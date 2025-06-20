@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Surface Tension: Digital Drip Pitch v40</title>
+    <title>Surface Tension: Digital Drip Pitch v41</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
@@ -230,19 +230,6 @@
         
         #finale-container { height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         #finale-animation { position: absolute; inset: 0; z-index: -1; }
-        #finale-animation::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(0,0,0,0) 60%);
-            filter: blur(20px);
-            z-index: -1;
-            animation: pulse-glow 10s infinite alternate;
-        }
         .finale-content { position: absolute; bottom: 5rem; left: 0; right: 0; padding: 2rem; z-index: 1; pointer-events: none; text-align: center; width: 100%; max-width: 1200px; margin: 0 auto; }
         #finale-title { 
             font-size: clamp(1.4rem, 2.5vw, 1.8rem); 
@@ -1050,88 +1037,100 @@ const Animations = {
         });
         return anim;
     },
-
-    initFinaleAnimation() {
-        const pCount = 80000;
-        const pos = new Float32Array(pCount * 3);
-        const particleTypes = new Float32Array(pCount); 
-        let lastUpdateTime = 0;
-
-        for (let i = 0; i < pCount; i++) {
-            const i3 = i * 3;
-            const r = Math.random() * 30;
-            const a = Math.random() * Math.PI * 2;
-            pos[i3] = r * Math.cos(a);
-            pos[i3 + 1] = r * Math.sin(a);
-            pos[i3 + 2] = (Math.random() - .5) * 12;
-            particleTypes[i] = Math.random() < 0.2 ? 1.0 : 0.0;
-        }
-
+    
+    initFinaleRipple() {
         const anim = this.createScene('finale-animation', {
             slideIndex: 9,
-            cameraZ: 2,
-            geometry: new THREE.BufferGeometry(),
+            cameraZ: 5,
+            geometry: new THREE.PlaneGeometry(30, 30, 256, 256),
             shader: {
-                uniforms: { uTime: { value: 0 } },
+                uniforms: {
+                    uTime: { value: 0.0 },
+                    uColor1: { value: new THREE.Color('#10b981') },
+                    uColor2: { value: new THREE.Color('#0a0e1a') }
+                },
                 vertexShader: `
                     uniform float uTime;
-                    attribute float aParticleType;
-                    varying float vAlpha;
-                    varying float vParticleType;
+                    varying vec2 vUv;
+                    varying float vWave;
+
+                    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                    vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                    vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+
+                    float snoise(vec2 v) {
+                        const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+                        vec2 i = floor(v + dot(v, C.yy));
+                        vec2 x0 = v - i + dot(i, C.xx);
+                        vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+                        vec4 x12 = x0.xyxy + C.xxzz;
+                        x12.xy -= i1;
+                        i = mod289(i);
+                        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
+                        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+                        m = m*m;
+                        m = m*m;
+                        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+                        vec3 h = abs(x) - 0.5;
+                        vec3 ox = floor(x + 0.5);
+                        vec3 a0 = x - ox;
+                        m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+                        vec3 g;
+                        g.x  = a0.x  * x0.x  + h.x  * x0.y;
+                        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+                        return 130.0 * dot(m, g);
+                    }
 
                     void main() {
-                        vParticleType = aParticleType;
-                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                        float zFactor = 1.0 - clamp(abs(mvPosition.z / 20.0), 0.0, 1.0);
-                        float pSize = (zFactor * zFactor) * 2.0 + 0.5;
-                        gl_PointSize = pSize;
-                        vAlpha = zFactor;
-                        gl_Position = projectionMatrix * mvPosition;
+                        vUv = uv;
+                        vec3 pos = position;
+                        float dist = distance(uv, vec2(0.5));
+                        float ripple = sin(dist * 25.0 - uTime * 2.0);
+                        float falloff = pow(1.0 - smoothstep(0.0, 0.5, dist), 2.0);
+                        float noiseFreq = 2.0;
+                        float noise = snoise(uv * noiseFreq + uTime * 0.1);
+                        pos.z += (ripple + noise * 0.2) * (0.3 + noise * 0.1) * falloff;
+                        vWave = pos.z;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                     }
                 `,
                 fragmentShader: `
-                    varying float vAlpha;
-                    varying float vParticleType;
-                    void main() {
-                        float dist = distance(gl_PointCoord, vec2(0.5));
-                        if (dist > 0.5) discard;
-                        float strength = 1.0 - dist * 2.0;
-                        vec3 greenHaloColor = vec3(0.06, 0.71, 0.51);
-                        vec3 greenCenterColor = vec3(0.8, 1.0, 0.9);
-                        vec3 platinumHaloColor = vec3(0.6, 0.65, 0.75);
-                        vec3 platinumCenterColor = vec3(1.0, 1.0, 1.0);
-                        vec3 greenColor = mix(greenCenterColor, greenHaloColor, strength * 2.5);
-                        vec3 platinumColor = mix(platinumCenterColor, platinumHaloColor, strength * 2.5);
-                        vec3 finalColor = mix(greenColor, platinumColor, vParticleType);
-                        gl_FragColor = vec4(finalColor, strength * vAlpha);
-                    }
-                `,
-                blending: THREE.AdditiveBlending,
-                transparent: true,
-                depthWrite: false
-            },
-            update: ({ main, t }) => {
-                if(!main.geometry.getAttribute('aParticleType')) {
-                     main.geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-                     main.geometry.setAttribute('aParticleType', new THREE.BufferAttribute(particleTypes, 1));
-                }
-                main.rotation.z += 3e-5;
-                main.material.uniforms.uTime.value = t;
+                    uniform vec3 uColor1;
+                    uniform vec3 uColor2;
+                    varying vec2 vUv;
+                    varying float vWave;
 
-                const now = performance.now();
-                if (now - lastUpdateTime > 16) {
-                    const positions = main.geometry.attributes.position.array;
-                    for (let i = 0; i < pCount; i++) {
-                        const i3 = i * 3;
-                        const d = Math.sqrt(positions[i3] ** 2 + positions[i3 + 1] ** 2);
-                        positions[i3 + 2] = Math.sin(d * 1.2 - t * .15) * 1.5 * Math.exp(-d * .1);
+                    float aastep(float threshold, float value) {
+                        float afwidth = fwidth(value) * 0.5;
+                        return smoothstep(threshold - afwidth, threshold + afwidth, value);
                     }
-                    main.geometry.attributes.position.needsUpdate = true;
-                    lastUpdateTime = now;
-                }
+
+                    void main() {
+                        float intensity = pow(0.8 - distance(vUv, vec2(0.5)), 2.0) * 2.0;
+                        vec3 surfaceColor = mix(uColor2, uColor1, intensity + vWave * 1.5);
+                        
+                        vec2 gridUv = vUv * 40.0;
+                        vec2 gridLine = abs(fract(gridUv) - 0.5);
+                        float gridThickness = 0.05;
+                        float gridFeather = 0.02;
+                        float grid = 1.0 - (aastep(gridThickness - gridFeather, gridLine.x) + aastep(gridThickness - gridFeather, gridLine.y));
+                        
+                        vec3 gridColor = uColor1 * 0.5;
+                        
+                        vec3 finalColor = mix(surfaceColor, gridColor, 1.0 - grid);
+
+                        gl_FragColor = vec4(finalColor, 1.0);
+                    }
+                `
+            },
+            update: ({ main, t, camera }) => {
+                main.material.uniforms.uTime.value = t;
+                main.rotation.x = -1.2;
+                camera.position.z = 4.5 + Math.sin(t * 0.2) * 0.5;
+                camera.position.y = 1.0;
+                camera.lookAt(0, 0, 0);
             }
         });
-
         return anim;
     },
 
@@ -1144,7 +1143,7 @@ const Animations = {
     handleResize(){this.renderers.forEach(r=>{const c=r.domElement.parentElement;if(c&&c.clientWidth>0){const m=Object.values(this.scenes).find(s=>s&&s.renderer===r)?.camera;if(m){m.aspect=c.clientWidth/c.clientHeight;m.updateProjectionMatrix();}r.setSize(c.clientWidth,c.clientHeight);}});Object.values(this.scenes).forEach(s=>{if(s instanceof Chart&&s.resize)s.resize();});},
     
     getAnimFunction(slideIndex) {
-        const animMap={0:this.initCoverSphere,2:this.initDripRipple,3:this.initVenuePointCloud,7:() => { this.initCreatorParticles('pratt-particles')(); this.initCreatorParticles('diana-particles')(); },9:this.initFinaleAnimation};
+        const animMap={0:this.initCoverSphere,2:this.initDripRipple,3:this.initVenuePointCloud,7:() => { this.initCreatorParticles('pratt-particles')(); this.initCreatorParticles('diana-particles')(); },9:this.initFinaleRipple};
         return animMap[slideIndex]?.bind(this);
     }
 };
