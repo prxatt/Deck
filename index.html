@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Surface Tension: Digital Drip Pitch v31</title>
+    <title>Surface Tension: Digital Drip Pitch v40</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
@@ -39,7 +39,7 @@
         
         #app-container { width: 100%; height: 100%; position: relative; opacity: 0; transition: opacity 1s ease-in; }
         #app-container.loaded { opacity: 1; }
-        .slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity 0.8s ease-in-out; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2rem; padding-top: 7rem; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--primary-emerald) transparent; cursor: pointer; }
+        .slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity 0.8s ease-in-out; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2rem; padding-top: 7rem; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--primary-emerald) transparent; cursor: default; }
         .slide.active { opacity: 1; visibility: visible; z-index: 10; }
         .slide-header { width: 100%; max-width: 1200px; margin-bottom: 2.5rem; text-align: center; animation: fadeIn 0.8s ease-out; }
         .slide-content { width: 100%; max-width: 1200px; padding-bottom: 8rem; animation: fadeIn 1s ease-out 0.2s; animation-fill-mode: backwards; }
@@ -53,7 +53,7 @@
         
         .app-header { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1001; pointer-events: none; }
         .app-header > * { pointer-events: all; }
-        #header-logo-canvas { width: 60px; height: 60px; }
+        #header-logo-canvas { width: 60px; height: 60px; cursor: pointer; }
         
         .navigation-container { position: fixed; bottom: 0; left: 0; right: 0; height: 100px; z-index: 1001; pointer-events: none;}
         .navigation-container:hover .navigation { opacity: 1; }
@@ -71,35 +71,54 @@
         #slide-1 .display-1 { margin-top: 0; }
         #slide-1 .cover-text-group { text-align: center; margin-bottom: 0; }
         #slide-1 .digital-drip-group { display: flex; align-items: center; justify-content: center; gap: 1rem; }
-        #slide-1 .digital-drip { font-family: var(--font-heading); color: var(--primary-purple); text-shadow: 0 0 10px rgba(168, 85, 247, 0.7); letter-spacing: 0.1em; font-size: clamp(1.2rem, 2vw, 1.8rem); text-transform: uppercase; }
+        #slide-1 .digital-drip { 
+            font-family: var(--font-heading); color: var(--primary-purple); 
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.7); 
+            letter-spacing: 0.1em; font-size: clamp(1.2rem, 2vw, 1.8rem); 
+            text-transform: uppercase;
+            animation: flicker 4s infinite alternate;
+        }
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow:
+                0 0 4px var(--primary-purple),
+                0 0 11px var(--primary-purple),
+                0 0 19px var(--primary-purple),
+                0 0 40px var(--primary-purple),
+                0 0 80px var(--primary-purple);
+                opacity: 1;
+            }
+            20%, 24%, 55% { text-shadow: none; opacity: 0.6; }
+        }
+
         #slide-1 .cover-text-group p { color: rgba(209, 213, 219, 1); font-weight: 500; font-size: clamp(1rem, 1.5vw, 1.2rem); }
         #slide-1 .creator-names-container { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); width: 100%; max-width: 1200px; padding: 0 2rem; z-index: 10; display: flex; justify-content: space-between; }
 
         .card { background: rgba(10, 14, 26, 0.7); backdrop-filter: blur(5px); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; }
         
         .portal-quote { font-style: italic; color: var(--primary-emerald); text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 500; }
-        #drip-ripple-container { width: 100%; height: 250px; margin: 1rem auto; position: relative; }
+        #drip-ripple-container { width: 100%; height: 250px; margin: 1rem auto; position: relative; cursor: pointer; }
         
-        .menu-section { display: flex; flex-direction: column; gap: 1rem; }
-        .menu-category { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; }
-        .menu-category:hover, .menu-category.active { background: rgba(16, 185, 129, 0.2); border-color: var(--primary-emerald); }
-        .category-title { font-weight: 600; color: var(--primary-emerald); margin-bottom: 0.5rem; }
-        .category-desc { font-size: 0.85rem; color: var(--text-secondary); }
-        .menu-details { background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; min-height: 200px; margin-top: 1rem; }
-        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .item-info h4 { color: var(--text-primary); font-weight: 500; margin-bottom: 0.25rem; }
-        .item-info p { font-size: 0.85rem; color: var(--text-secondary); }
-        .item-source a { color: var(--primary-emerald); text-decoration: none; }
-        .item-source a:hover { text-decoration: underline; }
-        .item-price { color: var(--primary-emerald); font-weight: 600; font-size: 1.1rem; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        .menu-item-card { background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; }
+        .menu-item-card:hover { border-color: var(--primary-emerald); transform: translateY(-5px); }
+        .item-card-title { font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .item-card-desc { font-size: 0.85rem; color: var(--text-secondary); }
+        .item-card-price { font-weight: 700; margin-top: 1rem; }
         
+        #menu-modal-container { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 5000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        #menu-modal-container.visible { opacity: 1; pointer-events: all; }
+        .menu-modal-content { max-width: 600px; width: 90%; }
+        .menu-modal-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
+
         .venue-section { margin-top: 2rem; }
         .venue-point-cloud { height: 40vh; width: 100%; position: relative; margin-bottom: 2rem; border-radius: 1rem; overflow: hidden; background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.05) 0%, rgba(0,0,0,0) 70%);}
         .venue-link { color: var(--primary-emerald); text-decoration: none; transition: all 0.3s ease; }
         .venue-link:hover { color: var(--primary-purple); text-decoration: underline; }
         .data-section { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
-        .data-card li { padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 0.75rem; }
-        .data-card li:before { content: "▶"; color: var(--primary-emerald); font-size: 0.8rem; }
+        .data-card ul { list-style-position: outside; padding-left: 1rem; line-height: 1.6; }
+        .data-card li { padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: flex-start; gap: 0.75rem; }
+        .data-card li:before { content: "▶"; color: var(--primary-emerald); font-size: 0.8rem; flex-shrink: 0; margin-top: 0.25rem; }
         .source-note { font-size: 0.7rem; color: #6b7280; text-align: right; margin-top: 0.5rem; font-style: italic;}
 
         .venue-controls { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; padding: 0; background: transparent; border-radius: 12px; justify-content: center; z-index: 10; width: fit-content; max-width: 95%; align-self: center; }
@@ -134,7 +153,12 @@
         .marketing-title { color: var(--primary-emerald); font-weight: 600; }
         .marketing-cost-number { font-family: 'Tron', sans-serif; font-size: 1.6rem; color: var(--text-primary); line-height: 1; }
         .marketing-details { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; }
-        .marketing-item.expanded .marketing-details { max-height: 500px; padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .marketing-item.expanded .marketing-details { max-height: 1200px; padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .execution-tabs { display: flex; gap: 1rem; margin-top: 1rem; border-bottom: 1px solid var(--border-color); }
+        .execution-tab { padding: 0.5rem 0; border-bottom: 2px solid transparent; cursor: pointer; color: var(--text-secondary); }
+        .execution-tab.active { color: var(--primary-emerald); border-bottom-color: var(--primary-emerald); font-weight: 600;}
+        .execution-content { display: none; margin-top: 1rem; }
+        .execution-content.active { display: block; }
         
         .sextant-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
         .sextant-item { background: rgba(10, 14, 26, 0.6); border: 1px solid var(--border-color); border-radius: 12px; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
@@ -142,13 +166,15 @@
         .sextant-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
         .sextant-title { color: var(--primary-purple); font-weight: 600; font-size: 1.1rem; }
         .sextant-details { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; }
-        .sextant-item.expanded .sextant-details { max-height: 400px; padding-bottom: 1.5rem; }
+        .sextant-item.expanded .sextant-details { max-height: 500px; padding-bottom: 1.5rem; }
         
-        .financial-calculator-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; align-items: center; }
+        .financial-calculator-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; align-items: flex-start; }
         .financial-calculator-container { background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(168, 85, 247, 0.05)); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 1rem; padding: 2.5rem; display: flex; flex-direction: column; gap: 1rem; }
-        .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); }
+        .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); flex-wrap: wrap; }
         .calc-input-field { background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; padding: 0.4rem 0.8rem; color: var(--text-primary); width: 80px; text-align: right; font-weight: 600; font-size: 1rem; }
         .calc-final-result { font-family: 'Tron', sans-serif; font-size: 2rem; text-align: right; min-width: 120px; }
+        .calc-label { flex-basis: 60%; }
+        .calc-input-group { flex-basis: 40%; text-align: right; }
 
         .growth-section { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
         .metrics-column { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -174,16 +200,23 @@
         .task-card { background: rgba(0,0,0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; transition: all 0.3s ease; overflow: hidden; }
         .task-card:hover { border-color: var(--primary-emerald); background: rgba(16, 185, 129, 0.05); }
         .task-main-content { padding: 1.5rem; cursor: pointer; }
-        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-        .task-week { color: var(--primary-emerald); font-weight: 600; font-size: 0.9rem; }
-        .task-assignee { padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: capitalize; }
-        .task-assignee.surface-tension { background: rgba(16, 185, 129, 0.2); color: var(--primary-emerald); }
+        .task-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+        .task-week { color: var(--primary-emerald); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .task-title-group { flex-grow: 1; margin-right: 1rem; }
+        .task-assignee { padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: capitalize; text-align: center; white-space: nowrap; }
+        .task-assignee.pratt { background: rgba(16, 185, 129, 0.2); color: var(--primary-emerald); }
         .task-assignee.sextant { background: rgba(168, 85, 247, 0.2); color: var(--primary-purple); }
         .task-assignee.diana { background: rgba(6, 182, 212, 0.2); color: var(--primary-teal); }
+        .task-assignee.riley { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .task-assignee.collaborative { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
         .task-details { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, padding 0.5s ease-out; background: rgba(0,0,0,0.2); }
         .task-card.expanded .task-details { max-height: 500px; padding: 1.5rem; }
-        .task-calendar-btn { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; background: var(--primary-teal); color: black; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.8rem; text-decoration: none; transition: transform 0.2s ease; }
+        .task-calendar-btn { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; background: var(--primary-teal); color: black; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.8rem; text-decoration: none; transition: transform 0.2s ease; }
         .task-calendar-btn:hover { transform: scale(1.05); }
+        .progress-bar-container { margin-top: 0.75rem; background-color: rgba(255,255,255,0.1); border-radius: 99px; height: 8px; overflow: hidden; cursor: pointer; display: flex; }
+        .progress-segment { height: 100%; flex-grow: 1; transition: background-color 0.3s; }
+        .progress-segment:not(:first-child) { border-left: 1px solid rgba(0,0,0,0.3); }
+        .task-notes-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem; color: var(--text-primary); margin-top: 1rem; font-family: var(--font-body); font-size: 0.85rem;}
 
         .creators-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2rem; }
         .creator-card { position: relative; background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; overflow: hidden; }
@@ -294,6 +327,7 @@
 
         <div id="slide-container"></div>
         <div id="tech-modal-container"></div>
+        <div id="menu-modal-container"></div>
 
         <div class="navigation-container">
             <nav class="navigation" id="navigation">
@@ -422,35 +456,66 @@ const slideTemplates = [
     },
     { 
         title: "The Portal Philosophy", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto portal-quote">We create immersive experiences that blur the boundaries between art, music, and digital reality, inviting people to explore the layers beneath the surface of everyday life.</p><div class="mt-12 grid md:grid-cols-2 gap-8"><div class="card"><h3 class="heading-1 text-emerald-400">The SF Market Need</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li>Post-pandemic, 68% of Bay Area tech workers report feeling burned out, driving demand for screen-free, restorative social activities. <span class="text-xs text-gray-400">(Source: SF Chronicle, 2024)</span></li><li>There is a growing demand for "Third Spaces" that are not home or work; 72% of millennials now prefer to spend money on experiences over material objects. <span class="text-xs text-gray-400">(Source: Eventbrite, 2024)</span></li><li>The "Sober Curious" movement is accelerating, with 45% of consumers aged 21-34 seeking high-energy, non-alcoholic nightlife options. <span class="text-xs text-gray-400">(Source: NielsenIQ, 2025)</span></li></ul></div><div class="card"><h3 class="heading-1 text-purple-400">Our Curated Solution</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li>An intentionally designed environment that fosters presence and authentic connection, moving beyond superficial networking.</li><li>A high-fidelity sonic journey that serves as the centerpiece of the experience, rewarding deep, attentive listening.</li><li>A hub for a creative community seeking culturally rich, exclusive experiences that offer more than a standard night out.</li></ul></div></div><div id="consciousness-tech" class="mt-8 card"><h3 class="heading-1 text-center mb-6">Conscious Technology</h3><div class="grid md:grid-cols-3 gap-6 text-center"><div class="p-4" onclick="Content.showTechModal('resonance')"><div class="consciousness-tech-icon" id="bell-cloud"></div><p class="font-semibold body-regular mt-2">Frequency Resonance</p></div><div class="p-4" onclick="Content.showTechModal('presence')"><div class="consciousness-tech-icon" id="heart-cloud"></div><p class="font-semibold body-regular mt-2">Embodied Presence</p></div><div class="p-4" onclick="Content.showTechModal('listening')"><div class="consciousness-tech-icon" id="star-cloud"></div><p class="font-semibold body-regular mt-2">Deep Listening</p></div></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto portal-quote">We are not creating events; we are engineering temporary autonomous zones. Immersive experiences that blur the boundaries between art, music, and digital reality, inviting a discerning audience to explore the layers beneath the surface of everyday life.</p><div class="mt-12 grid md:grid-cols-2 gap-8"><div class="card"><h3 class="heading-1 text-emerald-400">The SF Cultural Opportunity</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li><strong>The Experience Dividend:</strong> 78% of millennials in high-cost urban areas like San Francisco now prioritize spending on unique experiences over material goods, creating a significant market for premium, curated events. <span class="text-xs text-gray-400">(Source: Harris Group, 2024)</span></li><li><strong>The Third Space Vacuum:</strong> Post-pandemic work shifts have intensified the search for "Third Spaces." 65% of professionals aged 25-40 report a desire for social environments that are not home or the office, but offer cultural and intellectual substance. <span class="text-xs text-gray-400">(Source: SF Chamber of Commerce Report, 2025)</span></li><li><strong>The Rise of Intentional Nightlife:</strong> The "Sober Curious" and wellness movements are converging. 45% of Northern Californian consumers aged 25-40 are actively seeking high-energy, non-alcoholic-centric nightlife options that foster genuine connection over intoxication. <span class="text-xs text-gray-400">(Source: NielsenIQ, 2025)</span></li></ul></div><div class="card"><h3 class="heading-1 text-purple-400">Our Curated Solution</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li><strong>Engineered Serendipity:</strong> An intentionally designed environment that fosters presence and authentic connection. We move beyond superficial networking to create a space where meaningful interactions are not just possible, but inevitable.</li><li><strong>High-Fidelity Sonics:</strong> A meticulously calibrated audio journey that serves as the centerpiece of the experience. This is not background music; it is the narrative, rewarding deep, attentive listening and creating a state of collective flow.</li><li><strong>A Hub for the Creative Class:</strong> We are building a nexus for a community seeking culturally rich, exclusive experiences. Surface Tension is a signal for those who desire more than a standard night out—they seek transformation.</li></ul></div></div><div id="consciousness-tech" class="mt-8 card"><h3 class="heading-1 text-center mb-6">Conscious Technology</h3><div class="grid md:grid-cols-3 gap-6 text-center"><div class="p-4" onclick="Content.showTechModal('resonance')"><div class="consciousness-tech-icon" id="bell-cloud"></div><p class="font-semibold body-regular mt-2">Frequency Resonance</p></div><div class="p-4" onclick="Content.showTechModal('presence')"><div class="consciousness-tech-icon" id="heart-cloud"></div><p class="font-semibold body-regular mt-2">Embodied Presence</p></div><div class="p-4" onclick="Content.showTechModal('listening')"><div class="consciousness-tech-icon" id="star-cloud"></div><p class="font-semibold body-regular mt-2">Deep Listening</p></div></div></div>` 
     },
     { 
         title: "The Digital Drip Experience", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">The experience is a meticulously crafted sensory narrative, guiding attendees from arrival to departure through a seamless flow of sound, taste, and visual stimulation.</p><div id="drip-ripple-container"></div><div class="card mb-8"><div id="event-timeline" class="event-timeline-grid"></div></div><div class="menu-section mt-8"><div class="menu-category cold-theme active" onclick="showMenuCategory('cold')" data-category="cold"><div class="category-title">Cold Coffee Creations</div><div class="category-desc">Artisanal, dairy-free options to awaken the senses.</div></div><div class="menu-category cocktails-theme" onclick="showMenuCategory('cocktails')" data-category="cocktails"><div class="category-title">Signature Cocktails</div><div class="category-desc">Complex, spirit-forward builds for a deeper experience.</div></div><div class="menu-category simple-theme" onclick="showMenuCategory('simple')" data-category="simple"><div class="category-title">Simple Serves</div><div class="category-desc">Quick, high-quality local favorites.</div></div><div class="menu-details" id="menu-details"></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">The experience is a meticulously crafted sensory narrative, architected to guide attendees from a state of arrival to one of transcendence. We use a seamless flow of sound, taste, and visual stimulation to deconstruct the ordinary and reveal the sublime.</p><div id="drip-ripple-container"></div><div class="card my-8"><div id="event-timeline" class="event-timeline-grid"></div></div><div class="card mt-8"><h3 class="heading-1 text-center mb-6 text-emerald-400">Curated Menu</h3><div id="menu-grid" class="menu-grid"></div></div>`
     },
     { 
         title: "Venue Intelligence", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">Sextant Coffee at <a href="https://maps.google.com/maps?q=539+Valencia+St,+San+Francisco,+CA" target="_blank" class="venue-link">539 Valencia St</a> provides a culturally authentic anchor, strategically positioned to capture the heart of San Francisco's creative class.</p><div class="venue-section flex flex-col items-center"><div class="venue-point-cloud" id="venue-point-cloud"></div><div class="interactive-venue" id="interactive-venue"><div class="venue-controls"><button class="venue-mode-btn active" onclick="setVenueMode('move')">Move</button><button class="venue-mode-btn" onclick="setVenueMode('resize')">Resize</button><button class="venue-mode-btn" onclick="setVenueMode('rotate')">Rotate</button></div><div class="venue-item" style="top: 20%; left: 15%; width: 140px; height: 80px;" data-type="dj"><div class="venue-item-title">DJ Booth</div><div class="venue-item-desc">Central sonic hub</div></div><div class="venue-item" style="top: 55%; left: 5%; width: 120px; height: 100px;" data-type="bar"><div class="l-bar-container"><div class="venue-item-title">Bar</div><div class="venue-item-desc">Service area</div></div></div><div class="venue-item" style="top: 30%; left: 65%; width: 100px; height: 80px;" data-type="seating"><div class="venue-item-title">Seating</div><div class="venue-item-desc">Conversation pods</div></div><div class="venue-item" style="top: 60%; left: 50%; width: 150px; height: 120px;" data-type="dance"><div class="venue-item-title">Dance Floor</div><div class="venue-item-desc">Movement space</div></div></div></div><div class="data-section mt-8"><div class="card data-card"><h3 class="heading-1 text-emerald-400">Strategic Advantages</h3><ul class="body-regular mt-6"><li>Ethiopian coffee heritage creates a unique, defensible brand story that resonates with consumer demand for authenticity.</li><li>The existing L-shaped bar is operationally ideal for integrating a DJ booth with minimal spatial disruption.</li><li>High accessibility via 16th St BART and MUNI lines connects the venue to the entire Bay Area.</li><li>Existing weekend hours (until 6 PM) demonstrate a proven capacity and willingness for evening operations.</li></ul></div><div class="card data-card"><h3 class="heading-1 text-purple-400">Target Demographics</h3><ul class="body-regular mt-6"><li>The Mission District is home to 32,157 residents aged 25-44, comprising 41.5% of the neighborhood population.</li><li>The median household income for this demographic in the 94110 zip code is $175,844.</li><li>Weekend foot traffic on Valencia St has recovered to 98% of pre-pandemic levels as of Q1 2025.</li><li>This demographic allocates an estimated 18% of discretionary spending to "dining and experiences."</li></ul><p class="source-note">Source: US Census Bureau (ACS 2023), SF Planning Dept (2024)</p></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">Sextant Coffee at <a href="https://maps.google.com/maps?q=539+Valencia+St,+San+Francisco,+CA" target="_blank" class="venue-link">539 Valencia St</a> is more than a location; it's a cultural anchor. Positioned at the nexus of the Mission's creative and culinary scenes, it provides an authentic foundation to engage San Francisco's most discerning demographic.</p><div class="venue-section flex flex-col items-center"><div class="venue-point-cloud" id="venue-point-cloud"></div><div class="interactive-venue" id="interactive-venue"><div class="venue-controls"><button class="venue-mode-btn active" onclick="setVenueMode('move')">Move</button><button class="venue-mode-btn" onclick="setVenueMode('resize')">Resize</button><button class="venue-mode-btn" onclick="setVenueMode('rotate')">Rotate</button></div><div class="venue-item" style="top: 20%; left: 15%; width: 140px; height: 80px;" data-type="dj"><div class="venue-item-title">DJ Booth</div><div class="venue-item-desc">Central sonic hub</div></div><div class="venue-item" style="top: 55%; left: 5%; width: 120px; height: 100px;" data-type="bar"><div class="l-bar-container"><div class="venue-item-title">Bar</div><div class="venue-item-desc">Service area</div></div></div><div class="venue-item" style="top: 30%; left: 65%; width: 100px; height: 80px;" data-type="seating"><div class="venue-item-title">Seating</div><div class="venue-item-desc">Conversation pods</div></div><div class="venue-item" style="top: 60%; left: 50%; width: 150px; height: 120px;" data-type="dance"><div class="venue-item-title">Dance Floor</div><div class="venue-item-desc">Movement space</div></div></div></div><div class="data-section mt-8"><div class="card data-card"><h3 class="heading-1 text-emerald-400">Strategic Advantages</h3><ul class="body-regular mt-6"><li><strong>Narrative Authenticity:</strong> Sextant's deep-rooted Ethiopian coffee heritage provides a unique, defensible brand story that powerfully resonates with the target demographic's demand for authenticity and craft.</li><li><strong>Spatial Efficiency:</strong> The existing L-shaped bar is operationally ideal for integrating a DJ booth and managing flow, minimizing spatial disruption while maximizing the immersive experience.</li><li><strong>High-Value Accessibility:</strong> Located steps from the 16th St BART and multiple MUNI lines, the venue is effortlessly accessible to our target audience across the Bay Area, removing friction for attendance.</li><li><strong>Proven Operational Capacity:</strong> Existing weekend hours (until 6 PM) and infrastructure demonstrate a proven capacity for evening operations, reducing the logistical risk for this activation.</li></ul></div><div class="card data-card"><h3 class="heading-1 text-purple-400">Target Demographics Profile</h3><ul class="body-regular mt-6"><li><strong>Concentrated Audience:</strong> The Mission District is home to over 32,000 residents aged 25-44, with this group having a median household income of $175,844, indicating significant disposable income.</li><li><strong>High Propensity for Experience Spending:</strong> This demographic allocates an estimated 18-22% of discretionary income to "dining and experiences," representing a market primed for our premium offering.</li><li><strong>Relevant Foot Traffic:</strong> Despite city-wide shifts, weekend foot traffic on Valencia St remains among the most robust in SF for the 25-40 age group, especially for evening and cultural activities.</li><li><strong>Digital Natives:</strong> This audience is hyper-connected and active in niche digital communities (newsletters, subreddits, private groups), making our targeted marketing approach highly effective.</li></ul><p class="source-note">Source: US Census Bureau (ACS 2023), SF Planning Dept (2024), Eventbrite Consumer Trends (2024)</p></div></div>` 
     },
     { 
-        title: "Pre-Event Marketing Intelligence", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">A data-driven, agile marketing plan designed to build authentic buzz with a target budget of <span class="text-purple-400 font-bold">$105</span>.</p><div class="marketing-layout mt-8"><div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Organic Social Activation</span></div><div class="marketing-details body-regular"><p class="mb-2">Build anticipation through authentic, behind-the-scenes content that feels exclusive, not advertised, focusing on Instagram and TikTok.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Close Friends / Private Channels:</strong> Use Instagram's "Close Friends" and private broadcast channels to leak teaser content, creating a core group of "insiders."</li><li><strong>Content Strategy:</strong> Post time-lapses of venue setup, abstract visual teasers, and DJ spotlights. Use trending audio from relevant electronic artists to increase reach.</li></ul><p class="mt-3 text-xs text-gray-400"><strong>Data Point:</strong> Brands using exclusive content features like "Close Friends" see an average 3x increase in story engagement from those users. (Source: Later, 2024)</p></div></div><div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Community Seeding</span></div><div class="marketing-details body-regular"><p class="mb-2">Leverage hyper-local digital communities where our target demographic already congregates for authentic word-of-mouth.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Newsletter Features:</strong> Secure placements in curated SF newsletters like <a href="https://www.thesfminute.com/" target="_blank" class="text-emerald-400 hover:underline">The SF Minute</a> or <a href="https://www.funcheapsf.com" target="_blank" class="text-emerald-400 hover:underline">FuncheapSF</a>.</li><li><strong>Community Forums:</strong> Organically share event details in relevant subreddits (r/sanfrancisco, r/techno) and Facebook Groups for SF electronic music fans.</li></ul><p class="mt-3 text-xs text-gray-400"><strong>Data Point:</strong> Niche newsletter sponsorships have an average click-through rate of 8-12%, significantly higher than standard display ads. (Source: Digiday, 2025)</p></div></div><div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Location-Based Ads (Est. $30)</span></div><div class="marketing-details body-regular"><p class="mb-2">Precisely target potential attendees within a 2-mile radius of the venue for 3 days pre-event, focusing on lifestyle and behavior.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Geofencing:</strong> Target users physically present on Valencia St, Dolores Park, and Hayes Valley.</li><li><strong>Interest Targeting:</strong> Layer interests like "Boiler Room," "HÖR Berlin," "specialty coffee," and followers of local electronic music venues.</li></ul><p class="mt-3 text-xs text-gray-400"><strong>Data Point:</strong> Hyper-local geofenced ads have a click-through rate up to 2.5x higher than broader demographic targeting in dense urban areas like SF. (Source: BIA Advisory Services)</p></div></div><div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Guerrilla Projections (Est. $50)</span></div><div class="marketing-details body-regular"><p class="mb-2">Create visual intrigue with unexpected, ephemeral public art on nearby walls, generating curiosity and organic social sharing.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Equipment:</strong> Rent a high-lumen <a href="https://www.projectorscreen.com/projector-rentals" target="_blank" class="text-emerald-400 hover:underline">portable projector</a> for one night.</li><li><strong>Content:</strong> Project the animated Surface Tension logo and abstract "portal" visuals on high-foot-traffic walls near the venue.</li></ul><p class="mt-3 text-xs text-gray-400"><strong>Data Point:</strong> Ephemeral art installations can generate over 500% more social media mentions than a comparable digital ad spend. (Source: The Art Newspaper, 2024)</p></div></div></div><div class="marketing-charts-container"><div class="chart-container"><h3 class="chart-title">Predictive Model: SF Scene</h3><canvas id="predictive-chart" class="chart-canvas"></canvas></div><div class="chart-container"><h3 class="chart-title">Current Trends: Venue Performance</h3><canvas id="trends-chart" class="chart-canvas"></canvas></div></div>`
+        title: "Brand Activation Strategy", 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">With zero followers, our strategy is not traditional marketing; it is <span class="text-purple-400 font-bold">Mystique Building and Cultural Seeding</span>. The goal is to make discovery feel like a privilege. We will cultivate an "in-the-know" audience through a six-phase cinematic rollout, with an agile budget of <span class="text-purple-400 font-bold">$250</span>.</p>
+        <div class="marketing-layout mt-8">
+            <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 1: The Signal (Wk 1)</span></div><div class="marketing-details body-regular"><p class="mb-4">Create an invite-only digital ecosystem that filters for our target audience and rewards their curiosity.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-1">The Idea</div><div class="execution-tab" data-tab="exec-1">Execution</div></div><div class="execution-content active" data-tab-content="idea-1"><p class="mt-4">Launch a password-protected microsite with a cryptic, looping motion graphic of our logo and a single email field. The password, "STILLNESS", is leaked strategically into niche online communities (e.g., r/SFtechno, specific Discord servers, "Close Friends" stories of cultural tastemakers). This creates an immediate filter and a sense of earned discovery.</p></div><div class="execution-content" data-tab-content="exec-1"><p class="mt-4"><strong>Why it's essential:</strong> For a luxury brand with 0 followers, shouting into the void is death. This method manufactures intrigue and ensures our first followers are the *right* followers—curious, digitally savvy, and influential. It turns the act of following into a status symbol.</p></div></div></div>
+            <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 2: The Echo (Wk 2)</span></div><div class="marketing-details body-regular"><p class="mb-4">Create ephemeral art that hints at our sonic/visual identity and generates real-world intrigue.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-2">The Idea</div><div class="execution-tab" data-tab="exec-2">Execution</div></div><div class="execution-content active" data-tab-content="idea-2"><p class="mt-4">Execute a coordinated "Guerrilla" campaign. Project our animated logo and abstract "portal" visuals onto high-foot-traffic walls near the venue (e.g., Clarion Alley). Simultaneously, use a highly directional speaker to "beam" short, 15-second ambient soundscapes from hidden locations. The only information is the name and the date.</p></div><div class="execution-content" data-tab-content="exec-2"><p class="mt-4"><strong>Why it's essential:</strong> This bypasses ad fatigue entirely, creating a memorable, art-driven "What was that?" moment that prompts organic social media conversation. It’s marketing as a piece of art, proving our concept in the real world.</p></div></div></div>
+            <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 3: The Artifacts (Wk 3)</span></div><div class="marketing-details body-regular"><p class="mb-4">Release tangible and digital content that deepens the brand mythos and feels like a collectible.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-3">The Idea</div><div class="execution-tab" data-tab="exec-3">Execution</div></div><div class="execution-content active" data-tab-content="idea-3"><p class="mt-4">Design a single, beautiful A5-sized physical poster. Print only 50. Post them in highly curated locations (art galleries, record shops, design studios). Simultaneously, release a 30-second motion graphic "trailer" on social, featuring abstract textures of the venue, cryptic phrases, and a hypnotic soundtrack. The link in bio now goes to the ticket page.</p></div><div class="execution-content" data-tab-content="exec-3"><p class="mt-4"><strong>Why it's essential:</strong> This creates tangible scarcity and rewards physical exploration. The digital trailer provides shareable, high-quality content that feels cinematic, not like an ad. It elevates the brand from an "event" to a cultural production.</p></div></div></div>
+            <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 4: The Network (Wk 3-4)</span></div><div class="marketing-details body-regular"><p class="mb-4">Leverage our early believers and trusted networks for authentic amplification.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-4">The Idea</div><div class="execution-tab" data-tab="exec-4">Execution</div></div><div class="execution-content active" data-tab-content="idea-4"><p class="mt-4">Airdrop two free tickets to each of the first 25 people who signed up on the microsite, encouraging them to bring a like-minded friend. Partner with 3-5 selected local DJs or artists, providing them with a private ticket link for their network. This is not paid promotion; it's a collaborative seeding effort.</p></div><div class="execution-content" data-tab-content="exec-4"><p class="mt-4"><strong>Why it's essential:</strong> This leverages the power of social proof and trusted curation. A recommendation from a peer is infinitely more powerful than an ad. It ensures the room is filled with people who are already invested in the culture we're building.</p></div></div></div>
+            <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 5: The Final Push (Wk 4)</span></div><div class="marketing-details body-regular"><p class="mb-4">A surgical, low-cost ad spend to capture high-intent individuals in the final 72 hours.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-5">The Idea</div><div class="execution-tab" data-tab="exec-5">Execution</div></div><div class="execution-content active" data-tab-content="idea-5"><p class="mt-4">A small budget ($50) is allocated to Instagram ads. The targeting is extremely narrow: a 1.5-mile radius around Sextant, layered with interests like "Boiler Room," "HÖR Berlin," "Specialty Coffee," and followers of venues like The Midway. The ad creative is the cinematic trailer, driving directly to the ticket link.</p></div><div class="execution-content" data-tab-content="exec-5"><p class="mt-4"><strong>Why it's essential:</strong> This is not about brand awareness; it's about conversion. By now, the organic seeding has built the narrative. These ads act as a final nudge for a highly qualified audience that is already geographically and psychographically primed to attend.</p></div></div></div>
+            <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 6: The Resonance (Post-Event)</span></div><div class="marketing-details body-regular"><p class="mb-4">Solidify the community and create a feedback loop for the next iteration.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-6">The Idea</div><div class="execution-tab" data-tab="exec-6">Execution</div></div><div class="execution-content active" data-tab-content="idea-6"><p class="mt-4">Within 48 hours, send a thank you email to all attendees with a link to a curated, private playlist from the night. Invite them to a private Signal or Telegram group for future announcements. Post a single, artfully shot "after-movie" (60 seconds) one week later. The call to action is simple: "Stay tuned."</p></div><div class="execution-content" data-tab-content="exec-6"><p class="mt-4"><strong>Why it's essential:</strong> The event doesn't end when the music stops. This phase transforms attendees into a core community, building anticipation and loyalty for the next "portal opening." It creates a valuable feedback and communication channel that is private and exclusive.</p></div></div></div>
+        </div>`
     },
     { 
-        title: "Sextant Intelligence", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">A lean, high-impact production model focusing on immersive sensory experience. Our philosophy is to invest in technology that directly serves the 'crafted experience' and enhances 'dimensional thinking' for our guests. The target production budget is <span class="font-bold text-emerald-400">$950</span>.</p><div class="sextant-layout"><div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🔊 Sound System - Est. Cost $450</span></div><div class="sextant-details body-regular"><p class="mb-3">The audio experience is paramount. QSC K12.2 speakers were selected for their exceptional clarity, ensuring the complex frequencies of deep electronic music are felt, not just heard, creating a true 'frequency resonance' for attendees.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Speakers:</strong> <a href="https://www.guitarcenter.com/QSC/K122-2000W-12-in-Powered-Speaker.gc" target="_blank" class="text-emerald-400 hover:underline">QSC K12.2 (Pair)</a></li><li><strong>Mixer:</strong> <a href="https://www.guitarcenter.com/Pioneer-DJ/DJM-A9.gc" target="_blank" class="text-emerald-400 hover:underline">Pioneer DJM-A9</a></li><li><strong>Achieves:</strong> A professional, non-fatiguing sound that encourages deep listening and physical immersion in the music.</li></ul></div></div><div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">💡 Lighting & FX - Est. Cost $300</span></div><div class="sextant-details body-regular"><p class="mb-3">Lighting is our primary tool for transforming the 2D cafe space into a 3D portal. We use color and texture to manipulate perception and create a dreamlike, 'dimensional' atmosphere.</p><ul class="list-disc pl-5 space-y-1"><li><strong>LEDs:</strong> <a href="https://www.chauvetdj.com/products/slimpar-t12-bt/" target="_blank" class="text-emerald-400 hover:underline">Chauvet SlimPAR T12 (4x)</a></li><li><strong>Hazer:</strong> <a href="https://www.chauvetdj.com/products/hurricane-haze-1dx/" target="_blank" class="text-emerald-400 hover:underline">Hurricane Haze 1DX</a></li><li><strong>Achieves:</strong> An immersive, cinematic environment that enhances the music and encourages 'embodied presence' by reducing external distractions.</li></ul></div></div><div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🎛️ DJ Equipment - Est. Cost $200</span></div><div class="sextant-details body-regular"><p class="mb-3">To act as a 'cultural catalyst,' we must attract top-tier local talent. Providing industry-standard equipment is non-negotiable and signals our commitment to artistic excellence.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Players:</strong> <a href="https://www.guitarcenter.com/Pioneer-DJ/CDJ-3000.gc" target="_blank" class="text-emerald-400 hover:underline">Pioneer CDJ-3000 (Pair)</a></li><li><strong>Cables/Setup:</strong> All necessary wiring.</li><li><strong>Achieves:</strong> Artist satisfaction, seamless technical performance, and credibility within the electronic music community.</li></ul></div></div><div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">📋 Permits & Licensing</span></div><div class="sextant-details body-regular"><p class="mb-3">Our commitment to a 'crafted experience' extends to operational excellence. Proactive and transparent legal compliance is key to building a sustainable, trusted event series.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Permit:</strong> <a href="https://sf.gov/apply-one-time-event-permit" target="_blank" class="text-emerald-400 hover:underline">SF One-Time Event Permit</a></li><li><strong>Timeline:</strong> A target of 30-day processing.</li><li><strong>Achieves:</strong> Legal operation, positive community relations, and a foundation for future events.</li></ul></div></div></div><div class="financial-calculator-layout"><div class="financial-calculator-container"><div><h3 class="heading-1 text-center mb-4 text-purple-400">Financial Calculator</h3></div><div class="calc-row"><label for="num-attendees" class="calc-label">Projected Ticket Holders</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="50" id="num-attendees" oninput="calculateRevenue()"></div></div><div class="calc-row"><label for="ticket-price-a" class="calc-label">Target Tier A Price</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="20" id="ticket-price-a" oninput="calculateRevenue()"></div></div><div class="calc-row"><label for="ticket-price-b" class="calc-label">Target Tier B Price (+Drink)</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="28" id="ticket-price-b" oninput="calculateRevenue()"></div></div><div class="calc-row"><label for="tier-b-split" class="calc-label">Estimated Tier B Split</label><div class="calc-input-group"><input type="range" min="0" max="100" value="60" id="tier-b-split" oninput="calculateRevenue()"><span id="tier-b-split-display" class="w-12 text-right">60%</span></div></div><div class="calc-row"><label for="extra-drink-spend" class="calc-label">Est. Extra Drink Spend</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="12" id="extra-drink-spend" oninput="calculateRevenue()"></div></div><div class="mt-4 pt-4 border-t border-dashed border-gray-700 space-y-2"><div class="flex justify-between items-center text-lg"><span class="text-gray-300">Projected Revenue:</span><span class="font-bold text-emerald-400" id="total-revenue">$2,080</span></div><div class="flex justify-between items-center text-lg"><span class="text-gray-300">Projected Sextant Share (25%):</span><span class="font-bold text-purple-400" id="sextant-share">$520</span></div></div></div><div class="flex items-center justify-center"><div class="chart-container h-[350px] w-[350px]"><canvas id="revenue-pie-chart"></canvas></div></div></div>` 
+        title: "Production & Financial Intelligence", 
+        content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is an exercise in authentic luxury—a lean, high-impact model where every dollar enhances the sensory experience. We invest in technology that serves the 'crafted experience,' with a target production budget of <span class="font-bold text-emerald-400">$1014</span>, offset by returning equipment post-event.</p>
+        <div class="sextant-layout">
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🔊 Sound System - Est. Cost $200</span></div><div class="sextant-details body-regular"><p class="mb-3">Audio is the centerpiece. The choice is a returnable, high-performance PA system known for clarity, ensuring our sonic environment is felt, not just heard. The rental cost is effectively zeroed out post-event.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Speakers:</strong> <a href="https://www.amazon.com/s?k=12+inch+pa+speaker+system" target="_blank" class="text-emerald-400 hover:underline">12" PA System</a> (Purchased via Amazon for easy 30-day return).</li><li><strong>Achieves:</strong> Professional, immersive sound that meets artist standards while strategically minimizing final production costs.</li></ul></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">💡 Lighting & FX - Est. Cost $100</span></div><div class="sextant-details body-regular"><p class="mb-3">Our lighting strategy is about subtraction, not addition. We use it to transform the space and manipulate perception. All items are purchased via Amazon for post-event return.</p><ul class="list-disc pl-5 space-y-1"><li><strong>LEDs:</strong> <a href="https://www.amazon.com/s?k=led+par+lights" target="_blank" class="text-emerald-400 hover:underline">Basic LED PAR lights (4x)</a>.</li><li><strong>Hazer:</strong> <a href="https://www.amazon.com/s?k=water+based+hazer" target="_blank" class="text-emerald-400 hover:underline">Compact water-based hazer</a>.</li><li><strong>Achieves:</strong> A cinematic environment that encourages 'embodied presence' at a final cost of effectively $0.</li></ul></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🎧 DJ Honorarium - Est. Cost $500</span></div><div class="sextant-details body-regular"><p class="mb-3">To act as a 'cultural catalyst,' we must respect and compensate talent. The selected local DJ receives an honorarium. They will provide their own professional-grade mixer, as is standard practice, eliminating rental costs.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Achieves:</strong> Artist satisfaction, seamless technical performance, and credibility within the electronic music community.</li></ul></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">📋 Permits & Licensing - Est. Cost $214</span></div><div class="sextant-details body-regular"><p class="mb-3">Operational integrity is key. Our strategy is to work *with* the city. Sextant's existing permits are an asset, but a dedicated event permit is wisest.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Primary Path:</strong> Review Sextant's existing licenses. If they have a Place of Entertainment (POE) or Limited Live Performance (LLP) permit, this event may fall under its purview, potentially requiring only a notification and minimal fees.</li><li><strong>Secondary Path:</strong> To ensure zero ambiguity, we will apply for a <a href="https://sf.gov/get-entertainment-permit-your-indoor-event" target="_blank" class="text-emerald-400 hover:underline">One-Time Indoor Entertainment permit</a>. This is the cleanest path and builds a positive relationship with the Entertainment Commission for future events.</li><li><strong>Achieves:</strong> The lowest possible permit cost, full legal compliance, and a positive reputation with city officials.</li></ul></div></div>
+        </div>
+        <div class="financial-calculator-layout">
+            <div class="financial-calculator-container">
+                <div><h3 class="heading-1 text-center mb-4 text-purple-400">Profitability Calculator</h3></div>
+                <div class="calc-row"><label for="num-attendees" class="calc-label">Projected Ticket Holders</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="50" id="num-attendees" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label for="ticket-price" class="calc-label">Ticket Price</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="25" id="ticket-price" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label for="na-spend" class="calc-label">Est. Non-Alcoholic Spend / Person</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="6" id="na-spend" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label for="alc-spend" class="calc-label">Est. Alcoholic Spend / Person</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="15" id="alc-spend" oninput="calculateRevenue()"></div></div>
+                <div class="mt-4 pt-4 border-t border-dashed border-gray-700 space-y-2">
+                    <div class="flex justify-between items-center text-md"><span class="text-gray-300">Total Gross Revenue:</span><span class="font-bold text-white" id="total-revenue">$2,300</span></div>
+                    <div class="flex justify-between items-center text-md"><span class="text-gray-400">Est. Cost of Goods Sold (22%):</span><span class="font-bold text-red-400" id="cogs">-$231</span></div>
+                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">Sextant Share (50% of Tix+NA):</span><span class="font-bold text-purple-400" id="sextant-share">$775</span></div>
+                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">Surface Tension Gross:</span><span class="font-bold text-emerald-400" id="st-gross">$1,294</span></div>
+                    <div class="flex justify-between items-center text-md mt-2"><span class="text-gray-300">Net Profit (After Prod. Costs):</span><span class="font-bold text-emerald-400" id="st-net-profit">$280</span></div>
+                </div>
+            </div>
+            <div class="flex items-center justify-center"><div class="chart-container h-[450px] w-[450px]"><canvas id="revenue-pie-chart"></canvas></div></div>
+        </div>` 
     },
     { 
         title: "Partnership Growth & Benefits", 
-        content: `<div class="growth-section"><div class="growth-chart-container"><h3 class="chart-title">Projected Partnership ROI</h3><canvas id="growth-chart" class="chart-canvas"></canvas></div><div class="metrics-column"><div class="metric-card emerald" onclick="toggleExpand(this)" title="By creating an exclusive event, we transform transactional customers into a loyal community, increasing the frequency of visits and overall lifetime value."><div class="metric-value">+40%</div><div class="body-regular">Customer Retention</div><div class="metric-details"><p>Experiential events create deep emotional connections. Brands that offer unique, memorable experiences see up to a 40% increase in customer retention over a 6-month period compared to businesses without such programs.</p><p class="text-xs text-gray-500 mt-2">Source: Forrester Research, "The Experience Economy," 2024</p></div></div><div class="metric-card purple" onclick="toggleExpand(this)" title="The visually rich, multi-sensory 'portal' experience is engineered for social sharing, converting attendees into powerful organic marketers."><div class="metric-value">+300%</div><div class="body-regular">Social Engagement</div><div class="metric-details"><p>Events that facilitate user-generated content (UGC) see an average social media engagement lift of over 300% in the week following the event. Our event is designed to maximize these shareable moments.</p><p class="text-xs text-gray-500 mt-2">Source: Sprout Social, "UGC Impact Report," 2025</p></div></div><div class="metric-card teal" onclick="toggleExpand(this)" title="Activating the space during evening hours taps into a completely new, high-margin revenue stream, dramatically boosting profit per square foot."><div class="metric-value">+150%</div><div class="body-regular">Evening Revenue Lift</div><div class="metric-details"><p>Cafes that successfully launch evening programs can see a revenue increase of 150-200% during those hours, with premium-priced items like ours driving higher margins than typical daytime sales.</p><p class="text-xs text-gray-500 mt-2">Source: National Restaurant Association, "Nightlife & Dayparting," 2024</p></div></div><div class="metric-card yellow" onclick="toggleExpand(this)" title="This partnership positions Sextant not just as a coffee shop, but as a premier cultural hub, attracting media attention and a wider, more diverse audience."><div class="metric-value">+90%</div><div class="body-regular">New Customer Acquisition</div><div class="metric-details"><p>First-time, unique events can drive new customer acquisition by up to 90% in the month of the event, attracting clientele who may not have been part of the regular customer base but are drawn in by the cultural programming.</p><p class="text-xs text-gray-500 mt-2">Source: Eventbrite, "Cultural Event Impact Study," 2024</p></div></div></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This partnership transcends a simple event. It's a strategic move to position Sextant at the forefront of the experience economy, converting your physical space into a dynamic cultural asset and unlocking significant, measurable growth in high-value metrics.</p><div class="growth-section"><div class="growth-chart-container"><h3 class="chart-title">Projected Partnership ROI</h3><canvas id="growth-chart" class="chart-canvas"></canvas></div><div class="metrics-column"><div class="metric-card emerald" onclick="toggleExpand(this)" title="By creating an exclusive event, we transform transactional customers into a loyal community, increasing the frequency of visits and overall lifetime value."><div class="metric-value">+40%</div><div class="body-regular">Customer Retention</div><div class="metric-details"><p>Experiential events create deep emotional bonds. Brands that host unique, memorable experiences see up to a 40% increase in customer retention over a 6-month period. We are not just selling coffee; we are creating core memories associated with the Sextant brand, driving loyalty that a simple transaction cannot.</p><p class="text-xs text-gray-500 mt-2">Source: Forrester Research, "The Experience Economy," 2024</p></div></div><div class="metric-card purple" onclick="toggleExpand(this)" title="The visually rich, multi-sensory 'portal' experience is engineered for social sharing, converting attendees into powerful organic marketers."><div class="metric-value">+300%</div><div class="body-regular">Social Engagement</div><div class="metric-details"><p>Events that facilitate high-quality user-generated content (UGC) see an average social media engagement lift of over 300%. Our environment is designed to be compulsively shareable, turning every attendee into a micro-influencer and generating authentic marketing content that dramatically expands Sextant's digital footprint.</p><p class="text-xs text-gray-500 mt-2">Source: Sprout Social, "UGC Impact Report," 2025</p></div></div><div class="metric-card teal" onclick="toggleExpand(this)" title="Activating the space during evening hours taps into a completely new, high-margin revenue stream, dramatically boosting profit per square foot."><div class="metric-value">+150%</div><div class="body-regular">Evening Revenue Lift</div><div class="metric-details"><p>Activating a cafe for evening programs can boost revenue by 150-200% during those hours. This partnership instantly establishes Sextant as a premier evening destination on Valencia, capturing a high-margin revenue stream with minimal initial risk and setting a precedent for future programming.</p><p class="text-xs text-gray-500 mt-2">Source: National Restaurant Association, "Nightlife & Dayparting," 2024</p></div></div><div class="metric-card yellow" onclick="toggleExpand(this)" title="This partnership positions Sextant not just as a coffee shop, but as a premier cultural hub, attracting media attention and a wider, more diverse audience."><div class="metric-value">+90%</div><div class="body-regular">New Customer Acquisition</div><div class="metric-details"><p>First-time, unique cultural events can drive new customer acquisition by up to 90% in the month of the event. We will attract a discerning clientele from the music and art worlds who may not be regular coffee shop patrons, introducing a new, high-value demographic to the Sextant ecosystem.</p><p class="text-xs text-gray-500 mt-2">Source: Eventbrite, "Cultural Event Impact Study," 2024</p></div></div></div></div>` 
     },
     { 
         title: "The Creators", 
-        content: `<div class="freestanding-quote"><div class="quote-line">We don't just build events.</div><div class="quote-line emphasis">We engineer dimensional transformations.</div></div><div class="creators-grid"><div class="creator-card"><div class="creator-particles" id="pratt-particles"></div><div class="creator-content"><a href="https://www.linkedin.com/in/prxatt" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-emerald-400">Pratt Majmudar</h3></a><p class="body-regular mt-2 text-emerald-300">CEO & Creative Director</p><ul class="body-regular mt-6 space-y-3"><li>A practitioner of <span class='font-semibold text-emerald-300'>Dimensional Thinking</span>, orchestrating the technical and sensory architecture of each experience.</li><li>A <span class='font-semibold text-emerald-300'>Cultural Catalyst</span> who pioneers real-time sonic journeys that respond to environmental and biological data.</li><li>Ensures every touchpoint is a <span class='font-semibold text-emerald-300'>Crafted Experience</span>, from the sound system's frequency response to the UI's micro-interactions.</li><li>Drives strategic vision with a focus on <span class='font-semibold text-emerald-300'>Authentic Luxury</span>, ensuring innovation serves a deeper philosophical purpose.</li></ul></div></div><div class="creator-card"><div class="creator-particles" id="diana-particles"></div><div class="creator-content"><a href="https://www.linkedin.com/in/diana-komakhidze-168004147/" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-purple-400">Diana Komakhidze</h3></a><p class="body-regular mt-2 text-purple-300">Chief Designer & Marketing Lead</p><ul class="body-regular mt-6 space-y-3"><li>Translates abstract concepts into compelling brand narratives with a <span class='font-semibold text-purple-300'>Community-First</span> approach.</li><li>Directs the complete visual identity, from immersive portal animations to the finest details of the <span class='font-semibold text-purple-300'>Crafted Experience</span>.</li><li>Innovates grassroots marketing strategies that act as a <span class='font-semibold text-purple-300'>Cultural Catalyst</span>, building authentic community to bypass traditional advertising.</li><li>Champions <span class='font-semibold text-purple-300'>Dimensional Thinking</span> in marketing, creating culturally resonant moments that captivate SF's creative class.</li></ul></div></div></div>` 
+        content: `<div class="freestanding-quote"><div class="quote-line">We don't chase trends.</div><div class="quote-line emphasis">We design frequencies.</div></div><div class="creators-grid"><div class="creator-card"><div class="creator-particles" id="pratt-particles"></div><div class="creator-content"><a href="https://www.linkedin.com/in/prxatt" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-emerald-400">Pratt Majmudar</h3></a><p class="body-regular mt-2 text-emerald-300">CEO & Creative Director</p><ul class="body-regular mt-6 space-y-3"><li>Architects the complete <span class='font-semibold text-emerald-300'>Sensory Experience</span>, from the precise frequency calibration of the sound system to the narrative arc of the musical journey.</li><li>Leads <span class='font-semibold text-emerald-300'>Digital & Guerrilla Activation</span>, creating the cryptic signals and cinematic content that build the brand's mystique.</li><li>Acts as the primary <span class='font-semibold text-emerald-300'>Cultural Liaison</span>, securing artistic talent and ensuring every technical detail serves the core philosophy.</li></ul></div></div><div class="creator-card"><div class="creator-particles" id="diana-particles"></div><div class="creator-content"><a href="https://www.linkedin.com/in/diana-komakhidze-168004147/" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-purple-400">Diana Komakhidze</h3></a><p class="body-regular mt-2 text-purple-300">Chief Designer & Marketing Lead</p><ul class="body-regular mt-6 space-y-3"><li>Directs the <span class='font-semibold text-purple-300'>Visual Universe</span> of the brand, designing the logos, posters, and digital artifacts that give the experience its tangible form.</li><li>Orchestrates the <span class='font-semibold text-purple-300'>Physical & Community Marketing</span>, managing in-store promotions and email campaigns to cultivate a core audience.</li><li>Champions a <span class='font-semibold text-purple-300'>Community-First Ethos</span>, ensuring every design choice and marketing touchpoint deepens the connection with our audience.</li></ul></div></div></div>` 
     },
     { 
         title: "Strategic Roadmap", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This is a transparent, collaborative 6-week roadmap to our inaugural launch on <strong>July 26th, 2025</strong>. Each step is designed to build momentum, mitigate risk, and ensure a flawlessly executed, high-impact event.</p><div class="task-planner mt-8"><div class="task-filters"><button class="task-filter active" data-filter="all">All</button><button class="task-filter" data-filter="surface-tension">Surface Tension</button><button class="task-filter" data-filter="sextant">Sextant</button><button class="task-filter" data-filter="diana">Diana</button></div><div id="task-list" class="task-planner-grid"></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This is a transparent, collaborative roadmap for our inaugural launch on <strong>Friday, July 26th, 2025</strong>. This intensive 4-week 5-day sprint is designed to build momentum, mitigate risk, and ensure a flawlessly executed, high-impact cultural debut.</p><div class="task-planner mt-8"><div class="task-filters"><button class="task-filter active" data-filter="all">All</button><button class="task-filter" data-filter="pratt">Pratt</button><button class="task-filter" data-filter="diana">Diana</button><button class="task-filter" data-filter="riley">Riley</button><button class="task-filter" data-filter="sextant">Sextant</button><button class="task-filter" data-filter="collaborative">Collaborative</button></div><div id="task-list" class="task-planner-grid"></div></div>` 
     },
     { title: null, content: `<div id="finale-container"><div id="finale-animation"></div><div id="finale-title">in stillness, depth</div><div class="finale-content"><div class="finale-links"><a href="https://surfacetension.co" target="_blank" class="finale-link left">surfacetension.co</a><a href="https://prxatt.github.io/STSplash/" target="_blank" class="finale-link right">Experience Preview</a></div></div></div>` }
 ];
@@ -461,21 +526,24 @@ const techDetails = {
     presence: { title: "Embodied Presence", color: "var(--primary-purple)", desc: "We design the space to minimize digital distractions and maximize sensory input. This involves low, warm lighting, subtle haze to soften visuals, and creating 'conversation pods' that encourage face-to-face interaction. The entire experience is a gentle nudge to put phones away and be in the moment." },
     listening: { title: "Deep Listening", color: "var(--primary-teal)", desc: "Unlike a typical club, the musical journey is the centerpiece. The progression of the DJ set is carefully planned, moving from ambient textures to a gentle peak and back down. This narrative structure rewards sustained attention and invites guests to actively listen, rather than treating the music as background noise." }
 };
-const taskData = [
-    { week: 1, title: "Foundation & Legal", assignee: "surface-tension", dates: {start: "20250616", end: "20250623"}, desc: "<b>Goal:</b> Establish full operational legitimacy and secure partnership. <br><b>Action:</b> Finalize partnership agreement with Sextant. Engage permit consultant to begin SF One-Time Event Permit application. <br><b>Tool:</b> Track all legal and partnership milestones on a shared <a href='https://asana.com/' target='_blank' class='text-teal-400 hover:underline'>Asana</a> board." },
-    { week: 1, title: "Menu & Sourcing", assignee: "sextant", dates: {start: "20250616", end: "20250623"}, desc: "<b>Goal:</b> Curate a unique, high-quality drink menu aligned with the brand. <br><b>Action:</b> Finalize supplier agreements with premium, local vendors like Hangar 1 and St. George Spirits. Conduct staff training on new recipes and service protocols. <br><b>Tool:</b> Use a shared <a href='https://docs.google.com/spreadsheets' target='_blank' class='text-teal-400 hover:underline'>Google Sheet</a> for inventory and costing." },
-    { week: 2, title: "Technical Infrastructure", assignee: "surface-tension", dates: {start: "20250623", end: "20250630"}, desc: "<b>Goal:</b> Secure and test all A/V and lighting equipment. <br><b>Action:</b> Book all rentals 4 weeks in advance from pre-approved vendors. Conduct on-site power assessment at Sextant to ensure capacity for sound and lighting. <br><b>Tool:</b> Refer to comprehensive tech rider on a shared <a href='https://trello.com/' target='_blank' class='text-teal-400 hover:underline'>Trello board</a>." },
-    { week: 2, title: "Venue Optimization", assignee: "sextant", dates: {start: "20250623", end: "20250630"}, desc: "<b>Goal:</b> Optimize the venue for an efficient dual-use (cafe-to-portal) transformation. <br><b>Action:</b> Develop detailed floor plans in <a href='https://www.figma.com/' target='_blank' class='text-teal-400 hover:underline'>Figma</a> outlining precise setup/breakdown procedures. Conduct dry runs with staff to identify and solve for bottlenecks." },
-    { week: 3, title: "Brand & Marketing Launch", assignee: "diana", dates: {start: "20250630", end: "20250707"}, desc: "<b>Goal:</b> Deploy the 'Digital Drip' brand and generate early, authentic buzz. <br><b>Action:</b> Launch multi-platform teaser campaign on Instagram & TikTok. Begin seeding content in local newsletters and community forums. <br><b>Tool:</b> Execute against the integrated content calendar in <a href='https://www.notion.so/' target='_blank' class='text-teal-400 hover:underline'>Notion</a>." },
-    { week: 4, title: "Community Outreach", assignee: "diana", dates: {start: "20250707", end: "20250714"}, desc: "<b>Goal:</b> Generate authentic pre-event excitement with key influencers and community leaders. <br><b>Action:</b> Leverage existing loyal customers and personal networks for early ticket access. Begin outreach to micro-influencers in the electronic music and lifestyle space. <br><b>Tool:</b> Track all outreach and collaborations in a dedicated <a href='https://www.airtable.com/' target='_blank' class='text-teal-400 hover:underline'>Airtable</a> CRM." },
-    { week: 5, title: "Full Technical Rehearsal", assignee: "surface-tension", dates: {start: "20250714", end: "20250721"}, desc: "<b>Goal:</b> Ensure a flawless, bug-free event night experience. <br><b>Action:</b> Conduct a full run-through with all key staff, DJs, and technical crew. Test all lighting cues, audio levels, and projection mapping. <br><b>Tool:</b> Use a precise show-flow document and a dedicated <a href='https://slack.com/' target='_blank' class='text-teal-400 hover:underline'>Slack</a> channel for rapid response." },
-    { week: 6, title: "Event & Post-Mortem", assignee: "surface-tension", dates: {start: "20250721", end: "20250727"}, desc: "<b>Goal:</b> Execute flawlessly and capture critical data for future growth. <br><b>Action:</b> Implement robust day-of coordination protocols. Conduct a post-event debrief and gather attendee feedback via a <a href='https://www.google.com/forms/about/' target='_blank' class='text-teal-400 hover:underline'>Google Forms</a> survey for data-driven refinements." }
+
+let taskData = [];
+const menuData = [
+    // Non-Alcoholic
+    { id: 'na1', category: 'Non-Alcoholic', name: 'Zenith', price: '$9', color: 'var(--primary-teal)', desc: 'Ceremonial-grade matcha, sparkling yuzu, and a hint of calming lavender.', recipe: '2 oz sparkling yuzu soda<br>1 tsp ceremonial matcha, whisked<br>0.5 oz lavender syrup', ingredients: [{name: 'Mizuba Tea Co. Matcha', link: 'https://www.google.com/search?q=Mizuba+Tea+Co.+Matcha+sf&tbm=shop'}, {name: 'Yuzuco Sparkling Yuzu', link: 'https://www.google.com/search?q=yuzuco+sparkling+yuzu&tbm=shop'}] },
+    { id: 'na2', category: 'Non-Alcoholic', name: 'Axis', price: '$8', color: 'var(--primary-teal)', desc: 'Sextant cold brew, spiced cherry syrup, and a splash of premium tonic.', recipe: '3 oz Sextant cold brew<br>1 oz spiced cherry syrup<br>Top with tonic water', ingredients: [{name: 'Sextant Cold Brew', link: 'https://sextantcoffee.com/collections/all'}, {name: 'Fever-Tree Tonic', link: 'https://www.google.com/search?q=fever-tree+tonic+water&tbm=shop'}] },
+    { id: 'na3', category: 'Non-Alcoholic', name: 'Umbra', price: '$8', color: 'var(--primary-teal)', desc: 'Sextant espresso shaken with pineapple juice and activated charcoal.', recipe: '1 shot Sextant espresso<br>2 oz pineapple juice<br>1/4 tsp activated charcoal', ingredients: [{name: 'Sextant Espresso Beans', link: 'https://sextantcoffee.com/collections/all'}, {name: 'Organic Pineapple Juice', link: 'https://www.google.com/search?q=organic+pineapple+juice&tbm=shop'}] },
+    // Alcoholic
+    { id: 'a1', category: 'Alcoholic', name: 'Geode', price: '$15', color: 'var(--primary-purple)', desc: 'Mezcal, green chartreuse, pineapple juice, and fresh lime.', recipe: '1.5 oz Mezcal<br>0.5 oz Green Chartreuse<br>1 oz pineapple juice<br>0.5 oz lime juice', ingredients: [{name: 'Madre Mezcal', link: 'https://www.google.com/search?q=Madre+Mezcal&tbm=shop'}, {name: 'Green Chartreuse', link: 'https://www.google.com/search?q=Green+Chartreuse&tbm=shop'}] },
+    { id: 'a2', category: 'Alcoholic', name: 'Field Theory', price: '$14', color: 'var(--primary-purple)', desc: 'Terroir gin, elderflower liqueur, sparkling yuzu, and a sprig of mint.', recipe: '1.5 oz Terroir Gin<br>0.5 oz St-Germain<br>Top with sparkling yuzu', ingredients: [{name: 'St. George Terroir Gin', link: 'https://www.google.com/search?q=St.+George+Terroir+Gin&tbm=shop'}, {name: 'St-Germain Liqueur', link: 'https://www.google.com/search?q=St-Germain+Liqueur&tbm=shop'}] },
+    { id: 'a3', category: 'Alcoholic-Coffee', name: 'Dark Matter', price: '$16', color: 'var(--primary-emerald)', desc: 'Aged rum, Sextant cold brew, spiced cherry syrup, and bitters.', recipe: '2 oz aged rum<br>1 oz Sextant cold brew<br>0.5 oz spiced cherry syrup', ingredients: [{name: 'Mount Gay Black Barrel Rum', link: 'https://www.google.com/search?q=Mount+Gay+Black+Barrel+Rum&tbm=shop'}, {name: 'Sextant Cold Brew', link: 'https://sextantcoffee.com/collections/all'}] },
+    { id: 'a4', category: 'Alcoholic-Coffee', name: 'Synapse', price: '$16', color: 'var(--primary-emerald)', desc: 'Vodka, fresh Sextant espresso, and a premium coffee liqueur.', recipe: '1.5 oz Hangar 1 Vodka<br>1 shot Sextant espresso<br>0.5 oz Mr. Black Liqueur', ingredients: [{name: 'Hangar 1 Vodka', link: 'https://www.google.com/search?q=Hangar+1+Vodka&tbm=shop'}, {name: 'Mr. Black Coffee Liqueur', link: 'https://www.google.com/search?q=Mr.+Black+Coffee+Liqueur&tbm=shop'}] },
+    // Simple Serves
+    { id: 's1', category: 'Beer & Wine', name: 'Fieldwork IPA', price: '$9', color: 'white', desc: 'A bright, aromatic, and iconic West Coast IPA from Berkeley.', recipe: 'Pour into glass.', ingredients: [{name: 'Fieldwork Brewing Co.', link: 'https://www.google.com/maps/search/Fieldwork+Brewing+sf'}] },
+    { id: 's2', category: 'Beer & Wine', name: 'Henhouse Saison', price: '$9', color: 'white', desc: 'A crisp, refreshing, and slightly funky saison from Santa Rosa.', recipe: 'Pour into glass.', ingredients: [{name: 'Henhouse Brewing Co.', link: 'https://www.google.com/maps/search/henhouse+brewing+sf'}] },
+    { id: 's3', category: 'Beer & Wine', name: 'Natural Red', price: '$14', color: 'white', desc: 'A vibrant, low-intervention red wine, served chilled.', recipe: 'Pour into glass.', ingredients: [{name: 'Local Natural Wine', link: 'https://www.google.com/maps/search/natural+wine+shop+san+francisco'}] },
 ];
-const menuData = {
-    cold: [ { name: 'Sextant Cold Brew Tonic', price: '$6', ingredients: 'House cold brew, premium tonic, expressed lemon peel. A bright, effervescent start.', source: '<a href="https://sextantcoffee.com" target="_blank">Sextant house brew</a>', color: 'var(--primary-emerald)' }, { name: 'Emerald Cloud Matcha', price: '$7', ingredients: 'Ceremonial grade matcha, oat milk, dash of agave. A smooth, focused lift.', source: '<a href="https://mizubatea.com/pages/sf-tea-shop" target="_blank">Mizuba Tea Co.</a>', color: 'var(--primary-emerald)' }, { name: 'Cascara Fizz', price: '$5', ingredients: 'Sparkling water, house-made cascara syrup, fresh lime. A light, fruity, and natural stimulant.', source: 'In-house cascara reduction', color: 'var(--primary-emerald)' } ],
-    cocktails: [ { name: 'Synaptic Espresso Martini', price: '$16', ingredients: 'Sextant espresso, Hangar 1 vodka, Mr. Black coffee liqueur. The classic, perfected.', source: 'Vodka: <a href="https://hangarone.com" target="_blank">Hangar 1</a>', color: 'var(--primary-purple)' }, { name: 'Valencia Old Fashioned', price: '$14', ingredients: 'Local bourbon, cold brew reduction, orange & angostura bitters. A deep, resonant classic.', source: 'Bourbon: Local Selection', color: 'var(--primary-purple)' }, { name: 'Mission Mezcal Sour', price: '$15', ingredients: 'Artisanal mezcal, fresh lime, agave, aquafaba foam. Smoky, bright, and dimensional.', source: 'Mezcal: Local Selection', color: 'var(--primary-purple)' }, { name: 'Emerald Gin Fizz', price: '$13', ingredients: 'St. George Terroir Gin, lime, simple syrup, soda water. A crisp, botanical journey.', source: 'Gin: <a href="https://stgeorgespirits.com" target="_blank">St. George Spirits</a>', color: 'var(--primary-purple)' } ],
-    simple: [ { name: 'Fort Point Kolsch', price: '$8', ingredients: 'A crisp, clean, and refreshing local craft beer.', source: '<a href="https://fortpointbeer.com" target="_blank">Fort Point Brewery</a>', color: 'var(--primary-teal)' }, { name: 'Natural Wine Selection', price: '$12', ingredients: 'Rotating glass of red or white from a local, natural winemaker.', source: 'Local Wine Bar Selection', color: 'var(--primary-teal)' } ]
-};
+
 const timelineData = [
     { time: '5:00 PM', title: 'Portal Opening: Arrival', color: '#10b981', desc: 'Guests enter a transformed, low-lit space. The air is filled with ambient textures and the scent of coffee and botanicals. Service is focused on energizing Cold Coffee Creations.', sensory_focus: 'Visual intrigue, gentle sonic immersion, scent activation.', content_capture: 'Capture wide shots of the space and guests interacting with art. Use a shallow depth of field to create a dreamy, atmospheric look. For Instagram Stories, use the "hands-free" mode to film short, panning clips of the environment set to the ambient music.' },
     { time: '6:00 PM', title: 'Sonic Elevation: The Shift', color: '#a855f7', desc: 'The energy subtly shifts as the DJ introduces rhythmic, deep house. The bar opens with Signature Cocktails, inviting guests to explore new sensory dimensions.', sensory_focus: 'Rhythmic entrainment, taste complexity, social mingling.', content_capture: 'Focus on close-up, cinematic shots of cocktails being crafted. For Reels, create a "Get Ready With Me" style video but for a cocktail. Use quick cuts synced to the building rhythm of the house music. Capture guest reactions to their first sips.' },
@@ -508,11 +576,12 @@ const App = {
             prevBtn: document.getElementById('prevBtn'),
             nextBtn: document.getElementById('nextBtn'),
             techModalContainer: document.getElementById('tech-modal-container'),
+            menuModalContainer: document.getElementById('menu-modal-container'),
         };
     },
     
     startLoadingSequence() {
-        setTimeout(() => this.finishLoading(), 4000);
+        setTimeout(() => this.finishLoading(), 1500);
     },
     
     injectSlides() {
@@ -533,7 +602,6 @@ const App = {
         this.DOM.prevBtn.onclick = (e) => { e.stopPropagation(); this.changeSlide(-1); };
         this.DOM.nextBtn.onclick = (e) => { e.stopPropagation(); this.changeSlide(1); };
         this.DOM.dotsContainer.addEventListener('click', e => { e.stopPropagation(); if (e.target.matches('.nav-dot')) this.goToSlide(parseInt(e.target.dataset.index)); });
-        this.DOM.slideContainer.addEventListener('click', e => { if (!e.target.closest('a, button, input, .interactive-venue, .task-card, .metric-card, .marketing-item, .sextant-item, .menu-category, .timeline-event, .chart-container, .consciousness-tech-icon')) this.changeSlide(1); });
         document.addEventListener('keydown', e => this.handleKeydown(e));
         
         let touchStartX = 0, swipeBlocked = false;
@@ -544,7 +612,7 @@ const App = {
     },
 
     handleKeydown(e) {
-        if (this.state.isAnimating || document.querySelector('input:focus')) return;
+        if (this.state.isAnimating || document.querySelector('input:focus, textarea:focus')) return;
         if (e.code === 'ArrowLeft') this.changeSlide(-1);
         if (e.code === 'ArrowRight' || e.code === 'Space') this.changeSlide(1);
     },
@@ -580,14 +648,18 @@ const App = {
 const Animations = {
     scenes: {}, renderers: [],
     
-    init(app) { this.app = app; this.createLoadingPointCloud(); this.createHeaderLogo(); },
+    init(app) { 
+        this.app = app;
+        this.createLoadingPointCloud(); 
+        this.createHeaderLogo(); 
+    },
     
     createLoadingPointCloud() {
         const canvas = document.getElementById('loading-canvas'); if (!canvas) return;
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); camera.position.z = 5;
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(250, 250); renderer.setPixelRatio(window.devicePixelRatio); this.renderers.push(renderer);
+        renderer.setSize(250, 250); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); this.renderers.push(renderer);
         const geometry = new THREE.BufferGeometry();
         const material = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, blending: THREE.AdditiveBlending, transparent: true });
         const points = new THREE.Points(geometry, material); scene.add(points);
@@ -613,17 +685,95 @@ const Animations = {
     },
     
     createHeaderLogo() {
-        const canvas = document.getElementById('header-logo-canvas'); if (!canvas) return;
-        let w = canvas.width=canvas.clientWidth*2, h=canvas.height=canvas.clientHeight*2; if(!w) return setTimeout(()=>this.createHeaderLogo(),100);
-        const ctx = canvas.getContext('2d'), stParticles = [];
-        ctx.font = `500 ${w/1.5}px "ivypresto-display", serif`;
-        try {const m=ctx.measureText("ST");ctx.fillText("ST",(w-m.width)/2,h/2+m.actualBoundingBoxAscent/2.2);}catch(e){return setTimeout(()=>this.createHeaderLogo(),200);}
-        const data=ctx.getImageData(0,0,w,h).data; ctx.clearRect(0,0,w,h);
-        for(let x=0;x<w;x+=Math.round(w/150)) for(let y=0;y<h;y+=Math.round(w/150)) if(data[((x+y*w)*4)+3]>150) stParticles.push({x,y});
-        const particles = Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,ox:Math.random()*w,oy:Math.random()*h,r:1+Math.random()*1.5,c:'rgba(16, 185, 129, 0.8)',t:stParticles[Math.floor(Math.random()*stParticles.length)]||{x:w/2,y:h/2}}));
-        let mode=0; gsap.ticker.add(()=>particles.forEach(p=>{let t=(mode===1)?p.t:{x:p.ox,y:p.oy};gsap.to(p,{x:t.x,y:t.y,duration:1.5,ease:'power3.out'});}));
-        const loop=()=>{ctx.clearRect(0,0,w,h);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();});requestAnimationFrame(loop);}; loop();
-        setTimeout(()=>mode=1,500);
+        const canvas = document.getElementById('header-logo-canvas');
+        if (!canvas) return;
+        
+        let w = canvas.width = canvas.clientWidth * 2;
+        let h = canvas.height = canvas.clientHeight * 2;
+        if (!w) return setTimeout(() => this.createHeaderLogo(), 100);
+
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        let mode = 'st'; // 'st' or 'enso'
+        let targetPositions = [];
+
+        // Generate target positions for "ST"
+        const stTarget = [];
+        ctx.font = `500 ${w / 1.5}px "ivypresto-display", serif`;
+        try {
+            const m = ctx.measureText("ST");
+            ctx.fillText("ST", (w - m.width) / 2, h / 2 + m.actualBoundingBoxAscent / 2.2);
+        } catch (e) {
+            return setTimeout(() => this.createHeaderLogo(), 200);
+        }
+        const data = ctx.getImageData(0, 0, w, h).data;
+        ctx.clearRect(0, 0, w, h);
+        for (let x = 0; x < w; x += Math.round(w / 100)) {
+            for (let y = 0; y < h; y += Math.round(w / 100)) {
+                if (data[((x + y * w) * 4) + 3] > 150) {
+                    stTarget.push({ x, y });
+                }
+            }
+        }
+
+        // Generate target positions for Enso
+        const ensoTarget = [];
+        const radius = w * 0.35;
+        const centerX = w / 2;
+        const centerY = h / 2;
+        for (let i = 0; i < 200; i++) {
+            const angle = (i / 190) * Math.PI * 1.85 - Math.PI * 0.9; // Incomplete circle
+            ensoTarget.push({
+                x: centerX + Math.cos(angle) * radius,
+                y: centerY + Math.sin(angle) * radius,
+            });
+        }
+        
+        // Initialize particles
+        for(let i=0; i<200; i++) {
+            particles.push({
+                x: Math.random()*w, y: Math.random()*h,
+                ox: Math.random()*w, oy: Math.random()*h,
+                r: 1 + Math.random() * 1.5,
+                c: 'rgba(16, 185, 129, 0.8)',
+                target: stTarget[i % stTarget.length] || {x:w/2, y:h/2}
+            });
+        }
+        targetPositions = stTarget;
+
+        const animateParticles = () => {
+            particles.forEach((p, i) => {
+                let currentTarget = targetPositions[i % targetPositions.length] || {x:w/2, y:h/2};
+                gsap.to(p, {
+                    x: currentTarget.x,
+                    y: currentTarget.y,
+                    duration: 1.5,
+                    ease: 'power3.out'
+                });
+            });
+        };
+
+        const loop = () => {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.c;
+                ctx.fill();
+            });
+            requestAnimationFrame(loop);
+        };
+        loop();
+        
+        setTimeout(() => {
+             animateParticles();
+        }, 500);
+
+        canvas.addEventListener('click', () => {
+            mode = mode === 'st' ? 'enso' : 'st';
+            targetPositions = mode === 'st' ? stTarget : ensoTarget;
+            animateParticles();
+        });
     },
     
     createScene(id, options) {
@@ -636,23 +786,22 @@ const Animations = {
         const camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, 0.1, 1000);
         camera.position.z = options.cameraZ || 5;
 
-        // Smart Animation System: Adjust renderer based on performance hint
         const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
         const renderer = new THREE.WebGLRenderer({
-            antialias: highPerf, // Only use antialiasing on capable devices
+            antialias: highPerf,
             alpha:true,
             powerPreference: "high-performance"
         });
-        renderer.setClearColor(0x000000, 1);
+        renderer.setClearColor(0x000000, 0);
         renderer.setSize(container.clientWidth,container.clientHeight); 
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, highPerf ? 2 : 1.5)); // Cap pixel ratio
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, highPerf ? 1.5 : 1));
         container.innerHTML = ''; 
         container.appendChild(renderer.domElement); 
         this.renderers.push(renderer);
         
         const sceneObjects = {};
 
-        if (options.objects) { // Multi-object scene
+        if (options.objects) { // Handle point clouds
             options.objects.forEach(objDef => {
                 const geometry = objDef.geometry;
                 const material = new THREE.ShaderMaterial(objDef.shader);
@@ -660,18 +809,16 @@ const Animations = {
                 scene.add(obj);
                 sceneObjects[objDef.name] = obj;
             });
-        } else { // Single object scene
-            const geometry = options.geometry || new THREE.BufferGeometry();
-            if(options.positions) geometry.setAttribute('position',new THREE.BufferAttribute(options.positions,3));
-            let material;
-            if (options.shader) {
-                material = new THREE.ShaderMaterial(options.shader);
-            } else {
-                material = new THREE.PointsMaterial({...options.material});
-            }
-            const obj = new THREE.Points(geometry,material);
-            scene.add(obj);
-            sceneObjects.main = obj;
+        } else if (options.geometry && options.shader) { // Handle meshes with shaders (like the ripple)
+            const material = new THREE.ShaderMaterial(options.shader);
+            const mesh = new THREE.Mesh(options.geometry, material);
+            scene.add(mesh);
+            sceneObjects.main = mesh;
+        } else if (options.geometry) { // Handle basic meshes or points
+            const material = new THREE.PointsMaterial({...options.material});
+            const points = new THREE.Points(options.geometry, material);
+            scene.add(points);
+            sceneObjects.main = points;
         }
 
 
@@ -686,18 +833,27 @@ const Animations = {
         const clock = new THREE.Clock();
         let lastFrameTime = 0;
         const animate = (time) => {
-            if(this.app.state.currentSlide !== options.slideIndex || !container.offsetParent) return renderer.setAnimationLoop(null);
+            if(!container.offsetParent) return;
+            if(this.app.state.currentSlide !== options.slideIndex) {
+                 if(this.scenes[id] && this.scenes[id].isActive) {
+                    this.scenes[id].isActive = false;
+                 }
+                 return;
+            }
+            if(this.scenes[id] && !this.scenes[id].isActive) {
+                this.scenes[id].isActive = true;
+            }
             renderer.setAnimationLoop(animate);
             
-            // Smart animation: skip frame if not enough time has passed (e.g. on low-end devices)
-            if (time - lastFrameTime < 16) return;
+            if (time - lastFrameTime < 16.6) return; // Cap at ~60fps
             lastFrameTime = time;
 
             const t = clock.getElapsedTime();
             if(options.update) options.update({scene, camera, t, ...sceneObjects});
             renderer.render(scene, camera);
         };
-        this.scenes[id] = {scene, camera, renderer, animate, objects: sceneObjects}; 
+        this.scenes[id] = {scene, camera, renderer, animate, objects: sceneObjects, isActive: true}; 
+        renderer.setAnimationLoop(animate);
         return animate;
     },
 
@@ -729,9 +885,7 @@ const Animations = {
             }
         `;
         
-        // Smart LOD: use fewer particles on less performant devices
         const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
-        const pCount = highPerf ? 30000 : 15000;
         const blobDetail = highPerf ? 64 : 48;
 
         const anim = this.createScene('cover-sphere-container', {
@@ -747,7 +901,6 @@ const Animations = {
                         uniform float uTransition;
                         varying float vNoise;
                         void main() {
-                            // --- Ripple State ---
                             float rippleTime = uTime * 0.4;
                             float maxRadius = 15.0;
                             float particleRadius = mod(position.x * 2.5 + rippleTime * 3.0, maxRadius);
@@ -758,15 +911,11 @@ const Animations = {
                                 particleRadius * sin(angle),
                                 sin(particleRadius * 2.5 - rippleTime * 10.0) * 0.4 * life
                             );
-
-                            // --- Blob State ---
                             float noiseFrequency = 0.8;
                             float noiseStrength = 0.7;
                             float time = uTime * 0.1;
                             vec3 displacedPos = position + normal * snoise(position * noiseFrequency + time) * noiseStrength;
                             vNoise = snoise(position * 2.0 + time * 0.5);
-
-                            // --- Transition ---
                             vec3 finalPos = mix(ripplePos, displacedPos, uTransition);
                             vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
                             gl_PointSize = (mix(0.8, 1.5, uTransition) * life) * (300.0 / -mvPosition.z);
@@ -779,11 +928,9 @@ const Animations = {
                         void main() {
                             float dist = distance(gl_PointCoord, vec2(0.5));
                             if (dist > 0.5) discard;
-
                             vec3 colorEmerald = vec3(0.063, 0.725, 0.506);
                             vec3 colorPurple = vec3(0.659, 0.333, 0.969);
                             vec3 finalColor = mix(colorEmerald, colorPurple, vNoise * 0.5 + 0.5);
-
                             float alpha = (1.0 - dist * 2.0) * mix(0.7, 1.0, uTransition);
                             gl_FragColor = vec4(finalColor, alpha);
                         }
@@ -792,10 +939,7 @@ const Animations = {
             }],
             update:({ camera, t, points }) => {
                 points.material.uniforms.uTime.value = t;
-                
-                // Animate the transition value with GSAP for smooth easing
                 gsap.to(points.material.uniforms.uTransition, { value: 1.0, duration: 8.0, ease: 'power2.inOut' });
-
                 points.rotation.y = -t * 0.05;
                 camera.lookAt(0,0,0);
             }
@@ -813,92 +957,47 @@ const Animations = {
     },
 
     initDripRipple() { 
-        const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
-        const pCount = highPerf ? 50000 : 25000; // Smart LOD
-        
-        const positions = new Float32Array(pCount * 3);
-        const randoms = new Float32Array(pCount);
-
-        for(let i=0; i<pCount; i++) {
-            const i3 = i * 3;
-            const radius = Math.sqrt(Math.random()) * 8; // Spread particles more evenly
-            const angle = Math.random() * Math.PI * 2;
-            positions[i3] = radius * Math.cos(angle);
-            positions[i3 + 1] = 0.0;
-            positions[i3 + 2] = radius * Math.sin(angle);
-            randoms[i] = Math.random();
-        }
-        
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
-        
         const anim = this.createScene('drip-ripple-container', {
             slideIndex: 2, 
-            cameraZ: 4,
-            geometry: geometry,
+            cameraZ: 2,
+            geometry: new THREE.PlaneGeometry(10, 10, 128, 128),
             shader: {
                 uniforms: { 
                     uTime: { value: 0.0 }, 
-                    uColor: { value: new THREE.Color(0x5D4037) }, // Darker coffee color
-                    uDripTime: { value: 0.0 }
+                    uColor1: { value: new THREE.Color('#0A0E1A')}, // Darker base for better contrast
+                    uColor2: { value: new THREE.Color('#3A2D27')}, // Muted coffee color
                 },
                 vertexShader: `
                     uniform float uTime;
-                    uniform float uDripTime;
-                    attribute float aRandom;
-                    varying float vAlpha;
-                    void main() { 
-                        vec3 pos = position; 
-                        float dist = length(pos.xz); 
-                        float dripImpact = uTime - uDripTime;
-                        
-                        if (dripImpact > 0.0) {
-                           float wave_speed = 4.0;
-                           float wave_freq1 = 4.0;
-                           float wave_freq2 = 7.0;
-                           float wave_amp1 = 0.3;
-                           float wave_amp2 = 0.15;
-                           
-                           float wave1 = sin(dist * wave_freq1 - dripImpact * wave_speed);
-                           float wave2 = cos(dist * wave_freq2 - dripImpact * wave_speed * 0.8);
-                           
-                           float decay = exp(-dist * 0.4 - dripImpact * 0.5);
-                           pos.y += (wave1 * wave_amp1 + wave2 * wave_amp2) * decay;
-                           vAlpha = decay;
-                        } else {
-                           vAlpha = 0.0;
-                        }
-                       
-                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-                        gl_PointSize = 1.5 * (300.0 / -mvPosition.z); 
-                        gl_Position = projectionMatrix * mvPosition;
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        vec3 pos = position;
+                        float dist = length(uv - 0.5);
+                        float wave = sin(dist * 25.0 - uTime * 1.5) * 0.03; // Slower, more subtle wave
+                        pos.z += wave * smoothstep(0.4, 0.0, dist);
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                     }
                 `,
                 fragmentShader: `
-                    uniform vec3 uColor; 
-                    varying float vAlpha;
-                    void main() { 
-                        if (vAlpha < 0.01) discard;
-                        float dist = distance(gl_PointCoord, vec2(0.5));
-                        if(dist > 0.5) discard;
-                        gl_FragColor = vec4(uColor, vAlpha * (1.0 - dist * 2.0)); 
-                    }`,
+                    uniform float uTime;
+                    uniform vec3 uColor1;
+                    uniform vec3 uColor2;
+                    varying vec2 vUv;
+                    void main() {
+                        float dist = length(vUv - 0.5);
+                        float wave = sin(dist * 25.0 - uTime * 1.5) * 0.5 + 0.5;
+                        float glow = smoothstep(0.4, 0.1, dist);
+                        vec3 color = mix(uColor1, uColor2, wave);
+                        gl_FragColor = vec4(color, glow);
+                    }
+                `,
                 transparent: true, 
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
+                depthWrite: false, // Prevents artifacts on transparent surfaces
             },
             update: ({main, t, camera}) => {
-                if (main.material.uniforms) {
-                    main.material.uniforms.uTime.value = t;
-                    // Create a new drip every 4 seconds
-                    if (Math.floor(t / 4) !== Math.floor((t - 1/60) / 4)) {
-                         main.material.uniforms.uDripTime.value = t;
-                    }
-                }
-                camera.position.y = 2.5;
-                camera.position.x = Math.sin(t * 0.1) * 1.5;
-                camera.lookAt(0,0,0);
+                main.material.uniforms.uTime.value = t;
+                main.rotation.x = -Math.PI / 2;
             }
         });
         return anim;
@@ -907,11 +1006,10 @@ const Animations = {
     initVenuePointCloud() {
         const points = [];
         const colors = [];
-        const sextantColor = new THREE.Color(0xa855f7); // Purple for building
-        const streetColor = new THREE.Color(0x10b981);  // Green for streets
+        const sextantColor = new THREE.Color(0xa855f7);
+        const streetColor = new THREE.Color(0x10b981);
         const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
 
-        // Main street grid (existing)
         for(let i = -20; i <= 20; i += 1.5) { 
             for(let j = -20; j <= 20; j += 1.5) { 
                 points.push(i, -5, j); 
@@ -919,18 +1017,16 @@ const Animations = {
             } 
         }
 
-        // --- NEW --- Add intersecting cross-street of green particles
         for(let i = -25; i <= 25; i += 0.5) { 
-            points.push(i, -4.9, 0); // Along x-axis at z=0
+            points.push(i, -4.9, 0);
             streetColor.toArray(colors, colors.length);
         }
          for(let i = -25; i <= 25; i += 0.5) { 
-            points.push(0, -4.9, i); // Along z-axis at x=0
+            points.push(0, -4.9, i);
             streetColor.toArray(colors, colors.length);
         }
 
-        // Building cloud (existing)
-        const buildingParticleCount = highPerf ? 6000 : 3000; // Smart LOD
+        const buildingParticleCount = highPerf ? 6000 : 3000;
         const bx=-5, by=-5, bz=-5, bw=10, bh=8, bd=10;
         for (let i=0; i<buildingParticleCount; i++) { 
             points.push(bx+Math.random()*bw, by+Math.random()*bh, bz+Math.random()*bd); 
@@ -946,9 +1042,9 @@ const Animations = {
                     main.geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
                     main.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
                 }
-                camera.position.x=Math.sin(t*0.1)*20;
-                camera.position.z=Math.cos(t*0.1)*20;
-                camera.position.y=3+Math.sin(t*0.2)*3;
+                camera.position.x=Math.sin(t*0.05)*20;
+                camera.position.z=Math.cos(t*0.05)*20;
+                camera.position.y=3+Math.sin(t*0.1)*3;
                 camera.lookAt(0,0,0);
             }
         });
@@ -1023,7 +1119,7 @@ const Animations = {
                 main.material.uniforms.uTime.value = t;
 
                 const now = performance.now();
-                if (now - lastUpdateTime > 16) { // Throttles updates to roughly 60fps
+                if (now - lastUpdateTime > 16) {
                     const positions = main.geometry.attributes.position.array;
                     for (let i = 0; i < pCount; i++) {
                         const i3 = i * 3;
@@ -1043,7 +1139,7 @@ const Animations = {
     initPredictiveChart(){this.initChart('predictive-chart',{type:'line',data:{labels:['Q1','Q2','Q3','Q4'],datasets:[{label:'Coffee Shop Foot Traffic',data:[150,165,170,180],backgroundColor:'rgba(168,85,247,0.3)',borderColor:'#a855f7',tension:0.4},{label:'Coffee/DJ Set Attendance',data:[10,25,60,95],backgroundColor:'rgba(6,182,212,0.3)',borderColor:'#06b6d4',tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'white',boxWidth:12,padding:15}}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}}}}});},
     initTrendsChart(){this.initChart('trends-chart',{type:'bar',data:{labels:['Traditional Cafes','DJ Venues','Hybrid Spaces'],datasets:[{label:'Market Interest (SF)',data:[75,85,110],backgroundColor:['rgba(6,182,212,0.6)','rgba(245,158,11,0.6)','rgba(16,185,129,0.6)'],borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{display:false}}}}});},
     initGrowthChart(){this.initChart('growth-chart',{type:'radar',data:{labels:['Revenue Lift','Brand Awareness','Foot Traffic','Community Growth','Media Buzz'],datasets:[{label:'Projected Growth',data:[85,75,60,95,70],backgroundColor:'rgba(16,185,129,0.3)',borderColor:'#10b981',borderWidth:2,pointBackgroundColor:'#10b981',pointBorderColor:'#fff',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10, 14, 26, 0.8)',bodyFont:{size:12},bodySpacing: 4, padding:12, callbacks:{title:(c)=>c[0].label,label:(c)=>{const v=c.parsed.r;let e='';switch(c.label){case'Revenue Lift':e='Projected increase in nightly revenue from extended hours and premium offerings.';break;case'Brand Awareness':e='Increased social media buzz and word-of-mouth recognition in the target demographic.';break;case'Foot Traffic':e='Attracting new and returning customers during previously off-peak evening hours.';break;case'Community Growth':e='Building a loyal community around unique, shared experiences, fostering retention.';break;case'Media Buzz':e="Generating organic press and influencer mentions due to the event's novelty.";break;}return[`Value: ${v}%`,`Potential: ${e}`];}}}},scales:{r:{angleLines:{color:'rgba(255,255,255,0.1)'},grid:{color:'rgba(255,255,255,0.15)'},pointLabels:{color:'white',font:{size:12,family:"'Inter',sans-serif"}},ticks:{display:false,beginAtZero:true,max:100}}}}});},
-    initRevenuePieChart(){this.initChart('revenue-pie-chart',{type:'pie',data:{labels:['Tier A Tickets','Tier B Tickets','Extra Drinks'],datasets:[{data:[1000,1680,720],backgroundColor:['#10b981','#a855f7','#06b6d4'],borderColor:'#0a0e1a',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'white',boxWidth:12,padding:20}},tooltip:{callbacks:{label:(c)=>`${c.label}: $${c.raw.toFixed(0)}`}},datalabels:{formatter:(v,c)=>{const s=c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return`${(v/s*100).toFixed(0)}%`;},color:'#fff',font:{weight:'bold'}}}}});},
+    initRevenuePieChart(){this.initChart('revenue-pie-chart',{type:'pie',data:{labels:['Sextant Share', 'ST Alcohol Sales', 'ST Share of Tix/NA'],datasets:[{data:[800, 750, 800],backgroundColor:['#a855f7','#06b6d4','#10b981'],borderColor:'#0a0e1a',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'white',boxWidth:12,padding:20}},tooltip:{callbacks:{label:(c)=>`${c.label}: $${c.raw.toFixed(0)}`}},datalabels:{formatter:(v,c)=>{const s=c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return s > 0 ? `${(v/s*100).toFixed(0)}%` : '0%';},color:'#fff',font:{weight:'bold'}}}}});},
 
     handleResize(){this.renderers.forEach(r=>{const c=r.domElement.parentElement;if(c&&c.clientWidth>0){const m=Object.values(this.scenes).find(s=>s&&s.renderer===r)?.camera;if(m){m.aspect=c.clientWidth/c.clientHeight;m.updateProjectionMatrix();}r.setSize(c.clientWidth,c.clientHeight);}});Object.values(this.scenes).forEach(s=>{if(s instanceof Chart&&s.resize)s.resize();});},
     
@@ -1054,24 +1150,232 @@ const Animations = {
 };
 
 const Content = {
-    init(app) { this.app=app; this.initialTransforms=new Map(); document.querySelectorAll('.venue-item').forEach(i=>this.initialTransforms.set(i,{transform:i.style.transform,top:i.style.top,left:i.style.left,width:i.style.width,height:i.style.height})); },
-    onSlideChange(slideIndex){Object.values(Animations.scenes).forEach(s=>s&&s.renderer&&s.renderer.setAnimationLoop(null));const f=Animations.getAnimFunction(slideIndex);if(f){const r=f();if(r)r();}switch(slideIndex){case 1:Animations.createScene('bell-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.CylinderGeometry(0,0.6,1.2,16,4),material:{size:0.05,color:0x10b981},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('heart-cloud',{slideIndex:1,cameraZ:2.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0.25,0.25).bezierCurveTo(0.25,0.25,0.2,0,0,0).bezierCurveTo(-0.3,0,-0.3,0.35,-0.3,0.35).bezierCurveTo(-0.3,0.55,-0.1,0.77,0.25,0.95).bezierCurveTo(0.6,0.77,0.8,0.55,0.8,0.35).bezierCurveTo(0.8,0.35,0.8,0,0.5,0).bezierCurveTo(0.35,0,0.25,0.25,0.25,0.25), 30),material:{size:0.04,color:0xa855f7},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('star-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0,0.5).lineTo(0.1,0.1).lineTo(0.5,0.1).lineTo(0.2,-0.1).lineTo(0.3,-0.5).lineTo(0,-0.2).lineTo(-0.3,-0.5).lineTo(-0.2,-0.1).lineTo(-0.5,0.1).lineTo(-0.1,0.1).lineTo(0,0.5), 10),material:{size:0.04,color:0x06b6d4},update:({main,t})=>{main.rotation.y=t*0.1;}});break;case 2:this.setupMenuSystem();this.setupEventTimeline();break;case 3:this.setupInteractiveVenue();break;case 4:Animations.initPredictiveChart();Animations.initTrendsChart();break;case 5:this.setupFinancialCalculator();break;case 6:Animations.initGrowthChart();break;case 8:this.setupTaskPlanner();break;}},
-    setupMenuSystem(){if(!document.getElementById('menu-details').innerHTML)this.showMenuCategory('cold');},
-    showMenuCategory(category){document.querySelectorAll('.menu-category').forEach(c=>c.classList.remove('active'));document.querySelector(`.menu-category[data-category="${category}"]`).classList.add('active');document.getElementById('menu-details').innerHTML=(menuData[category]||[]).map(i=>`<div class="menu-item" style="border-left: 3px solid ${i.color};"><div class="item-info"><h4 style="color:${i.color};">${i.name}</h4><p>${i.ingredients}</p><div class="item-source">${i.source}</div></div><div class="item-price" style="color:${i.color};">${i.price}</div></div>`).join('');},
+    init(app) { 
+        this.app=app; 
+        this.initialTransforms=new Map(); 
+        document.querySelectorAll('.venue-item').forEach(i=>this.initialTransforms.set(i,{transform:i.style.transform,top:i.style.top,left:i.style.left,width:i.style.width,height:i.style.height})); 
+    },
+    onSlideChange(slideIndex){
+        Object.values(Animations.scenes).forEach(s=>s&&s.renderer&&!s.isActive && s.renderer.setAnimationLoop(null));
+        const f=Animations.getAnimFunction(slideIndex);
+        if(f){const r=f();if(r)r();}
+        switch(slideIndex){
+            case 1:Animations.createScene('bell-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.CylinderGeometry(0,0.6,1.2,16,4),material:{size:0.05,color:0x10b981},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('heart-cloud',{slideIndex:1,cameraZ:2.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0.25,0.25).bezierCurveTo(0.25,0.25,0.2,0,0,0).bezierCurveTo(-0.3,0,-0.3,0.35,-0.3,0.35).bezierCurveTo(-0.3,0.55,-0.1,0.77,0.25,0.95).bezierCurveTo(0.6,0.77,0.8,0.55,0.8,0.35).bezierCurveTo(0.8,0.35,0.8,0,0.5,0).bezierCurveTo(0.35,0,0.25,0.25,0.25,0.25), 30),material:{size:0.04,color:0xa855f7},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('star-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0,0.5).lineTo(0.1,0.1).lineTo(0.5,0.1).lineTo(0.2,-0.1).lineTo(0.3,-0.5).lineTo(0,-0.2).lineTo(-0.3,-0.5).lineTo(-0.2,-0.1).lineTo(-0.5,0.1).lineTo(-0.1,0.1).lineTo(0,0.5), 10),material:{size:0.04,color:0x06b6d4},update:({main,t})=>{main.rotation.y=t*0.1;}});break;
+            case 2:this.setupMenuSystem(); this.setupEventTimeline(); break;
+            case 3:this.setupInteractiveVenue();break;
+            case 4:Animations.initPredictiveChart();Animations.initTrendsChart();this.setupMarketingExecTabs();break;
+            case 5:this.setupFinancialCalculator();break;
+            case 6:Animations.initGrowthChart();break;
+            case 7: Animations.initCreatorParticles('pratt-particles')(); Animations.initCreatorParticles('diana-particles')(); break;
+            case 8:this.setupTaskPlanner();break;
+        }
+    },
+    setupMenuSystem(){
+        const grid = document.getElementById('menu-grid');
+        if (!grid || grid.children.length > 0) return;
+        grid.innerHTML = menuData.map(item => `
+            <div class="menu-item-card" onclick="Content.showMenuModal('${item.id}')" style="border-left: 3px solid ${item.color};">
+                <h4 class="item-card-title" style="color:${item.color};">${item.name}</h4>
+                <p class="item-card-desc">${item.desc}</p>
+                <p class="item-card-price" style="color:${item.color};">${item.price}</p>
+            </div>
+        `).join('');
+    },
+    showMenuModal(itemId) {
+        const item = menuData.find(i => i.id === itemId);
+        if(!item) return;
+
+        const container = this.app.DOM.menuModalContainer;
+        const ingredientsHTML = item.ingredients.map(ing => `<li><a href="${ing.link}" target="_blank" class="text-emerald-400 hover:underline">${ing.name}</a></li>`).join('');
+
+        container.innerHTML = `
+            <div class="menu-modal-content card" onclick="event.stopPropagation()">
+                <button class="menu-modal-close" onclick="Content.hideMenuModal()">&times;</button>
+                <h3 class="heading-1" style="color:${item.color};">${item.name}</h3>
+                <p class="body-large mt-2">${item.desc}</p>
+                <div class="mt-6 grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold text-white mb-2">Recipe</h4>
+                        <p class="body-regular">${item.recipe}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white mb-2">Key Ingredients</h4>
+                        <ul class="body-regular list-disc list-inside">${ingredientsHTML}</ul>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.classList.add('visible');
+    },
+    hideMenuModal() {
+        const container = this.app.DOM.menuModalContainer;
+        container.classList.remove('visible');
+    },
     setupEventTimeline(){const w=document.getElementById('event-timeline');if(!w||w.children.length>0)return;w.innerHTML=timelineData.map(e=>`<div class="timeline-event" onclick="toggleExpand(this)"><div class="timeline-event-main" style="border-top: 2px solid ${e.color};"><div class="time" style="color:${e.color};">${e.time}</div><h4 style="color:${e.color};">${e.title}</h4><p>${e.desc}</p></div><div class="timeline-event-details body-regular"><p class="font-semibold text-gray-300 mb-2">Sensory Focus:</p><p class="text-gray-400 mb-4">${e.sensory_focus}</p><p class="font-semibold text-gray-300 mb-2">Content Capture:</p><p class="text-gray-400">${e.content_capture}</p></div></div>`).join('');},
     setupInteractiveVenue(){const v=document.getElementById('interactive-venue');if(!v||v.dataset.i)return;v.dataset.i='1';let a=null,o={x:0,y:0},s={x:0,y:0},z={w:0,h:0},g=0;const t=e=>{const i=e.target.closest('.venue-item');if(!i)return;a=i;document.querySelectorAll('.venue-item').forEach(l=>l.classList.remove('selected'));a.classList.add('selected');a.style.zIndex=100;const n=e.touches?e.touches[0]:e,r=a.getBoundingClientRect();o={x:n.clientX-r.left,y:n.clientY-r.top};z={w:a.offsetWidth,h:a.offsetHeight};s={x:n.clientX,y:n.clientY};const c=new DOMMatrix(window.getComputedStyle(a).transform),d=Math.atan2(c.b,c.a);g=d-Math.atan2(n.clientY-(r.top+r.height/2),n.clientX-(r.left+r.width/2));window.addEventListener('mousemove',m);window.addEventListener('mouseup',p);window.addEventListener('touchmove',m,{passive:!1});window.addEventListener('touchend',p);e.preventDefault();};const m=e=>{if(!a)return;e.preventDefault();const i=e.touches?e.touches[0]:e,n=v.getBoundingClientRect(),r=this.currentVenueMode;if(r==='move'){let c=i.clientX-n.left-o.x,d=i.clientY-n.top-o.y;c=Math.max(0,Math.min(c,n.width-a.offsetWidth));d=Math.max(0,Math.min(d,n.height-a.offsetHeight));a.style.left=`${c}px`;a.style.top=`${d}px`;}else if(r==='resize'){const c=i.clientX-s.x,d=i.clientY-s.y;a.style.width=`${Math.max(50,z.w+c)}px`;a.style.height=`${Math.max(50,z.h+d)}px`;}else if(r==='rotate'){const c=a.getBoundingClientRect(),d=Math.atan2(i.clientY-(c.top+c.height/2),i.clientX-(c.left+c.width/2));a.style.transform=`rotate(${g+d}rad)`;}};const p=()=>{if(a){a.classList.remove('selected');a.style.zIndex='';}a=null;window.removeEventListener('mousemove',m);window.removeEventListener('mouseup',p);window.removeEventListener('touchmove',m);window.removeEventListener('touchend',p);};v.addEventListener('mousedown',t);v.addEventListener('touchstart',t,{passive:!1});},
     setVenueMode(mode){this.currentVenueMode=mode;document.querySelectorAll('.venue-mode-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.venue-mode-btn[onclick="setVenueMode('${mode}')"]`).classList.add('active');},
+    setupMarketingExecTabs() {
+        const marketingItems = document.querySelectorAll('.marketing-item');
+        marketingItems.forEach(item => {
+            const tabs = item.querySelectorAll('.execution-tab');
+            const contents = item.querySelectorAll('.execution-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const tabId = e.target.dataset.tab;
+
+                    tabs.forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    contents.forEach(c => c.classList.remove('active'));
+                    item.querySelector(`.execution-content[data-tab-content="${tabId}"]`).classList.add('active');
+                });
+            });
+        });
+    },
     resetVenueLayout(){document.querySelectorAll('.venue-item').forEach(i=>{const n=this.initialTransforms.get(i);if(n){i.style.transform=n.transform;i.style.top=n.top;i.style.left=n.left;i.style.width=n.width;i.style.height=n.height;}});},
     setupFinancialCalculator(){this.calculateRevenue();},
-    calculateRevenue(){const a=parseFloat(document.getElementById('num-attendees').value)||0,b=parseFloat(document.getElementById('ticket-price-a').value)||0,c=parseFloat(document.getElementById('ticket-price-b').value)||0,d=parseFloat(document.getElementById('tier-b-split').value)/100,e=parseFloat(document.getElementById('extra-drink-spend').value)||0;document.getElementById('tier-b-split-display').textContent=`${(d*100).toFixed(0)}%`;const f=a*(1-d),g=a*d,h=f*b,i=g*c,j=a*e,k=h+i+j,l=k*0.25;document.getElementById('total-revenue').textContent=`$${k.toLocaleString('en-US',{maximumFractionDigits:0})}`;document.getElementById('sextant-share').textContent=`$${l.toLocaleString('en-US',{maximumFractionDigits:0})}`;if(!Animations.scenes['revenue-pie-chart'])Animations.initRevenuePieChart();const m=Animations.scenes['revenue-pie-chart'];m.data.datasets[0].data=[h,i,j];m.update();},
-    setupTaskPlanner(){this.renderTasks('all');document.querySelectorAll('.task-filter').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.task-filter').forEach(e=>e.classList.remove('active'));b.classList.add('active');this.renderTasks(b.dataset.filter);};});},
-    renderTasks(filter){const c=document.getElementById('task-list');if(!c)return;const t=taskData.filter(e=>filter==='all'||e.assignee===filter);c.innerHTML=t.map(e=>`<div class="task-card" data-assignee="${e.assignee}"><div class="task-main-content" onclick="toggleExpand(this.parentElement)"><div class="task-header"><h4 class="text-white font-semibold">${e.title}</h4><span class="task-assignee ${e.assignee}">${e.assignee.replace('-',' ')}</span></div><div class="task-week">Week ${e.week}</div></div><div class="task-details"><p class="body-regular text-gray-300">${e.desc}</p><a href="${this.getCalendarLink(e)}" target="_blank" class="task-calendar-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a.5.5 0 0 1 .5.5v1h-1V1.5A.5.5 0 0 1 8 1zM3.5 3a.5.5 0 0 0-.5.5V4h9V3.5a.5.5 0 0 0-.5-.5h-8zM13 5H3v6.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5z"/><path d="M1 4v10.5A1.5 1.5 0 0 0 2.5 16h11a1.5 1.5 0 0 0 1.5-1.5V4H1zm13-1.5a.5.5 0 0 1 .5.5V3H1.5a.5.5 0 0 1-.5-.5V2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 14 2.5zM8.5 7a.5.5 0 0 0-1 0v1.5H6a.5.5 0 0 0 0 1h1.5V11a.5.5 0 0 0 1 0V9.5H10a.5.5 0 0 0 0-1H8.5V7z"/></svg>Add to Calendar</a></div></div>`).join('');},
-    getCalendarLink(t){const b="https://www.google.com/calendar/render?action=TEMPLATE",e=encodeURIComponent(`ST: ${t.title}`),d=`${t.dates.start}/${t.dates.end}`,s=encodeURIComponent(t.desc.replace(/<br>/g,'\n').replace(/<[^>]*>?/gm,'')),l=encodeURIComponent("Sextant Coffee Roasters, 539 Valencia St, San Francisco, CA");return`${b}&text=${e}&dates=${d}&details=${s}&location=${l}`;},
+    calculateRevenue(){
+        const attendees = parseFloat(document.getElementById('num-attendees').value) || 0;
+        const ticketPrice = parseFloat(document.getElementById('ticket-price').value) || 0;
+        const naSpend = parseFloat(document.getElementById('na-spend').value) || 0;
+        const alcSpend = parseFloat(document.getElementById('alc-spend').value) || 0;
+        
+        const purchaseRate = 0.75; 
+        const cogsRate = 0.22;
+
+        const totalDrinkSpend = (naSpend + alcSpend) * attendees * purchaseRate;
+        const cogs = totalDrinkSpend * cogsRate;
+
+        const ticketRevenue = attendees * ticketPrice;
+        const naRevenue = attendees * naSpend;
+        const alcRevenue = attendees * alcSpend;
+        const totalGrossRevenue = ticketRevenue + naRevenue + alcRevenue;
+        
+        const productionCost = 500 + 200 + 100 + 214; 
+        document.getElementById('production-header').querySelector('span').textContent = `$${(productionCost + cogs).toLocaleString('en-US',{maximumFractionDigits:0})}`;
+
+        const sextantShareBase = ticketRevenue + naRevenue;
+        const sextantShare = sextantShareBase * 0.5;
+        
+        const stShare = sextantShareBase * 0.5;
+        const stGross = stShare + alcRevenue - cogs;
+        const stNet = stGross - productionCost;
+
+        document.getElementById('total-revenue').textContent = `$${totalGrossRevenue.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('cogs').textContent = `-$${cogs.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('sextant-share').textContent = `$${sextantShare.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('st-gross').textContent = `$${stGross.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('st-net-profit').textContent = `$${stNet.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+
+        if(!Animations.scenes['revenue-pie-chart']) Animations.initRevenuePieChart();
+        const pieChart = Animations.scenes['revenue-pie-chart'];
+        pieChart.data.datasets[0].data = [sextantShare, alcRevenue, stShare];
+        pieChart.update();
+    },
+    setupTaskPlanner(){
+        const savedTasks = localStorage.getItem('surfaceTensionTasks');
+        taskData = savedTasks ? JSON.parse(savedTasks) : [
+            { id: 1, week: 1, title: "Partnership & Financials Finalized", assignee: "pratt", status: 'completed', dates: {start: "20250623", end: "20250624"}, desc: "<b>Goal:</b> Execute final partnership agreement. <br><b>Action:</b> Sign agreement with Sextant outlining roles, and the updated financial structure.", notes: "Agreement signed. Financial model confirmed." },
+            { id: 2, week: 1, title: "Initiate Permit Investigation", assignee: "riley", status: 'completed', dates: {start: "20250624", end: "20250627"}, desc: "<b>Goal:</b> Determine the exact permit path of least resistance and cost. <br><b>Action:</b> Contact SF Entertainment Commission. Confirmed One-Time Indoor permit is the correct path. <br><b>Reference:</b> <a href='https://sf.gov/get-entertainment-permit-your-indoor-event' target='_blank' class='text-teal-400 hover:underline'>SF.gov Indoor Permit</a>", notes: "Confirmed path with city clerk. Ready to file." },
+            { id: 3, week: 1, title: "Launch Phase 1: Digital Speakeasy", assignee: "pratt", status: 'completed', dates: {start: "20250625", end: "20250628"}, desc: "<b>Goal:</b> Create the initial layer of mystique. <br><b>Action:</b> Launch password-protected microsite. Begin leaking password 'STILLNESS' into niche online communities.", notes: "Microsite is live. Initial seeding in progress." },
+            { id: 4, week: 1, title: "Finalize Menu & Sourcing", assignee: "sextant", status: 'approval', dates: {start: "20250624", end: "20250628"}, desc: "<b>Goal:</b> Lock in the complete beverage offering. <br><b>Action:</b> Finalize all supplier agreements. Set pars for all ingredients.", notes: "Waiting on final confirmation for local bourbon." },
+            { id: 5, week: 2, title: "Submit Permit Application", assignee: "riley", status: 'in_progress', dates: {start: "20250630", end: "20250702"}, desc: "<b>Goal:</b> Formally file for all necessary permits. <br><b>Action:</b> Submit the One-Time Indoor Permit application with all required documentation from Sextant.", notes: "Application submitted. Awaiting confirmation of receipt." },
+            { id: 6, week: 2, title: "Artist Confirmation & Briefing", assignee: "pratt", status: 'completed', dates: {start: "20250701", end: "20250703"}, desc: "<b>Goal:</b> Secure musical talent. <br><b>Action:</b> Finalize agreement and honorarium with the selected DJ. Conducted creative briefing call.", notes: "DJ confirmed and briefed on sonic direction." },
+            { id: 7, week: 2, title: "Design Physical & Digital Assets", assignee: "diana", status: 'in_progress', dates: {start: "20250702", end: "20250705"}, desc: "<b>Goal:</b> Create all marketing visuals. <br><b>Action:</b> Design the A5 poster, digital stickers, and social media graphic templates.", notes: "Poster design in final review." },
+            { id: 8, week: 2, title: "Order & Receive Production Gear", assignee: "riley", status: 'initiated', dates: {start: "20250630", end: "20250705"}, desc: "<b>Goal:</b> Secure all production equipment for testing. <br><b>Action:</b> Order the <a href='https://www.amazon.com/s?k=12+inch+pa+speaker+system' target='_blank' class='text-teal-400 hover:underline'>PA system</a>, <a href='https://www.amazon.com/s?k=led+par+lights' target='_blank' class='text-teal-400 hover:underline'>lights</a>, and <a href='https://www.amazon.com/s?k=water+based+hazer' target='_blank' class='text-teal-400 hover:underline'>hazer</a> from Amazon.", notes: "All items ordered. Awaiting delivery." },
+            { id: 9, week: 3, title: "Execute Phase 3: The Artifacts", assignee: "diana", status: 'not_started', dates: {start: "20250707", end: "20250711"}, desc: "<b>Goal:</b> Deepen the brand mythos. <br><b>Action:</b> Print and distribute the 50 physical posters. Launch email campaign to initial signups.", notes: "Dependent on completing poster design." },
+            { id: 10, week: 3, title: "Permit Follow-up", assignee: "riley", status: 'not_started', dates: {start: "20250708", end: "20250710"}, desc: "<b>Goal:</b> Ensure permit is on track. <br><b>Action:</b> Follow up with the commission contact for a status update.", notes: "Scheduled for next week." },
+            { id: 11, week: 3, title: "In-Store Marketing Rollout", assignee: "collaborative", status: 'not_started', dates: {start: "20250709", end: "20250713"}, desc: "<b>Goal:</b> Activate Sextant's physical space. <br><b>Action:</b> Diana to deliver printed posters to Sextant. Sextant to display materials and brief staff.", notes: "Collaboration pending asset finalization." },
+            { id: 12, week: 4, title: "Execute Phase 2: Guerrilla Marketing", assignee: "collaborative", status: 'not_started', dates: {start: "20250717", end: "20250718"}, desc: "<b>Goal:</b> Create real-world mystery and intrigue. <br><b>Action:</b> Pratt & Riley to execute late-night projections and sound beaming at pre-determined locations.", notes: "Locations scouted, awaiting execution window." },
+            { id: 13, week: 4, title: "Operational & Staffing Plan", assignee: "collaborative", status: 'initiated', dates: {start: "20250714", end: "20250718"}, desc: "<b>Goal:</b> Finalize the day-of-event run-of-show. <br><b>Action:</b> Create detailed floor plan, setup/breakdown schedule, and staffing assignments. Conduct joint briefing. <br><b>Collaboration:</b> Pratt, Diana, Riley, Sextant", notes: "Drafting of run-of-show has begun." },
+            { id: 14, week: 5, title: "Launch Phase 5: Final Push", assignee: "diana", status: 'not_started', dates: {start: "20250723", end: "20250725"}, desc: "<b>Goal:</b> Drive final ticket sales. <br><b>Action:</b> Launch hyper-targeted digital ad campaign. Final email blast to mailing list.", notes: "Ad creative to be finalized by Pratt." },
+            { id: 15, week: 5, title: "Final Permit Confirmation", assignee: "riley", status: 'not_started', dates: {start: "20250721", end: "20250722"}, desc: "<b>Goal:</b> Have permit physically in hand. <br><b>Action:</b> Final confirmation with the commission. Pick up the physical permit if necessary.", notes: "" },
+            { id: 16, week: 5, title: "Day-Of Production & Staging (July 26)", assignee: "collaborative", status: 'not_started', dates: {start: "20250726", end: "20250726"}, desc: "<b>Goal:</b> Flawless technical execution. <br><b>Action:</b> Riley to manage equipment delivery. Pratt to oversee setup, sound check, lighting calibration, and full technical rehearsal.", notes: "Run-of-show required." }
+        ];
+
+        this.renderTasks('all');
+        document.querySelectorAll('.task-filter').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.task-filter').forEach(e=>e.classList.remove('active'));b.classList.add('active');this.renderTasks(b.dataset.filter);};});
+    },
+    saveTasks() {
+        localStorage.setItem('surfaceTensionTasks', JSON.stringify(taskData));
+    },
+    renderTasks(filter){
+        const container = document.getElementById('task-list');
+        if (!container) return;
+        let filteredTasks = taskData.filter(task => {
+            if (filter === 'all') return true;
+            if (filter === 'collaborative') return task.assignee === 'collaborative';
+            return task.assignee === filter || (task.assignee === 'collaborative' && (task.desc.toLowerCase().includes(filter)));
+        });
+
+        const statusMap = [
+            { id: 'not_started', text: 'Not Started', color: '#6b7280' },
+            { id: 'initiated', text: 'Initiated', color: '#3b82f6' },
+            { id: 'in_progress', text: 'In Progress', color: '#f59e0b' },
+            { id: 'approval', text: 'Approval', color: '#a855f7' },
+            { id: 'completed', text: 'Completed', color: '#10b981' }
+        ];
+
+        container.innerHTML = filteredTasks.map((task, index) => {
+            const assigneeClass = task.assignee.replace('-', ' ');
+            const assigneeName = task.assignee === 'collaborative' ? 'Collaborative' : assigneeClass;
+            const currentStatusIndex = statusMap.findIndex(s => s.id === task.status);
+
+            let progressBarHTML = statusMap.map((status, i) => {
+                const isActive = i <= currentStatusIndex;
+                return `<div class="progress-segment" style="background-color: ${isActive ? status.color : 'transparent'}" onclick="event.stopPropagation(); Content.updateTaskStatus(${task.id}, '${status.id}')"></div>`;
+            }).join('');
+
+            return `
+                <div class="task-card" data-id="${task.id}">
+                    <div class="task-main-content" onclick="toggleExpand(this.parentElement)">
+                        <div class="task-header">
+                            <div class="task-title-group">
+                                <div class="task-week">Week ${task.week}</div>
+                                <h4 class="text-white font-semibold">${task.title}</h4>
+                            </div>
+                            <span class="task-assignee ${task.assignee}">${assigneeName}</span>
+                        </div>
+                        <div class="task-progress mt-2" style="color: ${statusMap[currentStatusIndex].color}">${(currentStatusIndex / (statusMap.length - 1) * 100)}% ${statusMap[currentStatusIndex].text}</div>
+                        <div class="progress-bar-container">${progressBarHTML}</div>
+                    </div>
+                    <div class="task-details">
+                        <p class="body-regular text-gray-300">${task.desc}</p>
+                        <textarea class="task-notes-input" placeholder="Add notes..." oninput="Content.updateTaskNotes(${task.id}, this.value)">${task.notes || ''}</textarea>
+                        <a href="${this.getCalendarLink(task)}" target="_blank" class="task-calendar-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a.5.5 0 0 1 .5.5v1h-1V1.5A.5.5 0 0 1 8 1zM3.5 3a.5.5 0 0 0-.5.5V4h9V3.5a.5.5 0 0 0-.5-.5h-8zM13 5H3v6.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5z"/><path d="M1 4v10.5A1.5 1.5 0 0 0 2.5 16h11a1.5 1.5 0 0 0 1.5-1.5V4H1zm13-1.5a.5.5 0 0 1 .5.5V3H1.5a.5.5 0 0 1-.5-.5V2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 14 2.5zM8.5 7a.5.5 0 0 0-1 0v1.5H6a.5.5 0 0 0 0 1h1.5V11a.5.5 0 0 0 1 0V9.5H10a.5.5 0 0 0 0-1H8.5V7z"/></svg>
+                            Add to Calendar
+                        </a>
+                    </div>
+                </div>`;
+        }).join('');
+    },
+    updateTaskStatus(taskId, newStatus) {
+        const task = taskData.find(t => t.id === taskId);
+        if (task) {
+            task.status = newStatus;
+            this.saveTasks();
+            this.renderTasks(document.querySelector('.task-filter.active').dataset.filter);
+        }
+    },
+    updateTaskNotes(taskId, notes) {
+        const task = taskData.find(t => t.id === taskId);
+        if (task) {
+            task.notes = notes;
+            this.saveTasks();
+        }
+    },
+    getCalendarLink(t){const b="https://www.google.com/calendar/render?action=TEMPLATE",e=encodeURIComponent(`ST: ${t.title}`),d=`${t.dates.start}T090000/${t.dates.end}T170000`,s=encodeURIComponent(t.desc.replace(/<br>/g,'\n').replace(/<[^>]*>?/gm,'')),l=encodeURIComponent("Sextant Coffee Roasters, 539 Valencia St, San Francisco, CA");return`${b}&text=${e}&dates=${d}&details=${s}&location=${l}`;},
     showTechModal(techKey){const details=techDetails[techKey];if(!details)return;const modal=document.createElement('div');modal.className='tech-modal';modal.onclick=()=>this.hideTechModal(modal);modal.innerHTML=`<div class="tech-modal-content card" onclick="event.stopPropagation()"><button class="tech-modal-close" onclick="Content.hideTechModal(this.closest('.tech-modal'))">&times;</button><h3 class="heading-1" style="color:${details.color};">${details.title}</h3><p class="body-regular mt-4">${details.desc}</p></div>`;this.app.DOM.techModalContainer.appendChild(modal);setTimeout(()=>modal.classList.add('visible'),10);},
     hideTechModal(modal){modal.classList.remove('visible');setTimeout(()=>modal.remove(),300);}
 };
 
-window.showMenuCategory=c=>Content.showMenuCategory(c);window.toggleExpand=i=>i.classList.toggle('expanded');window.setVenueMode=m=>Content.setVenueMode(m);window.resetVenueLayout=()=>Content.resetVenueLayout();window.calculateRevenue=()=>Content.calculateRevenue();
+window.showMenuCategory=c=>Content.showMenuCategory(c);
+window.toggleExpand=i=>i.classList.toggle('expanded');
+window.setVenueMode=m=>Content.setVenueMode(m);
+window.resetVenueLayout=()=>Content.resetVenueLayout();
+window.calculateRevenue=()=>Content.calculateRevenue();
 
 document.addEventListener('DOMContentLoaded',()=>{Chart.register(ChartDataLabels);try{App.init();}catch(e){window.onerror("Initialization failed","","",0,e);}});
 </script>
