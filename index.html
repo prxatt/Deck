@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Surface Tension: Digital Drip Pitch v31</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://use.typekit.net/jhs3mli.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Tron';
+            src: url('https://fonts.cdnfonts.com/s/13884/TRON.woff') format('woff');
+            font-weight: normal; font-style: normal; font-display: swap;
+        }
+        :root {
+            --primary-emerald: #10b981; --primary-purple: #a855f7; --primary-teal: #06b6d4;
+            --text-primary: rgba(243, 244, 246, 1); --text-secondary: rgba(209, 213, 219, 0.9);
+            --bg-primary: #000000; --bg-secondary: #0a0e1a; --border-color: rgba(255, 255, 255, 0.1);
+            --font-heading: "ivypresto-display", serif; --font-body: 'Inter', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background-color: var(--bg-primary); font-family: var(--font-body); color: var(--text-primary); -webkit-tap-highlight-color: transparent; }
+        
+        #loading-screen { position: fixed; inset: 0; background-color: var(--bg-primary); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; transition: opacity 1s ease-in-out, visibility 1s ease-in-out; }
+        #loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #loading-canvas { width: 250px; height: 250px; }
+        .loading-text { 
+            margin-top: 1rem; font-family: var(--font-heading); font-size: 0.8rem;
+            font-weight: 400; color: var(--text-primary); text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); 
+            letter-spacing: 0.6em; margin-left: 0.6em;
+        }
+        
+        #app-container { width: 100%; height: 100%; position: relative; opacity: 0; transition: opacity 1s ease-in; }
+        #app-container.loaded { opacity: 1; }
+        .slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity 0.8s ease-in-out; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2rem; padding-top: 7rem; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--primary-emerald) transparent; cursor: pointer; }
+        .slide.active { opacity: 1; visibility: visible; z-index: 10; }
+        .slide-header { width: 100%; max-width: 1200px; margin-bottom: 2.5rem; text-align: center; animation: fadeIn 0.8s ease-out; }
+        .slide-content { width: 100%; max-width: 1200px; padding-bottom: 8rem; animation: fadeIn 1s ease-out 0.2s; animation-fill-mode: backwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .display-1 { font-family: 'Tron', var(--font-heading), sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; text-transform: uppercase; letter-spacing: 2px; }
+        .display-2 { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 500; line-height: 1.2; }
+        .heading-1 { font-family: var(--font-heading); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 500; line-height: 1.3; }
+        .body-large { font-family: var(--font-body); font-size: clamp(1rem, 1.5vw, 1.1rem); line-height: 1.8; font-weight: 400; color: var(--text-secondary); }
+        .body-regular { font-family: var(--font-body); font-size: clamp(0.9rem, 1.2vw, 1rem); line-height: 1.7; font-weight: 400; color: var(--text-secondary); }
+        
+        .app-header { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1001; pointer-events: none; }
+        .app-header > * { pointer-events: all; }
+        #header-logo-canvas { width: 60px; height: 60px; }
+        
+        .navigation-container { position: fixed; bottom: 0; left: 0; right: 0; height: 100px; z-index: 1001; pointer-events: none;}
+        .navigation-container:hover .navigation { opacity: 1; }
+        .navigation { pointer-events: all; position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 0.5rem; backdrop-filter: blur(8px); background-color: rgba(10,14,26,0.7); border: 1px solid var(--border-color); padding: 0.5rem 0.75rem; border-radius: 99px; opacity: 0.5; transition: opacity 0.4s ease-in-out; }
+        
+        .nav-arrow { background-color: transparent; border: none; color: white; cursor: pointer; padding: 0.5rem; transition: transform 0.2s ease, color 0.2s ease; border-radius: 50%; }
+        .nav-arrow:hover { color: var(--primary-emerald); transform: scale(1.1); }
+        .nav-arrow svg { width: 24px; height: 24px; stroke-width: 2; }
+        .nav-dots { display: flex; gap: 0.5rem; align-items: center; }
+        .nav-dot { width: 8px; height: 8px; background-color: rgba(255,255,255,0.3); border-radius: 50%; transition: all 0.3s ease; cursor: pointer; }
+        .nav-dot:hover { background-color: rgba(255,255,255,0.6); }
+        .nav-dot.active { background-color: var(--primary-emerald); box-shadow: 0 0 5px var(--primary-emerald); transform: scale(1.2); }
+        
+        #slide-1 .cover-content-wrapper { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15vh 0; }
+        #slide-1 .display-1 { margin-top: 0; }
+        #slide-1 .cover-text-group { text-align: center; margin-bottom: 0; }
+        #slide-1 .digital-drip-group { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+        #slide-1 .digital-drip { font-family: var(--font-heading); color: var(--primary-purple); text-shadow: 0 0 10px rgba(168, 85, 247, 0.7); letter-spacing: 0.1em; font-size: clamp(1.2rem, 2vw, 1.8rem); text-transform: uppercase; }
+        #slide-1 .cover-text-group p { color: rgba(209, 213, 219, 1); font-weight: 500; font-size: clamp(1rem, 1.5vw, 1.2rem); }
+        #slide-1 .creator-names-container { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); width: 100%; max-width: 1200px; padding: 0 2rem; z-index: 10; display: flex; justify-content: space-between; }
+
+        .card { background: rgba(10, 14, 26, 0.7); backdrop-filter: blur(5px); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; }
+        
+        .portal-quote { font-style: italic; color: var(--primary-emerald); text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 500; }
+        #drip-ripple-container { width: 100%; height: 250px; margin: 1rem auto; position: relative; }
+        
+        .menu-section { display: flex; flex-direction: column; gap: 1rem; }
+        .menu-category { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; }
+        .menu-category:hover, .menu-category.active { background: rgba(16, 185, 129, 0.2); border-color: var(--primary-emerald); }
+        .category-title { font-weight: 600; color: var(--primary-emerald); margin-bottom: 0.5rem; }
+        .category-desc { font-size: 0.85rem; color: var(--text-secondary); }
+        .menu-details { background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; min-height: 200px; margin-top: 1rem; }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .item-info h4 { color: var(--text-primary); font-weight: 500; margin-bottom: 0.25rem; }
+        .item-info p { font-size: 0.85rem; color: var(--text-secondary); }
+        .item-source a { color: var(--primary-emerald); text-decoration: none; }
+        .item-source a:hover { text-decoration: underline; }
+        .item-price { color: var(--primary-emerald); font-weight: 600; font-size: 1.1rem; }
+        
+        .venue-section { margin-top: 2rem; }
+        .venue-point-cloud { height: 40vh; width: 100%; position: relative; margin-bottom: 2rem; border-radius: 1rem; overflow: hidden; background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.05) 0%, rgba(0,0,0,0) 70%);}
+        .venue-link { color: var(--primary-emerald); text-decoration: none; transition: all 0.3s ease; }
+        .venue-link:hover { color: var(--primary-purple); text-decoration: underline; }
+        .data-section { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        .data-card li { padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 0.75rem; }
+        .data-card li:before { content: "▶"; color: var(--primary-emerald); font-size: 0.8rem; }
+        .source-note { font-size: 0.7rem; color: #6b7280; text-align: right; margin-top: 0.5rem; font-style: italic;}
+
+        .venue-controls { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; padding: 0; background: transparent; border-radius: 12px; justify-content: center; z-index: 10; width: fit-content; max-width: 95%; align-self: center; }
+        .venue-mode-btn { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--primary-emerald); color: var(--primary-emerald); padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: all 0.2s ease; user-select: none; font-weight: 600; }
+        .venue-mode-btn:hover, .venue-mode-btn.active { background: var(--primary-emerald); color: black; box-shadow: 0 0 15px var(--primary-emerald); }
+        
+        .interactive-venue { position: relative; width: 100%; height: 450px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(168, 85, 247, 0.03)); border: 2px dashed rgba(16, 185, 129, 0.3); border-radius: 1rem; overflow: hidden; touch-action: none; margin: 1rem 0; }
+        .venue-item { position: absolute; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 8px; cursor: grab; user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.85rem; text-align: center; padding: 1rem; transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease; will-change: transform, top, left, width, height; backdrop-filter: blur(5px); transform-origin: center center; color: var(--text-primary); }
+        .venue-item:active { cursor: grabbing; }
+        .venue-item:hover { border-color: var(--primary-emerald); transform: scale(1.02); }
+        .venue-item.selected { border-color: var(--primary-purple); background: rgba(168, 85, 247, 0.2); box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+        .venue-item-title { font-weight: 600; margin-bottom: 0.25rem; pointer-events: none; }
+        .venue-item-desc { font-size: 0.75rem; color: var(--text-secondary); pointer-events: none; }
+        
+        .venue-item[data-type="bar"] { background: transparent; border: none; padding: 0; }
+        .l-bar-container { width: 100%; height: 100%; position: relative; }
+        .l-bar-container::before, .l-bar-container::after { content: ''; position: absolute; background: rgba(168, 85, 247, 0.2); border: 2px solid var(--primary-purple); border-radius: 4px; box-sizing: border-box; }
+        .venue-item[data-type="bar"]:hover .l-bar-container::before, .venue-item[data-type="bar"]:hover .l-bar-container::after { background: rgba(168, 85, 247, 0.3); }
+        .l-bar-container::before { width: 100%; height: 35%; top: 0; left: 0; }
+        .l-bar-container::after { width: 35%; height: 100%; top: 0; left: 0; }
+        .venue-item[data-type="bar"] .venue-item-title, .venue-item[data-type="bar"] .venue-item-desc { color: var(--primary-purple); z-index: 1; text-shadow: 0 0 5px #000; }
+
+        .venue-item[data-type="dj"] { background: rgba(16, 185, 129, 0.2); border-color: var(--primary-emerald); color: var(--primary-emerald); }
+        .venue-item[data-type="seating"] { background: rgba(6, 182, 212, 0.2); border-color: var(--primary-teal); color: var(--primary-teal); }
+        .venue-item[data-type="dance"] { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #f59e0b; }
+
+        .marketing-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .marketing-charts-container { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        .marketing-item { background: rgba(10, 14, 26, 0.6); border: 1px solid var(--border-color); border-radius: 12px; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
+        .marketing-item:hover { border-color: var(--primary-emerald); background: rgba(16, 185, 129, 0.05); }
+        .marketing-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.1); border-bottom: 1px solid rgba(16, 185, 129, 0.3); }
+        .marketing-title { color: var(--primary-emerald); font-weight: 600; }
+        .marketing-cost-number { font-family: 'Tron', sans-serif; font-size: 1.6rem; color: var(--text-primary); line-height: 1; }
+        .marketing-details { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; }
+        .marketing-item.expanded .marketing-details { max-height: 500px; padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        
+        .sextant-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .sextant-item { background: rgba(10, 14, 26, 0.6); border: 1px solid var(--border-color); border-radius: 12px; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
+        .sextant-item:hover { border-color: var(--primary-purple); transform: translateY(-5px); }
+        .sextant-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .sextant-title { color: var(--primary-purple); font-weight: 600; font-size: 1.1rem; }
+        .sextant-details { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; }
+        .sextant-item.expanded .sextant-details { max-height: 400px; padding-bottom: 1.5rem; }
+        
+        .financial-calculator-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; align-items: center; }
+        .financial-calculator-container { background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(168, 85, 247, 0.05)); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 1rem; padding: 2.5rem; display: flex; flex-direction: column; gap: 1rem; }
+        .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); }
+        .calc-input-field { background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; padding: 0.4rem 0.8rem; color: var(--text-primary); width: 80px; text-align: right; font-weight: 600; font-size: 1rem; }
+        .calc-final-result { font-family: 'Tron', sans-serif; font-size: 2rem; text-align: right; min-width: 120px; }
+
+        .growth-section { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+        .metrics-column { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .metric-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s ease; overflow: hidden; position: relative; }
+        .metric-card:hover { transform: scale(1.05); }
+        .metric-card.emerald { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); }
+        .metric-card.purple { background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.4); }
+        .metric-card.teal { background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.4); }
+        .metric-card.yellow { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.4); }
+        .metric-value { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif; }
+        .metric-details { max-height: 0; overflow: hidden; transition: all 0.5s ease; margin-top: 1rem; font-size: 0.85rem; text-align: left;}
+        .metric-card.expanded .metric-details { max-height: 200px; }
+        
+        .growth-chart-container, .chart-container { background: rgba(10, 14, 26, 0.4); border: 1px solid var(--border-color); border-radius: 1rem; position: relative; height: 450px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; }
+        .chart-title { text-align: center; color: var(--primary-emerald); font-size: 1.1rem; font-weight: 500; margin-bottom: 1rem; }
+        .chart-canvas { width: 100% !important; height: 100% !important; }
+
+        .task-planner { background: rgba(10, 14, 26, 0.6); border: 1px solid var(--border-color); border-radius: 1.5rem; padding: 2.5rem; }
+        .task-filters { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .task-filter { padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem; }
+        .task-filter.active { background: var(--primary-emerald); border-color: var(--primary-emerald); color: black; font-weight: 600; }
+        .task-planner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+        .task-card { background: rgba(0,0,0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; transition: all 0.3s ease; overflow: hidden; }
+        .task-card:hover { border-color: var(--primary-emerald); background: rgba(16, 185, 129, 0.05); }
+        .task-main-content { padding: 1.5rem; cursor: pointer; }
+        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .task-week { color: var(--primary-emerald); font-weight: 600; font-size: 0.9rem; }
+        .task-assignee { padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: capitalize; }
+        .task-assignee.surface-tension { background: rgba(16, 185, 129, 0.2); color: var(--primary-emerald); }
+        .task-assignee.sextant { background: rgba(168, 85, 247, 0.2); color: var(--primary-purple); }
+        .task-assignee.diana { background: rgba(6, 182, 212, 0.2); color: var(--primary-teal); }
+        .task-details { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, padding 0.5s ease-out; background: rgba(0,0,0,0.2); }
+        .task-card.expanded .task-details { max-height: 500px; padding: 1.5rem; }
+        .task-calendar-btn { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; background: var(--primary-teal); color: black; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.8rem; text-decoration: none; transition: transform 0.2s ease; }
+        .task-calendar-btn:hover { transform: scale(1.05); }
+
+        .creators-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2rem; }
+        .creator-card { position: relative; background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; overflow: hidden; }
+        .creator-particles { position: absolute; inset: 0; pointer-events: none; }
+        .creator-content { position: relative; z-index: 10; }
+        .creator-content ul { list-style-position: outside; padding-left: 1rem;}
+        
+        .freestanding-quote { margin: 2rem auto 2rem; max-width: 700px; text-align: center; }
+        .freestanding-quote .quote-line { font-family: var(--font-heading); font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.4; letter-spacing: 0.03em; font-weight: 400; color: var(--text-secondary); }
+        .freestanding-quote .quote-line.emphasis { font-weight: 600; color: var(--primary-emerald); text-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        
+        #finale-container { height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #finale-animation { position: absolute; inset: 0; z-index: -1; }
+        #finale-animation::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(0,0,0,0) 60%);
+            filter: blur(20px);
+            z-index: -1;
+            animation: pulse-glow 10s infinite alternate;
+        }
+        .finale-content { position: absolute; bottom: 5rem; left: 0; right: 0; padding: 2rem; z-index: 1; pointer-events: none; text-align: center; width: 100%; max-width: 1200px; margin: 0 auto; }
+        #finale-title { 
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem); 
+            font-weight: 400; color: var(--text-primary); 
+            text-align: center; 
+            z-index: 1; 
+            width: 80%; 
+            text-shadow: 0 0 8px rgba(229, 228, 226, 0.9), 0 0 20px rgba(16, 185, 129, 0.5); 
+            font-family: var(--font-heading); 
+            text-transform: lowercase; 
+            position: absolute; top: 28%; 
+            left: 50%; transform: translate(-50%, -50%); 
+        }
+        .finale-links { display: flex; justify-content: space-between; align-items: center; width: 100%; pointer-events: all; }
+        .finale-link { color: white; text-decoration: none; font-size: 0.9rem; font-weight: 400; transition: all 0.3s ease; z-index: 100; }
+        .finale-link:hover { color: var(--primary-emerald); }
+        
+        #cover-sphere-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(168, 85, 247, 0.1) 40%, rgba(0,0,0,0) 70%);
+            filter: blur(40px);
+            z-index: -2;
+            animation: pulse-glow 10s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            from { opacity: 0.7; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .consciousness-tech-icon { width: 80px; height: 80px; margin: 0 auto; position: relative; cursor: pointer; transition: transform 0.2s ease; }
+        .consciousness-tech-icon:hover { transform: scale(1.1); }
+        
+        .event-timeline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        .timeline-event { background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 1rem; position: relative; z-index: 1; transition: all 0.3s ease; display: flex; flex-direction: column; cursor: pointer; }
+        .timeline-event:hover { border-color: var(--primary-emerald); transform: translateY(-5px); }
+        .timeline-event-main { padding: 1.5rem; flex-grow: 1; }
+        .timeline-event-details { max-height: 0; overflow: hidden; padding: 0 1.5rem; transition: all 0.5s ease; }
+        .timeline-event.expanded .timeline-event-details { max-height: 500px; padding-bottom: 1.5rem; }
+        .timeline-event .time { font-weight: 700; color: var(--primary-purple); margin-bottom: 0.5rem; }
+
+        .tech-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 5000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        .tech-modal.visible { opacity: 1; pointer-events: all; }
+        .tech-modal-content { max-width: 500px; width: 90%; }
+        .tech-modal-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
+
+        @media (max-width: 900px) {
+            .data-section, .marketing-layout, .sextant-layout, .creators-grid, .marketing-charts-container, .event-timeline-grid { grid-template-columns: 1fr; }
+            .growth-section { flex-direction: column-reverse; }
+        }
+        @media (max-width: 768px) {
+            .slide { padding: 1rem; padding-top: 6rem; }
+            .app-header { padding: 1rem 1.5rem; }
+            #header-logo-canvas { width: 50px; height: 50px; }
+            .finale-content { padding: 2rem; bottom: 2rem; }
+            .finale-links { flex-direction: column; gap: 2rem; align-items: center;}
+            .creator-names-container { padding: 0 1rem; bottom: 1rem; }
+            .freestanding-quote { margin: 1rem auto 3rem; }
+            #finale-title { position: static; transform: none; top: auto; left: auto; margin-bottom: 2rem; font-size: clamp(1.5rem, 5vw, 1.8rem); }
+            .financial-calculator-layout { grid-template-columns: 1fr; }
+            .financial-calculator-container { padding: 1.5rem; }
+            .calc-final-result { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <canvas id="loading-canvas"></canvas>
+        <p class="loading-text">LOADING CONSCIOUSNESS</p>
+    </div>
+
+    <div id="app-container">
+        <header class="app-header" id="app-header">
+            <canvas id="header-logo-canvas"></canvas>
+            <div id="slide-indicator" class="body-regular">01 / 10</div>
+        </header>
+
+        <div id="slide-container"></div>
+        <div id="tech-modal-container"></div>
+
+        <div class="navigation-container">
+            <nav class="navigation" id="navigation">
+                <button class="nav-arrow" id="prevBtn" aria-label="Previous Slide">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <div class="nav-dots" id="nav-dots"></div>
+                <button class="nav-arrow" id="nextBtn" aria-label="Next Slide">
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </button>
+            </nav>
+        </div>
+    </div>
+    
+    <audio id="bellSound" src="https://assets.codepen.io/225363/bell-sound.wav" preload="auto"></audio>
+    <audio id="heartSound" src="https://assets.codepen.io/225363/heart-sound.wav" preload="auto"></audio>
+    <audio id="starSound" src="https://assets.codepen.io/225363/star-sound.wav" preload="auto"></audio>
+
+<script>
+// --- GLOBAL ERROR HANDLER ---
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error("Global error caught:", { message, source, lineno, colno, error });
+    const errorModal = document.createElement('div');
+    errorModal.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-family: 'Inter', sans-serif; z-index: 10002; text-align: center; padding: 20px; backdrop-filter: blur(8px);`;
+    errorModal.innerHTML = `<h2 style="font-size: 2rem; color: #ef4444; margin-bottom: 1rem;">System Anomaly Detected</h2><p style="margin-bottom: 1.5rem;">An unexpected cosmic ripple occurred. Please recalibrate.</p><p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 2rem;">${error ? error.message : message || 'Unknown anomaly'}</p><button onclick="window.location.reload()" style="padding: 0.75rem 2rem; background: #10b981; color: black; border: none; border-radius: 99px; font-weight: bold; cursor: pointer;">Realign Reality</button>`;
+    if (!document.body.querySelector('#error-modal')) { errorModal.id = 'error-modal'; document.body.appendChild(errorModal); }
+    return true; 
+};
+
+// --- SIMPLEX NOISE LIBRARY (for slide 1 animation) ---
+const SimplexNoise = (() => {
+  const F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
+  const G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
+  const F3 = 1.0 / 3.0;
+  const G3 = 1.0 / 6.0;
+  const F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
+  const G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
+  
+  function buildPermutationTable(random) {
+    const p = new Uint8Array(256);
+    for (let i = 0; i < 256; i++) p[i] = i;
+    for (let i = 0; i < 255; i++) {
+      const r = i + ~~(random() * (256 - i));
+      const aux = p[i];
+      p[i] = p[r];
+      p[r] = aux;
+    }
+    const perm = new Uint8Array(512);
+    const permMod12 = new Uint8Array(512);
+    for (let i = 0; i < 512; i++) {
+      perm[i] = p[i & 255];
+      permMod12[i] = perm[i] % 12;
+    }
+    return { perm, permMod12 };
+  }
+
+  class SimplexNoise {
+    constructor(random = Math.random) {
+      const { perm, permMod12 } = buildPermutationTable(random);
+      this.perm = perm;
+      this.permMod12 = permMod12;
+      this.grad3 = new Float32Array([1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0, 1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, -1, 0, 1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1]);
+      this.grad4 = new Float32Array([0,1,1,1,0,1,1,-1,0,1,-1,1,0,1,-1,-1,0,-1,1,1,0,-1,1,-1,0,-1,-1,1,0,-1,-1,-1,1,0,1,1,1,0,1,-1,1,0,-1,1,1,0,-1,-1,-1,0,1,1,-1,0,1,-1,-1,0,-1,1,-1,0,-1,-1,1,1,0,1,1,1,0,-1,1,-1,0,1,1,-1,0,-1,-1,1,0,1,-1,1,0,-1,-1,-1,0,1,-1,-1,0,-1,1,1,1,0,1,1,-1,0,1,-1,1,0,1,-1,-1,0,-1,1,1,0,-1,1,-1,0,-1,-1,1,0,-1,-1,-1,0]);
+    }
+
+    noise4D(x, y, z, w) {
+        const { perm, grad4 } = this;
+        let n0, n1, n2, n3, n4;
+        let s = (x + y + z + w) * F4;
+        let i = Math.floor(x + s), j = Math.floor(y + s), k = Math.floor(z + s), l = Math.floor(w + s);
+        let t = (i + j + k + l) * G4;
+        let X0 = i - t, Y0 = j - t, Z0 = k - t, W0 = l - t;
+        let x0 = x - X0, y0 = y - Y0, z0 = z - Z0, w0 = w - W0;
+
+        let rankx = 0, ranky = 0, rankz = 0, rankw = 0;
+        if (x0 > y0) rankx++; else ranky++;
+        if (x0 > z0) rankx++; else rankz++;
+        if (x0 > w0) rankx++; else rankw++;
+        if (y0 > z0) ranky++; else rankz++;
+        if (y0 > w0) ranky++; else rankw++;
+        if (z0 > w0) rankz++; else rankw++;
+
+        let i1 = rankx >= 3 ? 1 : 0, j1 = ranky >= 3 ? 1 : 0, k1 = rankz >= 3 ? 1 : 0, l1 = rankw >= 3 ? 1 : 0;
+        let i2 = rankx >= 2 ? 1 : 0, j2 = ranky >= 2 ? 1 : 0, k2 = rankz >= 2 ? 1 : 0, l2 = rankw >= 2 ? 1 : 0;
+        let i3 = rankx >= 1 ? 1 : 0, j3 = ranky >= 1 ? 1 : 0, k3 = rankz >= 1 ? 1 : 0, l3 = rankw >= 1 ? 1 : 0;
+
+        let x1 = x0 - i1 + G4, y1 = y0 - j1 + G4, z1 = z0 - k1 + G4, w1 = w0 - l1 + G4;
+        let x2 = x0 - i2 + 2.0 * G4, y2 = y0 - j2 + 2.0 * G4, z2 = z0 - k2 + 2.0 * G4, w2 = w0 - l2 + 2.0 * G4;
+        let x3 = x0 - i3 + 3.0 * G4, y3 = y0 - j3 + 3.0 * G4, z3 = z0 - k3 + 3.0 * G4, w3 = w0 - l3 + 3.0 * G4;
+        let x4 = x0 - 1.0 + 4.0 * G4, y4 = y0 - 1.0 + 4.0 * G4, z4 = z0 - 1.0 + 4.0 * G4, w4 = w0 - 1.0 + 4.0 * G4;
+
+        let ii = i & 255, jj = j & 255, kk = k & 255, ll = l & 255;
+        let gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]] % 32 * 4;
+        let gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]] % 32 * 4;
+        let gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]] % 32 * 4;
+        let gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]] % 32 * 4;
+        let gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32 * 4;
+
+        let t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+        if (t0 < 0) n0 = 0.0;
+        else { t0 *= t0; n0 = t0 * t0 * (grad4[gi0] * x0 + grad4[gi0 + 1] * y0 + grad4[gi0 + 2] * z0 + grad4[gi0 + 3] * w0); }
+        let t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+        if (t1 < 0) n1 = 0.0;
+        else { t1 *= t1; n1 = t1 * t1 * (grad4[gi1] * x1 + grad4[gi1 + 1] * y1 + grad4[gi1 + 2] * z1 + grad4[gi1 + 3] * w1); }
+        let t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+        if (t2 < 0) n2 = 0.0;
+        else { t2 *= t2; n2 = t2 * t2 * (grad4[gi2] * x2 + grad4[gi2 + 1] * y2 + grad4[gi2 + 2] * z2 + grad4[gi2 + 3] * w2); }
+        let t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+        if (t3 < 0) n3 = 0.0;
+        else { t3 *= t3; n3 = t3 * t3 * (grad4[gi3] * x3 + grad4[gi3 + 1] * y3 + grad4[gi3 + 2] * z3 + grad4[gi3 + 3] * w3); }
+        let t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+        if (t4 < 0) n4 = 0.0;
+        else { t4 *= t4; n4 = t4 * t4 * (grad4[gi4] * x4 + grad4[gi4 + 1] * y4 + grad4[gi4 + 2] * z4 + grad4[gi4 + 3] * w4); }
+        return 27.0 * (n0 + n1 + n2 + n3 + n4);
+    }
+  }
+  return SimplexNoise;
+})();
+const simplex = new SimplexNoise();
+
+// --- SLIDE TEMPLATES --- //
+const slideTemplates = [
+    { 
+      title: null, 
+      content: `<div id="cover-sphere-container" class="absolute inset-0 -z-10"></div><div class="cover-content-wrapper"><h1 class="display-1 text-white" style="text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);">Surface Tension</h1><div class="cover-text-group"><div class="digital-drip-group"><h2 class="digital-drip">DIGITAL DRIP</h2><p class="mx-4">x</p><p>Sextant Coffee Roasters</p></div></div><div class="creator-names-container"><div class="text-left text-xs body-regular tracking-wider uppercase text-gray-400">Pratt Majmudar<br><span class="text-gray-500">CEO & Creative Director</span></div><div class="text-right text-xs body-regular tracking-wider uppercase text-gray-400">Diana Komakhidze<br><span class="text-gray-500">Chief Designer & Marketing Lead</span></div></div></div>` 
+    },
+    { 
+        title: "The Portal Philosophy", 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto portal-quote">We create immersive experiences that blur the boundaries between art, music, and digital reality, inviting people to explore the layers beneath the surface of everyday life.</p><div class="mt-12 grid md:grid-cols-2 gap-8"><div class="card"><h3 class="heading-1 text-emerald-400">The SF Market Need</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li>Post-pandemic, 68% of Bay Area tech workers report feeling burned out, driving demand for screen-free, restorative social activities. <span class="text-xs text-gray-400">(Source: SF Chronicle, 2024)</span></li><li>There is a growing demand for "Third Spaces" that are not home or work; 72% of millennials now prefer to spend money on experiences over material objects. <span class="text-xs text-gray-400">(Source: Eventbrite, 2024)</span></li><li>The "Sober Curious" movement is accelerating, with 45% of consumers aged 21-34 seeking high-energy, non-alcoholic nightlife options. <span class="text-xs text-gray-400">(Source: NielsenIQ, 2025)</span></li></ul></div><div class="card"><h3 class="heading-1 text-purple-400">Our Curated Solution</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li>An intentionally designed environment that fosters presence and authentic connection, moving beyond superficial networking.</li><li>A high-fidelity sonic journey that serves as the centerpiece of the experience, rewarding deep, attentive listening.</li><li>A hub for a creative community seeking culturally rich, exclusive experiences that offer more than a standard night out.</li></ul></div></div><div id="consciousness-tech" class="mt-8 card"><h3 class="heading-1 text-center mb-6">Conscious Technology</h3><div class="grid md:grid-cols-3 gap-6 text-center"><div class="p-4" onclick="Content.showTechModal('resonance')"><div class="consciousness-tech-icon" id="bell-cloud"></div><p class="font-semibold body-regular mt-2">Frequency Resonance</p></div><div class="p-4" onclick="Content.showTechModal('presence')"><div class="consciousness-tech-icon" id="heart-cloud"></div><p class="font-semibold body-regular mt-2">Embodied Presence</p></div><div class="p-4" onclick="Content.showTechModal('listening')"><div class="consciousness-tech-icon" id="star-cloud"></div><p class="font-semibold body-regular mt-2">Deep Listening</p></div></div></div>` 
+    },
+    { 
+        title: "The Digital Drip Experience", 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">The experience is a meticulously crafted sensory narrative, guiding attendees from arrival to departure through a seamless flow of sound, taste, and visual stimulation.</p><div id="drip-ripple-container"></div><div class="card mb-8"><div id="event-timeline" class="event-timeline-grid"></div></div><div class="menu-section mt-8"><div class="menu-category cold-theme active" onclick="showMenuCategory('cold')" data-category="cold"><div class="category-title">Cold Coffee Creations</div><div class="category-desc">Artisanal, dairy-free options to awaken the senses.</div></div><div class="menu-category cocktails-theme" onclick="showMenuCategory('cocktails')" data-category="cocktails"><div class="category-title">Signature Cocktails</div><div class="category-desc">Complex, spirit-forward builds for a deeper experience.</div></div><div class="menu-category simple-theme" onclick="showMenuCategory('simple')" data-category="simple"><div class="category-title">Simple Serves</div><div class="category-desc">Quick, high-quality local favorites.</div></div><div class="menu-details" id="menu-details"></div></div>` 
+    },
+    { 
+        title: "Venue Intelligence", 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">Sextant Coffee at <a href="https://maps.google.com/maps?q=539+Valencia+St,+San+Francisco,+CA" target="_blank" class="venue-link">539 Valencia St</a> provides a culturally authentic anchor, strategically positioned to capture the heart of San Francisco's creative class.</p><div class="venue-section flex flex-col items-center"><div class="venue-point-cloud" id="venue-point-cloud"></div><div class="interactive-venue" id="interactive-venue"><div class="venue-controls"><button class="venue-mode-btn active" onclick="setVenueMode('move')">Move</button><button class="venue-mode-btn" onclick="setVenueMode('resize')">Resize</button><button class="venue-mode-btn" onclick="setVenueMode('rotate')">Rotate</button></div><div class="venue-item" style="top: 20%; left: 15%; width: 140px; height: 80px;" data-type="dj"><div class="venue-item-title">DJ Booth</div><div class="venue-item-desc">Central sonic hub</div></div><div class="venue-item" style="top: 55%; left: 5%; width: 120px; height: 100px;" data-type="bar"><div class="l-bar-container"><div class="venue-item-title">Bar</div><div class="venue-item-desc">Service area</div></div></div><div class="venue-item" style="top: 30%; left: 65%; width: 100px; height: 80px;" data-type="seating"><div class="venue-item-title">Seating</div><div class="venue-item-desc">Conversation pods</div></div><div class="venue-item" style="top: 60%; left: 50%; width: 150px; height: 120px;" data-type="dance"><div class="venue-item-title">Dance Floor</div><div class="venue-item-desc">Movement space</div></div></div></div><div class="data-section mt-8"><div class="card data-card"><h3 class="heading-1 text-emerald-400">Strategic Advantages</h3><ul class="body-regular mt-6"><li>Ethiopian coffee heritage creates a unique, defensible brand story that resonates with consumer demand for authenticity.</li><li>The existing L-shaped bar is operationally ideal for integrating a DJ booth with minimal spatial disruption.</li><li>High accessibility via 16th St BART and MUNI lines connects the venue to the entire Bay Area.</li><li>Existing weekend hours (until 6 PM) demonstrate a proven capacity and willingness for evening operations.</li></ul></div><div class="card data-card"><h3 class="heading-1 text-purple-400">Target Demographics</h3><ul class="body-regular mt-6"><li>The Mission District is home to 32,157 residents aged 25-44, comprising 41.5% of the neighborhood population.</li><li>The median household income for this demographic in the 94110 zip code is $175,844.</li><li>Weekend foot traffic on Valencia St has recovered to 98% of pre-pandemic levels as of Q1 2025.</li><li>This demographic allocates an estimated 18% of discretionary spending to "dining and experiences."</li></ul><p class="source-note">Source: US Census Bureau (ACS 2023), SF Planning Dept (2024)</p></div></div>` 
+    },
+    { 
+        title: "Pre-Event Marketing Intelligence", 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">A data-driven, agile marketing plan designed to build authentic buzz with a target budget of <span class="text-purple-400 font-bold">$105</span>.</p><div class="marketing-layout mt-8"><div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Organic Social Activation</span></div><div class="marketing-details body-regular"><p class="mb-2">Build anticipation through authentic, behind-the-scenes content that feels exclusive, not advertised, focusing on Instagram and TikTok.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Close Friends / Private Channels:</strong> Use Instagram's "Close Friends" and private broadcast channels to leak teaser content, creating a core group of "insiders."</li><li><strong>Content Strategy:</strong> Post time-lapses of venue setup, abstract visual teasers, and DJ spotlights. Use trending audio from relevant electronic artists to increase reach.</li></ul><p class="mt-3 text-xs text-gray-400"><strong>Data Point:</strong> Brands using exclusive content features like "Close Friends" see an average 3x increase in story engagement from those users. (Source: Later, 2024)</p></div></div><div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Community Seeding</span></div><div class="marketing-details body-regular"><p class="mb-2">Leverage hyper-local digital communities where our target demographic already congregates for authentic word-of-mouth.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Newsletter Features:</strong> Secure placements in curated SF newsletters like <a href="https://www.thesfminute.com/" target="_blank" class="text-emerald-400 hover:underline">The SF Minute</a> or <a href="https://www.funcheapsf.com" target="_blank" class="text-emerald-400 hover:underline">FuncheapSF</a>.</li><li><strong>Community Forums:</strong> Organically share event details in relevant subreddits (r/sanfrancisco, r/techno) and Facebook Groups for SF electronic music fans.</li></ul><p class="mt-3 text-xs text-gray-400"><strong>Data Point:</strong> Niche newsletter sponsorships have an average click-through rate of 8-12%, significantly higher than standard display ads. (Source: Digiday, 2025)</p></div></div><div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Location-Based Ads (Est. $30)</span></div><div class="marketing-details body-regular"><p class="mb-2">Precisely target potential attendees within a 2-mile radius of the venue for 3 days pre-event, focusing on lifestyle and behavior.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Geofencing:</strong> Target users physically present on Valencia St, Dolores Park, and Hayes Valley.</li><li><strong>Interest Targeting:</strong> Layer interests like "Boiler Room," "HÖR Berlin," "specialty coffee," and followers of local electronic music venues.</li></ul><p class="mt-3 text-xs text-gray-400"><strong>Data Point:</strong> Hyper-local geofenced ads have a click-through rate up to 2.5x higher than broader demographic targeting in dense urban areas like SF. (Source: BIA Advisory Services)</p></div></div><div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Guerrilla Projections (Est. $50)</span></div><div class="marketing-details body-regular"><p class="mb-2">Create visual intrigue with unexpected, ephemeral public art on nearby walls, generating curiosity and organic social sharing.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Equipment:</strong> Rent a high-lumen <a href="https://www.projectorscreen.com/projector-rentals" target="_blank" class="text-emerald-400 hover:underline">portable projector</a> for one night.</li><li><strong>Content:</strong> Project the animated Surface Tension logo and abstract "portal" visuals on high-foot-traffic walls near the venue.</li></ul><p class="mt-3 text-xs text-gray-400"><strong>Data Point:</strong> Ephemeral art installations can generate over 500% more social media mentions than a comparable digital ad spend. (Source: The Art Newspaper, 2024)</p></div></div></div><div class="marketing-charts-container"><div class="chart-container"><h3 class="chart-title">Predictive Model: SF Scene</h3><canvas id="predictive-chart" class="chart-canvas"></canvas></div><div class="chart-container"><h3 class="chart-title">Current Trends: Venue Performance</h3><canvas id="trends-chart" class="chart-canvas"></canvas></div></div>`
+    },
+    { 
+        title: "Sextant Intelligence", 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">A lean, high-impact production model focusing on immersive sensory experience. Our philosophy is to invest in technology that directly serves the 'crafted experience' and enhances 'dimensional thinking' for our guests. The target production budget is <span class="font-bold text-emerald-400">$950</span>.</p><div class="sextant-layout"><div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🔊 Sound System - Est. Cost $450</span></div><div class="sextant-details body-regular"><p class="mb-3">The audio experience is paramount. QSC K12.2 speakers were selected for their exceptional clarity, ensuring the complex frequencies of deep electronic music are felt, not just heard, creating a true 'frequency resonance' for attendees.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Speakers:</strong> <a href="https://www.guitarcenter.com/QSC/K122-2000W-12-in-Powered-Speaker.gc" target="_blank" class="text-emerald-400 hover:underline">QSC K12.2 (Pair)</a></li><li><strong>Mixer:</strong> <a href="https://www.guitarcenter.com/Pioneer-DJ/DJM-A9.gc" target="_blank" class="text-emerald-400 hover:underline">Pioneer DJM-A9</a></li><li><strong>Achieves:</strong> A professional, non-fatiguing sound that encourages deep listening and physical immersion in the music.</li></ul></div></div><div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">💡 Lighting & FX - Est. Cost $300</span></div><div class="sextant-details body-regular"><p class="mb-3">Lighting is our primary tool for transforming the 2D cafe space into a 3D portal. We use color and texture to manipulate perception and create a dreamlike, 'dimensional' atmosphere.</p><ul class="list-disc pl-5 space-y-1"><li><strong>LEDs:</strong> <a href="https://www.chauvetdj.com/products/slimpar-t12-bt/" target="_blank" class="text-emerald-400 hover:underline">Chauvet SlimPAR T12 (4x)</a></li><li><strong>Hazer:</strong> <a href="https://www.chauvetdj.com/products/hurricane-haze-1dx/" target="_blank" class="text-emerald-400 hover:underline">Hurricane Haze 1DX</a></li><li><strong>Achieves:</strong> An immersive, cinematic environment that enhances the music and encourages 'embodied presence' by reducing external distractions.</li></ul></div></div><div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🎛️ DJ Equipment - Est. Cost $200</span></div><div class="sextant-details body-regular"><p class="mb-3">To act as a 'cultural catalyst,' we must attract top-tier local talent. Providing industry-standard equipment is non-negotiable and signals our commitment to artistic excellence.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Players:</strong> <a href="https://www.guitarcenter.com/Pioneer-DJ/CDJ-3000.gc" target="_blank" class="text-emerald-400 hover:underline">Pioneer CDJ-3000 (Pair)</a></li><li><strong>Cables/Setup:</strong> All necessary wiring.</li><li><strong>Achieves:</strong> Artist satisfaction, seamless technical performance, and credibility within the electronic music community.</li></ul></div></div><div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">📋 Permits & Licensing</span></div><div class="sextant-details body-regular"><p class="mb-3">Our commitment to a 'crafted experience' extends to operational excellence. Proactive and transparent legal compliance is key to building a sustainable, trusted event series.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Permit:</strong> <a href="https://sf.gov/apply-one-time-event-permit" target="_blank" class="text-emerald-400 hover:underline">SF One-Time Event Permit</a></li><li><strong>Timeline:</strong> A target of 30-day processing.</li><li><strong>Achieves:</strong> Legal operation, positive community relations, and a foundation for future events.</li></ul></div></div></div><div class="financial-calculator-layout"><div class="financial-calculator-container"><div><h3 class="heading-1 text-center mb-4 text-purple-400">Financial Calculator</h3></div><div class="calc-row"><label for="num-attendees" class="calc-label">Projected Ticket Holders</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="50" id="num-attendees" oninput="calculateRevenue()"></div></div><div class="calc-row"><label for="ticket-price-a" class="calc-label">Target Tier A Price</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="20" id="ticket-price-a" oninput="calculateRevenue()"></div></div><div class="calc-row"><label for="ticket-price-b" class="calc-label">Target Tier B Price (+Drink)</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="28" id="ticket-price-b" oninput="calculateRevenue()"></div></div><div class="calc-row"><label for="tier-b-split" class="calc-label">Estimated Tier B Split</label><div class="calc-input-group"><input type="range" min="0" max="100" value="60" id="tier-b-split" oninput="calculateRevenue()"><span id="tier-b-split-display" class="w-12 text-right">60%</span></div></div><div class="calc-row"><label for="extra-drink-spend" class="calc-label">Est. Extra Drink Spend</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="12" id="extra-drink-spend" oninput="calculateRevenue()"></div></div><div class="mt-4 pt-4 border-t border-dashed border-gray-700 space-y-2"><div class="flex justify-between items-center text-lg"><span class="text-gray-300">Projected Revenue:</span><span class="font-bold text-emerald-400" id="total-revenue">$2,080</span></div><div class="flex justify-between items-center text-lg"><span class="text-gray-300">Projected Sextant Share (25%):</span><span class="font-bold text-purple-400" id="sextant-share">$520</span></div></div></div><div class="flex items-center justify-center"><div class="chart-container h-[350px] w-[350px]"><canvas id="revenue-pie-chart"></canvas></div></div></div>` 
+    },
+    { 
+        title: "Partnership Growth & Benefits", 
+        content: `<div class="growth-section"><div class="growth-chart-container"><h3 class="chart-title">Projected Partnership ROI</h3><canvas id="growth-chart" class="chart-canvas"></canvas></div><div class="metrics-column"><div class="metric-card emerald" onclick="toggleExpand(this)" title="By creating an exclusive event, we transform transactional customers into a loyal community, increasing the frequency of visits and overall lifetime value."><div class="metric-value">+40%</div><div class="body-regular">Customer Retention</div><div class="metric-details"><p>Experiential events create deep emotional connections. Brands that offer unique, memorable experiences see up to a 40% increase in customer retention over a 6-month period compared to businesses without such programs.</p><p class="text-xs text-gray-500 mt-2">Source: Forrester Research, "The Experience Economy," 2024</p></div></div><div class="metric-card purple" onclick="toggleExpand(this)" title="The visually rich, multi-sensory 'portal' experience is engineered for social sharing, converting attendees into powerful organic marketers."><div class="metric-value">+300%</div><div class="body-regular">Social Engagement</div><div class="metric-details"><p>Events that facilitate user-generated content (UGC) see an average social media engagement lift of over 300% in the week following the event. Our event is designed to maximize these shareable moments.</p><p class="text-xs text-gray-500 mt-2">Source: Sprout Social, "UGC Impact Report," 2025</p></div></div><div class="metric-card teal" onclick="toggleExpand(this)" title="Activating the space during evening hours taps into a completely new, high-margin revenue stream, dramatically boosting profit per square foot."><div class="metric-value">+150%</div><div class="body-regular">Evening Revenue Lift</div><div class="metric-details"><p>Cafes that successfully launch evening programs can see a revenue increase of 150-200% during those hours, with premium-priced items like ours driving higher margins than typical daytime sales.</p><p class="text-xs text-gray-500 mt-2">Source: National Restaurant Association, "Nightlife & Dayparting," 2024</p></div></div><div class="metric-card yellow" onclick="toggleExpand(this)" title="This partnership positions Sextant not just as a coffee shop, but as a premier cultural hub, attracting media attention and a wider, more diverse audience."><div class="metric-value">+90%</div><div class="body-regular">New Customer Acquisition</div><div class="metric-details"><p>First-time, unique events can drive new customer acquisition by up to 90% in the month of the event, attracting clientele who may not have been part of the regular customer base but are drawn in by the cultural programming.</p><p class="text-xs text-gray-500 mt-2">Source: Eventbrite, "Cultural Event Impact Study," 2024</p></div></div></div></div>` 
+    },
+    { 
+        title: "The Creators", 
+        content: `<div class="freestanding-quote"><div class="quote-line">We don't just build events.</div><div class="quote-line emphasis">We engineer dimensional transformations.</div></div><div class="creators-grid"><div class="creator-card"><div class="creator-particles" id="pratt-particles"></div><div class="creator-content"><a href="https://www.linkedin.com/in/prxatt" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-emerald-400">Pratt Majmudar</h3></a><p class="body-regular mt-2 text-emerald-300">CEO & Creative Director</p><ul class="body-regular mt-6 space-y-3"><li>A practitioner of <span class='font-semibold text-emerald-300'>Dimensional Thinking</span>, orchestrating the technical and sensory architecture of each experience.</li><li>A <span class='font-semibold text-emerald-300'>Cultural Catalyst</span> who pioneers real-time sonic journeys that respond to environmental and biological data.</li><li>Ensures every touchpoint is a <span class='font-semibold text-emerald-300'>Crafted Experience</span>, from the sound system's frequency response to the UI's micro-interactions.</li><li>Drives strategic vision with a focus on <span class='font-semibold text-emerald-300'>Authentic Luxury</span>, ensuring innovation serves a deeper philosophical purpose.</li></ul></div></div><div class="creator-card"><div class="creator-particles" id="diana-particles"></div><div class="creator-content"><a href="https://www.linkedin.com/in/diana-komakhidze-168004147/" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-purple-400">Diana Komakhidze</h3></a><p class="body-regular mt-2 text-purple-300">Chief Designer & Marketing Lead</p><ul class="body-regular mt-6 space-y-3"><li>Translates abstract concepts into compelling brand narratives with a <span class='font-semibold text-purple-300'>Community-First</span> approach.</li><li>Directs the complete visual identity, from immersive portal animations to the finest details of the <span class='font-semibold text-purple-300'>Crafted Experience</span>.</li><li>Innovates grassroots marketing strategies that act as a <span class='font-semibold text-purple-300'>Cultural Catalyst</span>, building authentic community to bypass traditional advertising.</li><li>Champions <span class='font-semibold text-purple-300'>Dimensional Thinking</span> in marketing, creating culturally resonant moments that captivate SF's creative class.</li></ul></div></div></div>` 
+    },
+    { 
+        title: "Strategic Roadmap", 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This is a transparent, collaborative 6-week roadmap to our inaugural launch on <strong>July 26th, 2025</strong>. Each step is designed to build momentum, mitigate risk, and ensure a flawlessly executed, high-impact event.</p><div class="task-planner mt-8"><div class="task-filters"><button class="task-filter active" data-filter="all">All</button><button class="task-filter" data-filter="surface-tension">Surface Tension</button><button class="task-filter" data-filter="sextant">Sextant</button><button class="task-filter" data-filter="diana">Diana</button></div><div id="task-list" class="task-planner-grid"></div></div>` 
+    },
+    { title: null, content: `<div id="finale-container"><div id="finale-animation"></div><div id="finale-title">in stillness, depth</div><div class="finale-content"><div class="finale-links"><a href="https://surfacetension.co" target="_blank" class="finale-link left">surfacetension.co</a><a href="https://prxatt.github.io/STSplash/" target="_blank" class="finale-link right">Experience Preview</a></div></div></div>` }
+];
+
+// --- DATA --- //
+const techDetails = {
+    resonance: { title: "Frequency Resonance", color: "var(--primary-emerald)", desc: "This is achieved by curating a sonic environment with specific, non-fatiguing frequencies. We use a high-fidelity sound system (like QSC K.2 series) and work with artists who specialize in deep, hypnotic house and techno. The goal is to create a sound bath that attendees feel physically, promoting a state of flow and presence." },
+    presence: { title: "Embodied Presence", color: "var(--primary-purple)", desc: "We design the space to minimize digital distractions and maximize sensory input. This involves low, warm lighting, subtle haze to soften visuals, and creating 'conversation pods' that encourage face-to-face interaction. The entire experience is a gentle nudge to put phones away and be in the moment." },
+    listening: { title: "Deep Listening", color: "var(--primary-teal)", desc: "Unlike a typical club, the musical journey is the centerpiece. The progression of the DJ set is carefully planned, moving from ambient textures to a gentle peak and back down. This narrative structure rewards sustained attention and invites guests to actively listen, rather than treating the music as background noise." }
+};
+const taskData = [
+    { week: 1, title: "Foundation & Legal", assignee: "surface-tension", dates: {start: "20250616", end: "20250623"}, desc: "<b>Goal:</b> Establish full operational legitimacy and secure partnership. <br><b>Action:</b> Finalize partnership agreement with Sextant. Engage permit consultant to begin SF One-Time Event Permit application. <br><b>Tool:</b> Track all legal and partnership milestones on a shared <a href='https://asana.com/' target='_blank' class='text-teal-400 hover:underline'>Asana</a> board." },
+    { week: 1, title: "Menu & Sourcing", assignee: "sextant", dates: {start: "20250616", end: "20250623"}, desc: "<b>Goal:</b> Curate a unique, high-quality drink menu aligned with the brand. <br><b>Action:</b> Finalize supplier agreements with premium, local vendors like Hangar 1 and St. George Spirits. Conduct staff training on new recipes and service protocols. <br><b>Tool:</b> Use a shared <a href='https://docs.google.com/spreadsheets' target='_blank' class='text-teal-400 hover:underline'>Google Sheet</a> for inventory and costing." },
+    { week: 2, title: "Technical Infrastructure", assignee: "surface-tension", dates: {start: "20250623", end: "20250630"}, desc: "<b>Goal:</b> Secure and test all A/V and lighting equipment. <br><b>Action:</b> Book all rentals 4 weeks in advance from pre-approved vendors. Conduct on-site power assessment at Sextant to ensure capacity for sound and lighting. <br><b>Tool:</b> Refer to comprehensive tech rider on a shared <a href='https://trello.com/' target='_blank' class='text-teal-400 hover:underline'>Trello board</a>." },
+    { week: 2, title: "Venue Optimization", assignee: "sextant", dates: {start: "20250623", end: "20250630"}, desc: "<b>Goal:</b> Optimize the venue for an efficient dual-use (cafe-to-portal) transformation. <br><b>Action:</b> Develop detailed floor plans in <a href='https://www.figma.com/' target='_blank' class='text-teal-400 hover:underline'>Figma</a> outlining precise setup/breakdown procedures. Conduct dry runs with staff to identify and solve for bottlenecks." },
+    { week: 3, title: "Brand & Marketing Launch", assignee: "diana", dates: {start: "20250630", end: "20250707"}, desc: "<b>Goal:</b> Deploy the 'Digital Drip' brand and generate early, authentic buzz. <br><b>Action:</b> Launch multi-platform teaser campaign on Instagram & TikTok. Begin seeding content in local newsletters and community forums. <br><b>Tool:</b> Execute against the integrated content calendar in <a href='https://www.notion.so/' target='_blank' class='text-teal-400 hover:underline'>Notion</a>." },
+    { week: 4, title: "Community Outreach", assignee: "diana", dates: {start: "20250707", end: "20250714"}, desc: "<b>Goal:</b> Generate authentic pre-event excitement with key influencers and community leaders. <br><b>Action:</b> Leverage existing loyal customers and personal networks for early ticket access. Begin outreach to micro-influencers in the electronic music and lifestyle space. <br><b>Tool:</b> Track all outreach and collaborations in a dedicated <a href='https://www.airtable.com/' target='_blank' class='text-teal-400 hover:underline'>Airtable</a> CRM." },
+    { week: 5, title: "Full Technical Rehearsal", assignee: "surface-tension", dates: {start: "20250714", end: "20250721"}, desc: "<b>Goal:</b> Ensure a flawless, bug-free event night experience. <br><b>Action:</b> Conduct a full run-through with all key staff, DJs, and technical crew. Test all lighting cues, audio levels, and projection mapping. <br><b>Tool:</b> Use a precise show-flow document and a dedicated <a href='https://slack.com/' target='_blank' class='text-teal-400 hover:underline'>Slack</a> channel for rapid response." },
+    { week: 6, title: "Event & Post-Mortem", assignee: "surface-tension", dates: {start: "20250721", end: "20250727"}, desc: "<b>Goal:</b> Execute flawlessly and capture critical data for future growth. <br><b>Action:</b> Implement robust day-of coordination protocols. Conduct a post-event debrief and gather attendee feedback via a <a href='https://www.google.com/forms/about/' target='_blank' class='text-teal-400 hover:underline'>Google Forms</a> survey for data-driven refinements." }
+];
+const menuData = {
+    cold: [ { name: 'Sextant Cold Brew Tonic', price: '$6', ingredients: 'House cold brew, premium tonic, expressed lemon peel. A bright, effervescent start.', source: '<a href="https://sextantcoffee.com" target="_blank">Sextant house brew</a>', color: 'var(--primary-emerald)' }, { name: 'Emerald Cloud Matcha', price: '$7', ingredients: 'Ceremonial grade matcha, oat milk, dash of agave. A smooth, focused lift.', source: '<a href="https://mizubatea.com/pages/sf-tea-shop" target="_blank">Mizuba Tea Co.</a>', color: 'var(--primary-emerald)' }, { name: 'Cascara Fizz', price: '$5', ingredients: 'Sparkling water, house-made cascara syrup, fresh lime. A light, fruity, and natural stimulant.', source: 'In-house cascara reduction', color: 'var(--primary-emerald)' } ],
+    cocktails: [ { name: 'Synaptic Espresso Martini', price: '$16', ingredients: 'Sextant espresso, Hangar 1 vodka, Mr. Black coffee liqueur. The classic, perfected.', source: 'Vodka: <a href="https://hangarone.com" target="_blank">Hangar 1</a>', color: 'var(--primary-purple)' }, { name: 'Valencia Old Fashioned', price: '$14', ingredients: 'Local bourbon, cold brew reduction, orange & angostura bitters. A deep, resonant classic.', source: 'Bourbon: Local Selection', color: 'var(--primary-purple)' }, { name: 'Mission Mezcal Sour', price: '$15', ingredients: 'Artisanal mezcal, fresh lime, agave, aquafaba foam. Smoky, bright, and dimensional.', source: 'Mezcal: Local Selection', color: 'var(--primary-purple)' }, { name: 'Emerald Gin Fizz', price: '$13', ingredients: 'St. George Terroir Gin, lime, simple syrup, soda water. A crisp, botanical journey.', source: 'Gin: <a href="https://stgeorgespirits.com" target="_blank">St. George Spirits</a>', color: 'var(--primary-purple)' } ],
+    simple: [ { name: 'Fort Point Kolsch', price: '$8', ingredients: 'A crisp, clean, and refreshing local craft beer.', source: '<a href="https://fortpointbeer.com" target="_blank">Fort Point Brewery</a>', color: 'var(--primary-teal)' }, { name: 'Natural Wine Selection', price: '$12', ingredients: 'Rotating glass of red or white from a local, natural winemaker.', source: 'Local Wine Bar Selection', color: 'var(--primary-teal)' } ]
+};
+const timelineData = [
+    { time: '5:00 PM', title: 'Portal Opening: Arrival', color: '#10b981', desc: 'Guests enter a transformed, low-lit space. The air is filled with ambient textures and the scent of coffee and botanicals. Service is focused on energizing Cold Coffee Creations.', sensory_focus: 'Visual intrigue, gentle sonic immersion, scent activation.', content_capture: 'Capture wide shots of the space and guests interacting with art. Use a shallow depth of field to create a dreamy, atmospheric look. For Instagram Stories, use the "hands-free" mode to film short, panning clips of the environment set to the ambient music.' },
+    { time: '6:00 PM', title: 'Sonic Elevation: The Shift', color: '#a855f7', desc: 'The energy subtly shifts as the DJ introduces rhythmic, deep house. The bar opens with Signature Cocktails, inviting guests to explore new sensory dimensions.', sensory_focus: 'Rhythmic entrainment, taste complexity, social mingling.', content_capture: 'Focus on close-up, cinematic shots of cocktails being crafted. For Reels, create a "Get Ready With Me" style video but for a cocktail. Use quick cuts synced to the building rhythm of the house music. Capture guest reactions to their first sips.' },
+    { time: '7:00 PM', title: 'DJ Transition: Deepening', color: '#06b6d4', desc: 'A seamless DJ swap introduces a new wave of sound, moving deeper. The full beverage menu is available as the collective energy of the room begins to sync.', sensory_focus: 'Narrative progression in music, heightened social connection.', content_capture: 'Create a dynamic transition video for TikTok/Reels. Start with a shot of the first DJ, then a creative wipe or spin transition to the second DJ taking over. Capture the change in the crowd\'s energy. Use a wide-angle lens to make the space feel expansive.' },
+    { time: '8:30 PM', title: 'Peak Resonance: Immersion', color: '#f59e0b', desc: 'The musical journey reaches its zenith. The interplay of hypnotic house and techno with the dynamic visual projections creates a state of peak collective experience.', sensory_focus: 'Full audio-visual-somatic immersion, flow state.', content_capture: 'This is the time for high-energy content. Use a phone gimbal for smooth, flowing shots through the crowd. Create short video loops of people dancing, focusing on silhouettes against the lighting. For photos, use a slow shutter speed to capture light trails and motion blur for an artistic effect.' },
+    { time: '9:30 PM', title: 'Harmonic Descent: Reflection', color: '#a855f7', desc: 'The music gracefully tapers back to ambient textures, allowing for reflection, conversation, and a final sensory recalibration before the night concludes.', sensory_focus: 'Gentle auditory landing, quiet connection, memory consolidation.', content_capture: 'Shift to more intimate, candid shots. Capture small groups in conversation. For Stories, use a soft filter and ask guests to share one word describing their experience. Film slow-motion videos of the lighting effects and the remaining guests vibing to the chill sounds.' }
+];
+
+// --- GLOBAL OBJECTS --- //
+const App = {
+    init() {
+        this.state = { currentSlide: 0, totalSlides: slideTemplates.length, isAnimating: false, loadingComplete: false };
+        this.setupDOM();
+        this.injectSlides();
+        this.bindEvents();
+        this.update();
+        Animations.init(this);
+        Content.init(this);
+        this.startLoadingSequence();
+    },
+    
+    setupDOM() {
+        this.DOM = {
+            loadingScreen: document.getElementById('loading-screen'),
+            appContainer: document.getElementById('app-container'),
+            header: document.getElementById('app-header'),
+            slideIndicator: document.getElementById('slide-indicator'),
+            slideContainer: document.getElementById('slide-container'),
+            dotsContainer: document.getElementById('nav-dots'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            techModalContainer: document.getElementById('tech-modal-container'),
+        };
+    },
+    
+    startLoadingSequence() {
+        setTimeout(() => this.finishLoading(), 4000);
+    },
+    
+    injectSlides() {
+        const container = this.DOM.slideContainer;
+        if (!container) return;
+        slideTemplates.forEach((slideData, index) => {
+            const slide = document.createElement('div');
+            slide.className = 'slide';
+            slide.id = `slide-${index + 1}`;
+            let headerHTML = slideData.title ? `<div class="slide-header"><h2 class="display-2">${slideData.title}</h2></div>` : '';
+            slide.innerHTML = `${headerHTML}<div class="slide-content">${slideData.content}</div>`;
+            container.appendChild(slide);
+        });
+        this.DOM.slides = document.querySelectorAll('.slide');
+    },
+    
+    bindEvents() {
+        this.DOM.prevBtn.onclick = (e) => { e.stopPropagation(); this.changeSlide(-1); };
+        this.DOM.nextBtn.onclick = (e) => { e.stopPropagation(); this.changeSlide(1); };
+        this.DOM.dotsContainer.addEventListener('click', e => { e.stopPropagation(); if (e.target.matches('.nav-dot')) this.goToSlide(parseInt(e.target.dataset.index)); });
+        this.DOM.slideContainer.addEventListener('click', e => { if (!e.target.closest('a, button, input, .interactive-venue, .task-card, .metric-card, .marketing-item, .sextant-item, .menu-category, .timeline-event, .chart-container, .consciousness-tech-icon')) this.changeSlide(1); });
+        document.addEventListener('keydown', e => this.handleKeydown(e));
+        
+        let touchStartX = 0, swipeBlocked = false;
+        this.DOM.slideContainer.addEventListener('touchstart', e => { swipeBlocked = !!e.target.closest('a, button, input, .interactive-venue, .timeline-container, .chart-container'); if (!swipeBlocked) touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        this.DOM.slideContainer.addEventListener('touchend', e => { if (!swipeBlocked && Math.abs(e.changedTouches[0].screenX - touchStartX) > 50) this.changeSlide(e.changedTouches[0].screenX > touchStartX ? -1 : 1); });
+        
+        window.addEventListener('resize', () => Animations.handleResize());
+    },
+
+    handleKeydown(e) {
+        if (this.state.isAnimating || document.querySelector('input:focus')) return;
+        if (e.code === 'ArrowLeft') this.changeSlide(-1);
+        if (e.code === 'ArrowRight' || e.code === 'Space') this.changeSlide(1);
+    },
+    
+    update() {
+        this.DOM.slides.forEach((slide, index) => slide.classList.toggle('active', index === this.state.currentSlide));
+        this.DOM.dotsContainer.innerHTML = Array.from({ length: this.state.totalSlides }, (_, i) => `<div class="nav-dot ${i === this.state.currentSlide ? 'active' : ''}" data-index="${i}"></div>`).join('');
+        this.DOM.slideIndicator.textContent = `${(this.state.currentSlide + 1).toString().padStart(2, '0')} / ${this.state.totalSlides}`;
+        this.DOM.header.style.display = this.state.currentSlide === this.state.totalSlides - 1 ? 'none' : 'flex';
+    },
+    
+    changeSlide(dir) { this.goToSlide((this.state.currentSlide + dir + this.state.totalSlides) % this.state.totalSlides); },
+    
+    goToSlide(index) {
+        if (this.state.isAnimating || index === this.state.currentSlide) return;
+        this.state.isAnimating = true;
+        this.DOM.slides[this.state.currentSlide]?.scrollTo(0, 0);
+        this.state.currentSlide = index;
+        this.update();
+        Content.onSlideChange(index);
+        setTimeout(() => { this.state.isAnimating = false; }, 800);
+    },
+    
+    finishLoading() {
+        if (this.state.loadingComplete) return;
+        this.state.loadingComplete = true;
+        this.DOM.loadingScreen.classList.add('hidden');
+        this.DOM.appContainer.classList.add('loaded');
+        Content.onSlideChange(0);
+    }
+};
+
+const Animations = {
+    scenes: {}, renderers: [],
+    
+    init(app) { this.app = app; this.createLoadingPointCloud(); this.createHeaderLogo(); },
+    
+    createLoadingPointCloud() {
+        const canvas = document.getElementById('loading-canvas'); if (!canvas) return;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); camera.position.z = 5;
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setSize(250, 250); renderer.setPixelRatio(window.devicePixelRatio); this.renderers.push(renderer);
+        const geometry = new THREE.BufferGeometry();
+        const material = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, blending: THREE.AdditiveBlending, transparent: true });
+        const points = new THREE.Points(geometry, material); scene.add(points);
+        const clock = new THREE.Clock();
+        const animate = () => {
+            if(!this.app.state.loadingComplete) requestAnimationFrame(animate); else { renderer.dispose(); geometry.dispose(); material.dispose(); return; }
+            const t = clock.getElapsedTime(), stage = Math.floor(t / 2) % 3;
+            const particleCount = 1000, positions = new Float32Array(particleCount*3), colors = new Float32Array(particleCount*3);
+            for (let i=0; i<particleCount; i++) {
+                const i3 = i * 3; let r, g, b;
+                switch(stage) {
+                    case 0: [r,g,b]=[0.1,0.7,0.5]; positions[i3]=(Math.random()-0.5)*6; positions[i3+1]=(Math.random()-0.5)*6; positions[i3+2]=(Math.random()-0.5)*6; break;
+                    case 1: [r,g,b]=[0.1,0.7,0.5]; const p=Math.acos(-1+(2*i)/particleCount),h=Math.sqrt(particleCount*Math.PI)*p; positions[i3]=Math.cos(h)*Math.sin(p)*2; positions[i3+1]=Math.sin(h)*Math.sin(p)*2; positions[i3+2]=Math.cos(p)*2; break;
+                    case 2: [r,g,b]=[0.66,0.33,0.96]; const a=(i/particleCount)*Math.PI*2,d=2.2+Math.sin(a*3+t)*0.3; positions[i3]=Math.cos(a)*d; positions[i3+1]=Math.sin(a)*d; positions[i3+2]=Math.sin(t+i*0.1)*0.2; break;
+                }
+                colors[i3]=r; colors[i3+1]=g; colors[i3+2]=b;
+            }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            points.rotation.y = t * 0.1; points.rotation.x = t * 0.05; renderer.render(scene, camera);
+        };
+        animate();
+    },
+    
+    createHeaderLogo() {
+        const canvas = document.getElementById('header-logo-canvas'); if (!canvas) return;
+        let w = canvas.width=canvas.clientWidth*2, h=canvas.height=canvas.clientHeight*2; if(!w) return setTimeout(()=>this.createHeaderLogo(),100);
+        const ctx = canvas.getContext('2d'), stParticles = [];
+        ctx.font = `500 ${w/1.5}px "ivypresto-display", serif`;
+        try {const m=ctx.measureText("ST");ctx.fillText("ST",(w-m.width)/2,h/2+m.actualBoundingBoxAscent/2.2);}catch(e){return setTimeout(()=>this.createHeaderLogo(),200);}
+        const data=ctx.getImageData(0,0,w,h).data; ctx.clearRect(0,0,w,h);
+        for(let x=0;x<w;x+=Math.round(w/150)) for(let y=0;y<h;y+=Math.round(w/150)) if(data[((x+y*w)*4)+3]>150) stParticles.push({x,y});
+        const particles = Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,ox:Math.random()*w,oy:Math.random()*h,r:1+Math.random()*1.5,c:'rgba(16, 185, 129, 0.8)',t:stParticles[Math.floor(Math.random()*stParticles.length)]||{x:w/2,y:h/2}}));
+        let mode=0; gsap.ticker.add(()=>particles.forEach(p=>{let t=(mode===1)?p.t:{x:p.ox,y:p.oy};gsap.to(p,{x:t.x,y:t.y,duration:1.5,ease:'power3.out'});}));
+        const loop=()=>{ctx.clearRect(0,0,w,h);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();});requestAnimationFrame(loop);}; loop();
+        setTimeout(()=>mode=1,500);
+    },
+    
+    createScene(id, options) {
+        if(this.scenes[id]) {
+            if (this.scenes[id].renderer) this.scenes[id].renderer.setAnimationLoop(this.scenes[id].animate);
+            return this.scenes[id].animate;
+        }
+        const container = document.getElementById(id); if(!container) return;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, 0.1, 1000);
+        camera.position.z = options.cameraZ || 5;
+
+        // Smart Animation System: Adjust renderer based on performance hint
+        const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
+        const renderer = new THREE.WebGLRenderer({
+            antialias: highPerf, // Only use antialiasing on capable devices
+            alpha:true,
+            powerPreference: "high-performance"
+        });
+        renderer.setClearColor(0x000000, 1);
+        renderer.setSize(container.clientWidth,container.clientHeight); 
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, highPerf ? 2 : 1.5)); // Cap pixel ratio
+        container.innerHTML = ''; 
+        container.appendChild(renderer.domElement); 
+        this.renderers.push(renderer);
+        
+        const sceneObjects = {};
+
+        if (options.objects) { // Multi-object scene
+            options.objects.forEach(objDef => {
+                const geometry = objDef.geometry;
+                const material = new THREE.ShaderMaterial(objDef.shader);
+                let obj = new THREE.Points(geometry, material);
+                scene.add(obj);
+                sceneObjects[objDef.name] = obj;
+            });
+        } else { // Single object scene
+            const geometry = options.geometry || new THREE.BufferGeometry();
+            if(options.positions) geometry.setAttribute('position',new THREE.BufferAttribute(options.positions,3));
+            let material;
+            if (options.shader) {
+                material = new THREE.ShaderMaterial(options.shader);
+            } else {
+                material = new THREE.PointsMaterial({...options.material});
+            }
+            const obj = new THREE.Points(geometry,material);
+            scene.add(obj);
+            sceneObjects.main = obj;
+        }
+
+
+        if (options.lighting) {
+            scene.add(new THREE.AmbientLight(options.lighting.ambientColor, options.lighting.ambientIntensity));
+            const light = new THREE.DirectionalLight(options.lighting.directionalColor, options.lighting.directionalIntensity);
+            light.position.copy(options.lighting.directionalPosition);
+            scene.add(light);
+            sceneObjects.light = light;
+        }
+
+        const clock = new THREE.Clock();
+        let lastFrameTime = 0;
+        const animate = (time) => {
+            if(this.app.state.currentSlide !== options.slideIndex || !container.offsetParent) return renderer.setAnimationLoop(null);
+            renderer.setAnimationLoop(animate);
+            
+            // Smart animation: skip frame if not enough time has passed (e.g. on low-end devices)
+            if (time - lastFrameTime < 16) return;
+            lastFrameTime = time;
+
+            const t = clock.getElapsedTime();
+            if(options.update) options.update({scene, camera, t, ...sceneObjects});
+            renderer.render(scene, camera);
+        };
+        this.scenes[id] = {scene, camera, renderer, animate, objects: sceneObjects}; 
+        return animate;
+    },
+
+    initCoverSphere() {
+        const noiseFunc = `
+            vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+            vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+            vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+            vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+            float snoise(vec3 v) {
+              const vec2  C = vec2(1.0/6.0, 1.0/3.0); const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+              vec3 i  = floor(v + dot(v, C.yyy)); vec3 x0 = v - i + dot(i, C.xxx);
+              vec3 g = step(x0.yzx, x0.xyz); vec3 l = 1.0 - g; vec3 i1 = min(g, l.zxy); vec3 i2 = max(g, l.zxy);
+              vec3 x1 = x0 - i1 + C.xxx; vec3 x2 = x0 - i2 + C.yyy; vec3 x3 = x0 - D.yyy;
+              i = mod289(i);
+              vec4 p = permute( permute( permute(i.z + vec4(0.0, i1.z, i2.z, 1.0)) + i.y + vec4(0.0, i1.y, i2.y, 1.0)) + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+              float n_ = 0.142857142857; vec3 ns = n_ * D.wyz - D.xzx;
+              vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+              vec4 x_ = floor(j * ns.z); vec4 y_ = floor(j - 7.0 * x_);
+              vec4 x = x_ *ns.x + ns.yyyy; vec4 y = y_ *ns.x + ns.yyyy;
+              vec4 h = 1.0 - abs(x) - abs(y); vec4 b0 = vec4(x.xy, y.xy); vec4 b1 = vec4(x.zw, y.zw);
+              vec4 s0 = floor(b0)*2.0 + 1.0; vec4 s1 = floor(b1)*2.0 + 1.0; vec4 sh = -step(h, vec4(0.0));
+              vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy; vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+              vec3 p0 = vec3(a0.xy,h.x); vec3 p1 = vec3(a0.zw,h.y); vec3 p2 = vec3(a1.xy,h.z); vec3 p3 = vec3(a1.zw,h.w);
+              vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+              p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+              vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+              m = m * m; return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+            }
+        `;
+        
+        // Smart LOD: use fewer particles on less performant devices
+        const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
+        const pCount = highPerf ? 30000 : 15000;
+        const blobDetail = highPerf ? 64 : 48;
+
+        const anim = this.createScene('cover-sphere-container', {
+            slideIndex: 0,
+            cameraZ: 8,
+            objects: [{
+                name: 'points',
+                geometry: new THREE.IcosahedronGeometry(1.8, blobDetail),
+                shader: {
+                    uniforms: { uTime: { value: 0 }, uTransition: { value: 0.0 } },
+                    vertexShader: noiseFunc + `
+                        uniform float uTime;
+                        uniform float uTransition;
+                        varying float vNoise;
+                        void main() {
+                            // --- Ripple State ---
+                            float rippleTime = uTime * 0.4;
+                            float maxRadius = 15.0;
+                            float particleRadius = mod(position.x * 2.5 + rippleTime * 3.0, maxRadius);
+                            float angle = atan(position.z, position.y) + uTime * 0.1;
+                            float life = pow(1.0 - (particleRadius / maxRadius), 2.0);
+                            vec3 ripplePos = vec3(
+                                particleRadius * cos(angle),
+                                particleRadius * sin(angle),
+                                sin(particleRadius * 2.5 - rippleTime * 10.0) * 0.4 * life
+                            );
+
+                            // --- Blob State ---
+                            float noiseFrequency = 0.8;
+                            float noiseStrength = 0.7;
+                            float time = uTime * 0.1;
+                            vec3 displacedPos = position + normal * snoise(position * noiseFrequency + time) * noiseStrength;
+                            vNoise = snoise(position * 2.0 + time * 0.5);
+
+                            // --- Transition ---
+                            vec3 finalPos = mix(ripplePos, displacedPos, uTransition);
+                            vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
+                            gl_PointSize = (mix(0.8, 1.5, uTransition) * life) * (300.0 / -mvPosition.z);
+                            gl_Position = projectionMatrix * mvPosition;
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform float uTransition;
+                        varying float vNoise;
+                        void main() {
+                            float dist = distance(gl_PointCoord, vec2(0.5));
+                            if (dist > 0.5) discard;
+
+                            vec3 colorEmerald = vec3(0.063, 0.725, 0.506);
+                            vec3 colorPurple = vec3(0.659, 0.333, 0.969);
+                            vec3 finalColor = mix(colorEmerald, colorPurple, vNoise * 0.5 + 0.5);
+
+                            float alpha = (1.0 - dist * 2.0) * mix(0.7, 1.0, uTransition);
+                            gl_FragColor = vec4(finalColor, alpha);
+                        }
+                    `
+                }
+            }],
+            update:({ camera, t, points }) => {
+                points.material.uniforms.uTime.value = t;
+                
+                // Animate the transition value with GSAP for smooth easing
+                gsap.to(points.material.uniforms.uTransition, { value: 1.0, duration: 8.0, ease: 'power2.inOut' });
+
+                points.rotation.y = -t * 0.05;
+                camera.lookAt(0,0,0);
+            }
+        });
+        return anim;
+    },
+
+    initCreatorParticles(id) { 
+        return this.createScene(id,{
+            slideIndex:7, cameraZ:2.5, 
+            geometry:new THREE.IcosahedronGeometry(1.2,5),
+            material:{size:0.02,color:id.includes('pratt')?0x10b981:0xa855f7,wireframe:true},
+            update:({main, t})=>{main.rotation.y=t*0.1;}
+        }); 
+    },
+
+    initDripRipple() { 
+        const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
+        const pCount = highPerf ? 50000 : 25000; // Smart LOD
+        
+        const positions = new Float32Array(pCount * 3);
+        const randoms = new Float32Array(pCount);
+
+        for(let i=0; i<pCount; i++) {
+            const i3 = i * 3;
+            const radius = Math.sqrt(Math.random()) * 8; // Spread particles more evenly
+            const angle = Math.random() * Math.PI * 2;
+            positions[i3] = radius * Math.cos(angle);
+            positions[i3 + 1] = 0.0;
+            positions[i3 + 2] = radius * Math.sin(angle);
+            randoms[i] = Math.random();
+        }
+        
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+        
+        const anim = this.createScene('drip-ripple-container', {
+            slideIndex: 2, 
+            cameraZ: 4,
+            geometry: geometry,
+            shader: {
+                uniforms: { 
+                    uTime: { value: 0.0 }, 
+                    uColor: { value: new THREE.Color(0x5D4037) }, // Darker coffee color
+                    uDripTime: { value: 0.0 }
+                },
+                vertexShader: `
+                    uniform float uTime;
+                    uniform float uDripTime;
+                    attribute float aRandom;
+                    varying float vAlpha;
+                    void main() { 
+                        vec3 pos = position; 
+                        float dist = length(pos.xz); 
+                        float dripImpact = uTime - uDripTime;
+                        
+                        if (dripImpact > 0.0) {
+                           float wave_speed = 4.0;
+                           float wave_freq1 = 4.0;
+                           float wave_freq2 = 7.0;
+                           float wave_amp1 = 0.3;
+                           float wave_amp2 = 0.15;
+                           
+                           float wave1 = sin(dist * wave_freq1 - dripImpact * wave_speed);
+                           float wave2 = cos(dist * wave_freq2 - dripImpact * wave_speed * 0.8);
+                           
+                           float decay = exp(-dist * 0.4 - dripImpact * 0.5);
+                           pos.y += (wave1 * wave_amp1 + wave2 * wave_amp2) * decay;
+                           vAlpha = decay;
+                        } else {
+                           vAlpha = 0.0;
+                        }
+                       
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        gl_PointSize = 1.5 * (300.0 / -mvPosition.z); 
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 uColor; 
+                    varying float vAlpha;
+                    void main() { 
+                        if (vAlpha < 0.01) discard;
+                        float dist = distance(gl_PointCoord, vec2(0.5));
+                        if(dist > 0.5) discard;
+                        gl_FragColor = vec4(uColor, vAlpha * (1.0 - dist * 2.0)); 
+                    }`,
+                transparent: true, 
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            },
+            update: ({main, t, camera}) => {
+                if (main.material.uniforms) {
+                    main.material.uniforms.uTime.value = t;
+                    // Create a new drip every 4 seconds
+                    if (Math.floor(t / 4) !== Math.floor((t - 1/60) / 4)) {
+                         main.material.uniforms.uDripTime.value = t;
+                    }
+                }
+                camera.position.y = 2.5;
+                camera.position.x = Math.sin(t * 0.1) * 1.5;
+                camera.lookAt(0,0,0);
+            }
+        });
+        return anim;
+    },
+    
+    initVenuePointCloud() {
+        const points = [];
+        const colors = [];
+        const sextantColor = new THREE.Color(0xa855f7); // Purple for building
+        const streetColor = new THREE.Color(0x10b981);  // Green for streets
+        const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
+
+        // Main street grid (existing)
+        for(let i = -20; i <= 20; i += 1.5) { 
+            for(let j = -20; j <= 20; j += 1.5) { 
+                points.push(i, -5, j); 
+                streetColor.toArray(colors, colors.length); 
+            } 
+        }
+
+        // --- NEW --- Add intersecting cross-street of green particles
+        for(let i = -25; i <= 25; i += 0.5) { 
+            points.push(i, -4.9, 0); // Along x-axis at z=0
+            streetColor.toArray(colors, colors.length);
+        }
+         for(let i = -25; i <= 25; i += 0.5) { 
+            points.push(0, -4.9, i); // Along z-axis at x=0
+            streetColor.toArray(colors, colors.length);
+        }
+
+        // Building cloud (existing)
+        const buildingParticleCount = highPerf ? 6000 : 3000; // Smart LOD
+        const bx=-5, by=-5, bz=-5, bw=10, bh=8, bd=10;
+        for (let i=0; i<buildingParticleCount; i++) { 
+            points.push(bx+Math.random()*bw, by+Math.random()*bh, bz+Math.random()*bd); 
+            sextantColor.toArray(colors, colors.length); 
+        }
+        
+        const anim = this.createScene('venue-point-cloud', { 
+            slideIndex:3, cameraZ:10, 
+            geometry: new THREE.BufferGeometry(),
+            material:{size:0.1, vertexColors: true, transparent:true,opacity:0.8, blending: THREE.AdditiveBlending},
+            update:({main, camera,t})=>{
+                if (!main.geometry.getAttribute('position')) {
+                    main.geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+                    main.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+                }
+                camera.position.x=Math.sin(t*0.1)*20;
+                camera.position.z=Math.cos(t*0.1)*20;
+                camera.position.y=3+Math.sin(t*0.2)*3;
+                camera.lookAt(0,0,0);
+            }
+        });
+        return anim;
+    },
+
+    initFinaleAnimation() {
+        const pCount = 80000;
+        const pos = new Float32Array(pCount * 3);
+        const particleTypes = new Float32Array(pCount); 
+        let lastUpdateTime = 0;
+
+        for (let i = 0; i < pCount; i++) {
+            const i3 = i * 3;
+            const r = Math.random() * 30;
+            const a = Math.random() * Math.PI * 2;
+            pos[i3] = r * Math.cos(a);
+            pos[i3 + 1] = r * Math.sin(a);
+            pos[i3 + 2] = (Math.random() - .5) * 12;
+            particleTypes[i] = Math.random() < 0.2 ? 1.0 : 0.0;
+        }
+
+        const anim = this.createScene('finale-animation', {
+            slideIndex: 9,
+            cameraZ: 2,
+            geometry: new THREE.BufferGeometry(),
+            shader: {
+                uniforms: { uTime: { value: 0 } },
+                vertexShader: `
+                    uniform float uTime;
+                    attribute float aParticleType;
+                    varying float vAlpha;
+                    varying float vParticleType;
+
+                    void main() {
+                        vParticleType = aParticleType;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        float zFactor = 1.0 - clamp(abs(mvPosition.z / 20.0), 0.0, 1.0);
+                        float pSize = (zFactor * zFactor) * 2.0 + 0.5;
+                        gl_PointSize = pSize;
+                        vAlpha = zFactor;
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying float vAlpha;
+                    varying float vParticleType;
+                    void main() {
+                        float dist = distance(gl_PointCoord, vec2(0.5));
+                        if (dist > 0.5) discard;
+                        float strength = 1.0 - dist * 2.0;
+                        vec3 greenHaloColor = vec3(0.06, 0.71, 0.51);
+                        vec3 greenCenterColor = vec3(0.8, 1.0, 0.9);
+                        vec3 platinumHaloColor = vec3(0.6, 0.65, 0.75);
+                        vec3 platinumCenterColor = vec3(1.0, 1.0, 1.0);
+                        vec3 greenColor = mix(greenCenterColor, greenHaloColor, strength * 2.5);
+                        vec3 platinumColor = mix(platinumCenterColor, platinumHaloColor, strength * 2.5);
+                        vec3 finalColor = mix(greenColor, platinumColor, vParticleType);
+                        gl_FragColor = vec4(finalColor, strength * vAlpha);
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                depthWrite: false
+            },
+            update: ({ main, t }) => {
+                if(!main.geometry.getAttribute('aParticleType')) {
+                     main.geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+                     main.geometry.setAttribute('aParticleType', new THREE.BufferAttribute(particleTypes, 1));
+                }
+                main.rotation.z += 3e-5;
+                main.material.uniforms.uTime.value = t;
+
+                const now = performance.now();
+                if (now - lastUpdateTime > 16) { // Throttles updates to roughly 60fps
+                    const positions = main.geometry.attributes.position.array;
+                    for (let i = 0; i < pCount; i++) {
+                        const i3 = i * 3;
+                        const d = Math.sqrt(positions[i3] ** 2 + positions[i3 + 1] ** 2);
+                        positions[i3 + 2] = Math.sin(d * 1.2 - t * .15) * 1.5 * Math.exp(-d * .1);
+                    }
+                    main.geometry.attributes.position.needsUpdate = true;
+                    lastUpdateTime = now;
+                }
+            }
+        });
+
+        return anim;
+    },
+
+    initChart(id,config){if(this.scenes[id])this.scenes[id].destroy();const c=document.getElementById(id)?.getContext('2d');if(!c)return;this.scenes[id]=new Chart(c,config);},
+    initPredictiveChart(){this.initChart('predictive-chart',{type:'line',data:{labels:['Q1','Q2','Q3','Q4'],datasets:[{label:'Coffee Shop Foot Traffic',data:[150,165,170,180],backgroundColor:'rgba(168,85,247,0.3)',borderColor:'#a855f7',tension:0.4},{label:'Coffee/DJ Set Attendance',data:[10,25,60,95],backgroundColor:'rgba(6,182,212,0.3)',borderColor:'#06b6d4',tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'white',boxWidth:12,padding:15}}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}}}}});},
+    initTrendsChart(){this.initChart('trends-chart',{type:'bar',data:{labels:['Traditional Cafes','DJ Venues','Hybrid Spaces'],datasets:[{label:'Market Interest (SF)',data:[75,85,110],backgroundColor:['rgba(6,182,212,0.6)','rgba(245,158,11,0.6)','rgba(16,185,129,0.6)'],borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{display:false}}}}});},
+    initGrowthChart(){this.initChart('growth-chart',{type:'radar',data:{labels:['Revenue Lift','Brand Awareness','Foot Traffic','Community Growth','Media Buzz'],datasets:[{label:'Projected Growth',data:[85,75,60,95,70],backgroundColor:'rgba(16,185,129,0.3)',borderColor:'#10b981',borderWidth:2,pointBackgroundColor:'#10b981',pointBorderColor:'#fff',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10, 14, 26, 0.8)',bodyFont:{size:12},bodySpacing: 4, padding:12, callbacks:{title:(c)=>c[0].label,label:(c)=>{const v=c.parsed.r;let e='';switch(c.label){case'Revenue Lift':e='Projected increase in nightly revenue from extended hours and premium offerings.';break;case'Brand Awareness':e='Increased social media buzz and word-of-mouth recognition in the target demographic.';break;case'Foot Traffic':e='Attracting new and returning customers during previously off-peak evening hours.';break;case'Community Growth':e='Building a loyal community around unique, shared experiences, fostering retention.';break;case'Media Buzz':e="Generating organic press and influencer mentions due to the event's novelty.";break;}return[`Value: ${v}%`,`Potential: ${e}`];}}}},scales:{r:{angleLines:{color:'rgba(255,255,255,0.1)'},grid:{color:'rgba(255,255,255,0.15)'},pointLabels:{color:'white',font:{size:12,family:"'Inter',sans-serif"}},ticks:{display:false,beginAtZero:true,max:100}}}}});},
+    initRevenuePieChart(){this.initChart('revenue-pie-chart',{type:'pie',data:{labels:['Tier A Tickets','Tier B Tickets','Extra Drinks'],datasets:[{data:[1000,1680,720],backgroundColor:['#10b981','#a855f7','#06b6d4'],borderColor:'#0a0e1a',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'white',boxWidth:12,padding:20}},tooltip:{callbacks:{label:(c)=>`${c.label}: $${c.raw.toFixed(0)}`}},datalabels:{formatter:(v,c)=>{const s=c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return`${(v/s*100).toFixed(0)}%`;},color:'#fff',font:{weight:'bold'}}}}});},
+
+    handleResize(){this.renderers.forEach(r=>{const c=r.domElement.parentElement;if(c&&c.clientWidth>0){const m=Object.values(this.scenes).find(s=>s&&s.renderer===r)?.camera;if(m){m.aspect=c.clientWidth/c.clientHeight;m.updateProjectionMatrix();}r.setSize(c.clientWidth,c.clientHeight);}});Object.values(this.scenes).forEach(s=>{if(s instanceof Chart&&s.resize)s.resize();});},
+    
+    getAnimFunction(slideIndex) {
+        const animMap={0:this.initCoverSphere,2:this.initDripRipple,3:this.initVenuePointCloud,7:() => { this.initCreatorParticles('pratt-particles')(); this.initCreatorParticles('diana-particles')(); },9:this.initFinaleAnimation};
+        return animMap[slideIndex]?.bind(this);
+    }
+};
+
+const Content = {
+    init(app) { this.app=app; this.initialTransforms=new Map(); document.querySelectorAll('.venue-item').forEach(i=>this.initialTransforms.set(i,{transform:i.style.transform,top:i.style.top,left:i.style.left,width:i.style.width,height:i.style.height})); },
+    onSlideChange(slideIndex){Object.values(Animations.scenes).forEach(s=>s&&s.renderer&&s.renderer.setAnimationLoop(null));const f=Animations.getAnimFunction(slideIndex);if(f){const r=f();if(r)r();}switch(slideIndex){case 1:Animations.createScene('bell-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.CylinderGeometry(0,0.6,1.2,16,4),material:{size:0.05,color:0x10b981},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('heart-cloud',{slideIndex:1,cameraZ:2.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0.25,0.25).bezierCurveTo(0.25,0.25,0.2,0,0,0).bezierCurveTo(-0.3,0,-0.3,0.35,-0.3,0.35).bezierCurveTo(-0.3,0.55,-0.1,0.77,0.25,0.95).bezierCurveTo(0.6,0.77,0.8,0.55,0.8,0.35).bezierCurveTo(0.8,0.35,0.8,0,0.5,0).bezierCurveTo(0.35,0,0.25,0.25,0.25,0.25), 30),material:{size:0.04,color:0xa855f7},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('star-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0,0.5).lineTo(0.1,0.1).lineTo(0.5,0.1).lineTo(0.2,-0.1).lineTo(0.3,-0.5).lineTo(0,-0.2).lineTo(-0.3,-0.5).lineTo(-0.2,-0.1).lineTo(-0.5,0.1).lineTo(-0.1,0.1).lineTo(0,0.5), 10),material:{size:0.04,color:0x06b6d4},update:({main,t})=>{main.rotation.y=t*0.1;}});break;case 2:this.setupMenuSystem();this.setupEventTimeline();break;case 3:this.setupInteractiveVenue();break;case 4:Animations.initPredictiveChart();Animations.initTrendsChart();break;case 5:this.setupFinancialCalculator();break;case 6:Animations.initGrowthChart();break;case 8:this.setupTaskPlanner();break;}},
+    setupMenuSystem(){if(!document.getElementById('menu-details').innerHTML)this.showMenuCategory('cold');},
+    showMenuCategory(category){document.querySelectorAll('.menu-category').forEach(c=>c.classList.remove('active'));document.querySelector(`.menu-category[data-category="${category}"]`).classList.add('active');document.getElementById('menu-details').innerHTML=(menuData[category]||[]).map(i=>`<div class="menu-item" style="border-left: 3px solid ${i.color};"><div class="item-info"><h4 style="color:${i.color};">${i.name}</h4><p>${i.ingredients}</p><div class="item-source">${i.source}</div></div><div class="item-price" style="color:${i.color};">${i.price}</div></div>`).join('');},
+    setupEventTimeline(){const w=document.getElementById('event-timeline');if(!w||w.children.length>0)return;w.innerHTML=timelineData.map(e=>`<div class="timeline-event" onclick="toggleExpand(this)"><div class="timeline-event-main" style="border-top: 2px solid ${e.color};"><div class="time" style="color:${e.color};">${e.time}</div><h4 style="color:${e.color};">${e.title}</h4><p>${e.desc}</p></div><div class="timeline-event-details body-regular"><p class="font-semibold text-gray-300 mb-2">Sensory Focus:</p><p class="text-gray-400 mb-4">${e.sensory_focus}</p><p class="font-semibold text-gray-300 mb-2">Content Capture:</p><p class="text-gray-400">${e.content_capture}</p></div></div>`).join('');},
+    setupInteractiveVenue(){const v=document.getElementById('interactive-venue');if(!v||v.dataset.i)return;v.dataset.i='1';let a=null,o={x:0,y:0},s={x:0,y:0},z={w:0,h:0},g=0;const t=e=>{const i=e.target.closest('.venue-item');if(!i)return;a=i;document.querySelectorAll('.venue-item').forEach(l=>l.classList.remove('selected'));a.classList.add('selected');a.style.zIndex=100;const n=e.touches?e.touches[0]:e,r=a.getBoundingClientRect();o={x:n.clientX-r.left,y:n.clientY-r.top};z={w:a.offsetWidth,h:a.offsetHeight};s={x:n.clientX,y:n.clientY};const c=new DOMMatrix(window.getComputedStyle(a).transform),d=Math.atan2(c.b,c.a);g=d-Math.atan2(n.clientY-(r.top+r.height/2),n.clientX-(r.left+r.width/2));window.addEventListener('mousemove',m);window.addEventListener('mouseup',p);window.addEventListener('touchmove',m,{passive:!1});window.addEventListener('touchend',p);e.preventDefault();};const m=e=>{if(!a)return;e.preventDefault();const i=e.touches?e.touches[0]:e,n=v.getBoundingClientRect(),r=this.currentVenueMode;if(r==='move'){let c=i.clientX-n.left-o.x,d=i.clientY-n.top-o.y;c=Math.max(0,Math.min(c,n.width-a.offsetWidth));d=Math.max(0,Math.min(d,n.height-a.offsetHeight));a.style.left=`${c}px`;a.style.top=`${d}px`;}else if(r==='resize'){const c=i.clientX-s.x,d=i.clientY-s.y;a.style.width=`${Math.max(50,z.w+c)}px`;a.style.height=`${Math.max(50,z.h+d)}px`;}else if(r==='rotate'){const c=a.getBoundingClientRect(),d=Math.atan2(i.clientY-(c.top+c.height/2),i.clientX-(c.left+c.width/2));a.style.transform=`rotate(${g+d}rad)`;}};const p=()=>{if(a){a.classList.remove('selected');a.style.zIndex='';}a=null;window.removeEventListener('mousemove',m);window.removeEventListener('mouseup',p);window.removeEventListener('touchmove',m);window.removeEventListener('touchend',p);};v.addEventListener('mousedown',t);v.addEventListener('touchstart',t,{passive:!1});},
+    setVenueMode(mode){this.currentVenueMode=mode;document.querySelectorAll('.venue-mode-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.venue-mode-btn[onclick="setVenueMode('${mode}')"]`).classList.add('active');},
+    resetVenueLayout(){document.querySelectorAll('.venue-item').forEach(i=>{const n=this.initialTransforms.get(i);if(n){i.style.transform=n.transform;i.style.top=n.top;i.style.left=n.left;i.style.width=n.width;i.style.height=n.height;}});},
+    setupFinancialCalculator(){this.calculateRevenue();},
+    calculateRevenue(){const a=parseFloat(document.getElementById('num-attendees').value)||0,b=parseFloat(document.getElementById('ticket-price-a').value)||0,c=parseFloat(document.getElementById('ticket-price-b').value)||0,d=parseFloat(document.getElementById('tier-b-split').value)/100,e=parseFloat(document.getElementById('extra-drink-spend').value)||0;document.getElementById('tier-b-split-display').textContent=`${(d*100).toFixed(0)}%`;const f=a*(1-d),g=a*d,h=f*b,i=g*c,j=a*e,k=h+i+j,l=k*0.25;document.getElementById('total-revenue').textContent=`$${k.toLocaleString('en-US',{maximumFractionDigits:0})}`;document.getElementById('sextant-share').textContent=`$${l.toLocaleString('en-US',{maximumFractionDigits:0})}`;if(!Animations.scenes['revenue-pie-chart'])Animations.initRevenuePieChart();const m=Animations.scenes['revenue-pie-chart'];m.data.datasets[0].data=[h,i,j];m.update();},
+    setupTaskPlanner(){this.renderTasks('all');document.querySelectorAll('.task-filter').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.task-filter').forEach(e=>e.classList.remove('active'));b.classList.add('active');this.renderTasks(b.dataset.filter);};});},
+    renderTasks(filter){const c=document.getElementById('task-list');if(!c)return;const t=taskData.filter(e=>filter==='all'||e.assignee===filter);c.innerHTML=t.map(e=>`<div class="task-card" data-assignee="${e.assignee}"><div class="task-main-content" onclick="toggleExpand(this.parentElement)"><div class="task-header"><h4 class="text-white font-semibold">${e.title}</h4><span class="task-assignee ${e.assignee}">${e.assignee.replace('-',' ')}</span></div><div class="task-week">Week ${e.week}</div></div><div class="task-details"><p class="body-regular text-gray-300">${e.desc}</p><a href="${this.getCalendarLink(e)}" target="_blank" class="task-calendar-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a.5.5 0 0 1 .5.5v1h-1V1.5A.5.5 0 0 1 8 1zM3.5 3a.5.5 0 0 0-.5.5V4h9V3.5a.5.5 0 0 0-.5-.5h-8zM13 5H3v6.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5z"/><path d="M1 4v10.5A1.5 1.5 0 0 0 2.5 16h11a1.5 1.5 0 0 0 1.5-1.5V4H1zm13-1.5a.5.5 0 0 1 .5.5V3H1.5a.5.5 0 0 1-.5-.5V2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 14 2.5zM8.5 7a.5.5 0 0 0-1 0v1.5H6a.5.5 0 0 0 0 1h1.5V11a.5.5 0 0 0 1 0V9.5H10a.5.5 0 0 0 0-1H8.5V7z"/></svg>Add to Calendar</a></div></div>`).join('');},
+    getCalendarLink(t){const b="https://www.google.com/calendar/render?action=TEMPLATE",e=encodeURIComponent(`ST: ${t.title}`),d=`${t.dates.start}/${t.dates.end}`,s=encodeURIComponent(t.desc.replace(/<br>/g,'\n').replace(/<[^>]*>?/gm,'')),l=encodeURIComponent("Sextant Coffee Roasters, 539 Valencia St, San Francisco, CA");return`${b}&text=${e}&dates=${d}&details=${s}&location=${l}`;},
+    showTechModal(techKey){const details=techDetails[techKey];if(!details)return;const modal=document.createElement('div');modal.className='tech-modal';modal.onclick=()=>this.hideTechModal(modal);modal.innerHTML=`<div class="tech-modal-content card" onclick="event.stopPropagation()"><button class="tech-modal-close" onclick="Content.hideTechModal(this.closest('.tech-modal'))">&times;</button><h3 class="heading-1" style="color:${details.color};">${details.title}</h3><p class="body-regular mt-4">${details.desc}</p></div>`;this.app.DOM.techModalContainer.appendChild(modal);setTimeout(()=>modal.classList.add('visible'),10);},
+    hideTechModal(modal){modal.classList.remove('visible');setTimeout(()=>modal.remove(),300);}
+};
+
+window.showMenuCategory=c=>Content.showMenuCategory(c);window.toggleExpand=i=>i.classList.toggle('expanded');window.setVenueMode=m=>Content.setVenueMode(m);window.resetVenueLayout=()=>Content.resetVenueLayout();window.calculateRevenue=()=>Content.calculateRevenue();
+
+document.addEventListener('DOMContentLoaded',()=>{Chart.register(ChartDataLabels);try{App.init();}catch(e){window.onerror("Initialization failed","","",0,e);}});
+</script>
+</body>
+</html>
