@@ -218,7 +218,7 @@
         .progress-segment:not(:first-child) { border-left: 1px solid rgba(0,0,0,0.3); }
         .task-notes-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem; color: var(--text-primary); margin-top: 1rem; font-family: var(--font-body); font-size: 0.85rem;}
 
-        .creators-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2rem; }
+        .creators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
         .creator-card { position: relative; background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; overflow: hidden; }
         .creator-particles { position: absolute; inset: 0; pointer-events: none; }
         .creator-content { position: relative; z-index: 10; }
