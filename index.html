@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Surface Tension: Digital Drip Pitch v41</title>
+    <title>Surface Tension: Digital Drip Pitch v42</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
@@ -28,7 +28,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; width: 100%; overflow: hidden; background-color: var(--bg-primary); font-family: var(--font-body); color: var(--text-primary); -webkit-tap-highlight-color: transparent; }
         
-        #loading-screen { position: fixed; inset: 0; background-color: var(--bg-primary); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; transition: opacity 1s ease-in-out, visibility 1s ease-in-out; }
+        #loading-screen { position: fixed; inset: 0; background-color: var(--bg-primary); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out; }
         #loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         #loading-canvas { width: 250px; height: 250px; }
         .loading-text { 
@@ -182,7 +182,7 @@
         .metric-card:hover { transform: scale(1.05); }
         .metric-card.emerald { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); }
         .metric-card.purple { background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.4); }
-        .metric-card.teal { background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.4); }
+        .metric-card.teal { background: rgba(6, 182, 212, 0.2); border-color: rgba(6, 182, 212, 0.4); }
         .metric-card.yellow { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.4); }
         .metric-value { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif; }
         .metric-details { max-height: 0; overflow: hidden; transition: all 0.5s ease; margin-top: 1rem; font-size: 0.85rem; text-align: left;}
@@ -214,7 +214,7 @@
         .task-calendar-btn { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; background: var(--primary-teal); color: black; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.8rem; text-decoration: none; transition: transform 0.2s ease; }
         .task-calendar-btn:hover { transform: scale(1.05); }
         .progress-bar-container { margin-top: 0.75rem; background-color: rgba(255,255,255,0.1); border-radius: 99px; height: 8px; overflow: hidden; cursor: pointer; display: flex; }
-        .progress-segment { height: 100%; flex-grow: 1; transition: background-color 0.3s; }
+        .progress-segment { height: 100%; flex-grow: 1; transition: background-color: 0.3s; }
         .progress-segment:not(:first-child) { border-left: 1px solid rgba(0,0,0,0.3); }
         .task-notes-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem; color: var(--text-primary); margin-top: 1rem; font-family: var(--font-body); font-size: 0.85rem;}
 
@@ -228,7 +228,7 @@
         .freestanding-quote .quote-line { font-family: var(--font-heading); font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.4; letter-spacing: 0.03em; font-weight: 400; color: var(--text-secondary); }
         .freestanding-quote .quote-line.emphasis { font-weight: 600; color: var(--primary-emerald); text-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
         
-        #finale-container { height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #finale-container { height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.1) 0%, rgba(0,0,0,0) 70%);}
         #finale-animation { position: absolute; inset: 0; z-index: -1; }
         .finale-content { position: absolute; bottom: 5rem; left: 0; right: 0; padding: 2rem; z-index: 1; pointer-events: none; text-align: center; width: 100%; max-width: 1200px; margin: 0 auto; }
         #finale-title { 
@@ -278,8 +278,9 @@
 
         .tech-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 5000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
         .tech-modal.visible { opacity: 1; pointer-events: all; }
-        .tech-modal-content { max-width: 500px; width: 90%; }
-        .tech-modal-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
+        .menu-modal-details { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.75rem; display: flex; justify-content: space-between; opacity: 0.8;}
+        .menu-modal-content { max-width: 600px; width: 90%; }
+        .menu-modal-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
 
         @media (max-width: 900px) {
             .data-section, .marketing-layout, .sextant-layout, .creators-grid, .marketing-charts-container, .event-timeline-grid { grid-template-columns: 1fr; }
@@ -309,7 +310,7 @@
     <div id="app-container">
         <header class="app-header" id="app-header">
             <canvas id="header-logo-canvas"></canvas>
-            <div id="slide-indicator" class="body-regular">01 / 10</div>
+            <div id="slide-indicator" class="body-regular">01 / 11</div>
         </header>
 
         <div id="slide-container"></div>
@@ -344,97 +345,6 @@ window.onerror = function(message, source, lineno, colno, error) {
     return true; 
 };
 
-// --- SIMPLEX NOISE LIBRARY (for slide 1 animation) ---
-const SimplexNoise = (() => {
-  const F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
-  const G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
-  const F3 = 1.0 / 3.0;
-  const G3 = 1.0 / 6.0;
-  const F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
-  const G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
-  
-  function buildPermutationTable(random) {
-    const p = new Uint8Array(256);
-    for (let i = 0; i < 256; i++) p[i] = i;
-    for (let i = 0; i < 255; i++) {
-      const r = i + ~~(random() * (256 - i));
-      const aux = p[i];
-      p[i] = p[r];
-      p[r] = aux;
-    }
-    const perm = new Uint8Array(512);
-    const permMod12 = new Uint8Array(512);
-    for (let i = 0; i < 512; i++) {
-      perm[i] = p[i & 255];
-      permMod12[i] = perm[i] % 12;
-    }
-    return { perm, permMod12 };
-  }
-
-  class SimplexNoise {
-    constructor(random = Math.random) {
-      const { perm, permMod12 } = buildPermutationTable(random);
-      this.perm = perm;
-      this.permMod12 = permMod12;
-      this.grad3 = new Float32Array([1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0, 1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, -1, 0, 1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1]);
-      this.grad4 = new Float32Array([0,1,1,1,0,1,1,-1,0,1,-1,1,0,1,-1,-1,0,-1,1,1,0,-1,1,-1,0,-1,-1,1,0,-1,-1,-1,1,0,1,1,1,0,1,-1,1,0,-1,1,1,0,-1,-1,-1,0,1,1,-1,0,1,-1,-1,0,-1,1,-1,0,-1,-1,1,1,0,1,1,1,0,-1,1,-1,0,1,1,-1,0,-1,-1,1,0,1,-1,1,0,-1,-1,-1,0,1,-1,-1,0,-1,1,1,1,0,1,1,-1,0,1,-1,1,0,1,-1,-1,0,-1,1,1,0,-1,1,-1,0,-1,-1,1,0,-1,-1,-1,0]);
-    }
-
-    noise4D(x, y, z, w) {
-        const { perm, grad4 } = this;
-        let n0, n1, n2, n3, n4;
-        let s = (x + y + z + w) * F4;
-        let i = Math.floor(x + s), j = Math.floor(y + s), k = Math.floor(z + s), l = Math.floor(w + s);
-        let t = (i + j + k + l) * G4;
-        let X0 = i - t, Y0 = j - t, Z0 = k - t, W0 = l - t;
-        let x0 = x - X0, y0 = y - Y0, z0 = z - Z0, w0 = w - W0;
-
-        let rankx = 0, ranky = 0, rankz = 0, rankw = 0;
-        if (x0 > y0) rankx++; else ranky++;
-        if (x0 > z0) rankx++; else rankz++;
-        if (x0 > w0) rankx++; else rankw++;
-        if (y0 > z0) ranky++; else rankz++;
-        if (y0 > w0) ranky++; else rankw++;
-        if (z0 > w0) rankz++; else rankw++;
-
-        let i1 = rankx >= 3 ? 1 : 0, j1 = ranky >= 3 ? 1 : 0, k1 = rankz >= 3 ? 1 : 0, l1 = rankw >= 3 ? 1 : 0;
-        let i2 = rankx >= 2 ? 1 : 0, j2 = ranky >= 2 ? 1 : 0, k2 = rankz >= 2 ? 1 : 0, l2 = rankw >= 2 ? 1 : 0;
-        let i3 = rankx >= 1 ? 1 : 0, j3 = ranky >= 1 ? 1 : 0, k3 = rankz >= 1 ? 1 : 0, l3 = rankw >= 1 ? 1 : 0;
-
-        let x1 = x0 - i1 + G4, y1 = y0 - j1 + G4, z1 = z0 - k1 + G4, w1 = w0 - l1 + G4;
-        let x2 = x0 - i2 + 2.0 * G4, y2 = y0 - j2 + 2.0 * G4, z2 = z0 - k2 + 2.0 * G4, w2 = w0 - l2 + 2.0 * G4;
-        let x3 = x0 - i3 + 3.0 * G4, y3 = y0 - j3 + 3.0 * G4, z3 = z0 - k3 + 3.0 * G4, w3 = w0 - l3 + 3.0 * G4;
-        let x4 = x0 - 1.0 + 4.0 * G4, y4 = y0 - 1.0 + 4.0 * G4, z4 = z0 - 1.0 + 4.0 * G4, w4 = w0 - 1.0 + 4.0 * G4;
-
-        let ii = i & 255, jj = j & 255, kk = k & 255, ll = l & 255;
-        let gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]] % 32 * 4;
-        let gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]] % 32 * 4;
-        let gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]] % 32 * 4;
-        let gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]] % 32 * 4;
-        let gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32 * 4;
-
-        let t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
-        if (t0 < 0) n0 = 0.0;
-        else { t0 *= t0; n0 = t0 * t0 * (grad4[gi0] * x0 + grad4[gi0 + 1] * y0 + grad4[gi0 + 2] * z0 + grad4[gi0 + 3] * w0); }
-        let t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
-        if (t1 < 0) n1 = 0.0;
-        else { t1 *= t1; n1 = t1 * t1 * (grad4[gi1] * x1 + grad4[gi1 + 1] * y1 + grad4[gi1 + 2] * z1 + grad4[gi1 + 3] * w1); }
-        let t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
-        if (t2 < 0) n2 = 0.0;
-        else { t2 *= t2; n2 = t2 * t2 * (grad4[gi2] * x2 + grad4[gi2 + 1] * y2 + grad4[gi2 + 2] * z2 + grad4[gi2 + 3] * w2); }
-        let t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
-        if (t3 < 0) n3 = 0.0;
-        else { t3 *= t3; n3 = t3 * t3 * (grad4[gi3] * x3 + grad4[gi3 + 1] * y3 + grad4[gi3 + 2] * z3 + grad4[gi3 + 3] * w3); }
-        let t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
-        if (t4 < 0) n4 = 0.0;
-        else { t4 *= t4; n4 = t4 * t4 * (grad4[gi4] * x4 + grad4[gi4 + 1] * y4 + grad4[gi4 + 2] * z4 + grad4[gi4 + 3] * w4); }
-        return 27.0 * (n0 + n1 + n2 + n3 + n4);
-    }
-  }
-  return SimplexNoise;
-})();
-const simplex = new SimplexNoise();
-
 // --- SLIDE TEMPLATES --- //
 const slideTemplates = [
     { 
@@ -465,28 +375,77 @@ const slideTemplates = [
             <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 6: The Resonance (Post-Event)</span></div><div class="marketing-details body-regular"><p class="mb-4">Solidify the community and create a feedback loop for the next iteration.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-6">The Idea</div><div class="execution-tab" data-tab="exec-6">Execution</div></div><div class="execution-content active" data-tab-content="idea-6"><p class="mt-4">Within 48 hours, send a thank you email to all attendees with a link to a curated, private playlist from the night. Invite them to a private Signal or Telegram group for future announcements. Post a single, artfully shot "after-movie" (60 seconds) one week later. The call to action is simple: "Stay tuned."</p></div><div class="execution-content" data-tab-content="exec-6"><p class="mt-4"><strong>Why it's essential:</strong> The event doesn't end when the music stops. This phase transforms attendees into a core community, building anticipation and loyalty for the next "portal opening." It creates a valuable feedback and communication channel that is private and exclusive.</p></div></div></div>
         </div>`
     },
+    {
+        title: "Sponsorship & Partnership",
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">Surface Tension offers a unique opportunity for brands to align with a new wave of cultural experiences in San Francisco. We seek partners who value authenticity, quality, and deep community engagement. Our model is designed to be a zero-cost event for us and a high-value platform for you.</p>
+        <div class="sextant-layout">
+            <div class="sextant-item" onclick="toggleExpand(this)">
+                <div class="sextant-header"><span class="sextant-title text-emerald-400">🔊 The Sonic Partner (In-Kind)</span></div>
+                <div class="sextant-details body-regular">
+                    <p class="mb-3">Provide a professional-grade sound system (2x speakers, 1x subwoofer) for the event duration.</p>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Value Exchange:</strong> Prominent "Audio Experience by [Your Brand]" branding at the DJ booth and on all digital assets. Direct access to a discerning audience of audiophiles and music lovers. Professional photos of your gear in an aesthetic, high-energy environment.</li>
+                        <li><strong>Target:</strong> Local A/V Rental Companies (e.g., Avista, McCune), High-Fidelity Brands (e.g., Funktion-One, Pioneer DJ).</li>
+                        <li class="font-bold text-emerald-300 mt-2">Cost Offset: $200</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sextant-item" onclick="toggleExpand(this)">
+                <div class="sextant-header"><span class="sextant-title text-purple-400">🍹 The Elixir Partner (In-Kind)</span></div>
+                <div class="sextant-details body-regular">
+                    <p class="mb-3">Supply non-alcoholic spirits, mixers, and unique ingredients for our curated menu.</p>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Value Exchange:</strong> Your brand will be the exclusive N/A spirit featured in our signature cocktails. Menu integration, social media spotlights, and direct sampling opportunities to a health-conscious, trend-setting demographic.</li>
+                        <li><strong>Target:</strong> N/A Spirit Brands (e.g., Ghia, Seedlip, Kin Euphorics), Premium Mixer Companies (e.g., Fever-Tree), Local ingredient purveyors.</li>
+                        <li class="font-bold text-purple-300 mt-2">Cost Offset: ~$250 (COGS)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sextant-item" onclick="toggleExpand(this)">
+                <div class="sextant-header"><span class="sextant-title text-teal-400">✨ The Ambience Partner ($500 Cash)</span></div>
+                <div class="sextant-details body-regular">
+                    <p class="mb-3">A direct financial sponsorship to underwrite the core artistic and operational costs.</p>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Value Exchange:</strong> "Presented By [Your Brand]" status on all marketing materials. On-site activation space, exclusive access for content creation, and an opportunity to co-host a pre-event for your top clients or team. The most direct way to embed your brand within this cultural moment.</li>
+                        <li><strong>Target:</strong> Tech companies, lifestyle brands, creative agencies seeking to engage with SF's cultural tastemakers.</li>
+                        <li class="font-bold text-teal-300 mt-2">Cost Offset: $500 (DJ Honorarium)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>`
+    },
     { 
         title: "Production & Financial Intelligence", 
-        content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is an exercise in authentic luxury—a lean, high-impact model where every dollar enhances the sensory experience. We invest in technology that serves the 'crafted experience,' with a target production budget of <span class="font-bold text-emerald-400">$1014</span>, offset by returning equipment post-event.</p>
+        content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is an exercise in authentic luxury—a lean, high-impact model where every dollar enhances the sensory experience. We aim for a <span class="font-bold text-emerald-400">zero-cost event</span> through strategic partnerships, ensuring all investment is directed towards quality and experience.</p>
         <div class="sextant-layout">
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🔊 Sound System - Est. Cost $200</span></div><div class="sextant-details body-regular"><p class="mb-3">Audio is the centerpiece. The choice is a returnable, high-performance PA system known for clarity, ensuring our sonic environment is felt, not just heard. The rental cost is effectively zeroed out post-event.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Speakers:</strong> <a href="https://www.amazon.com/s?k=12+inch+pa+speaker+system" target="_blank" class="text-emerald-400 hover:underline">12" PA System</a> (Purchased via Amazon for easy 30-day return).</li><li><strong>Achieves:</strong> Professional, immersive sound that meets artist standards while strategically minimizing final production costs.</li></ul></div></div>
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">💡 Lighting & FX - Est. Cost $100</span></div><div class="sextant-details body-regular"><p class="mb-3">Our lighting strategy is about subtraction, not addition. We use it to transform the space and manipulate perception. All items are purchased via Amazon for post-event return.</p><ul class="list-disc pl-5 space-y-1"><li><strong>LEDs:</strong> <a href="https://www.amazon.com/s?k=led+par+lights" target="_blank" class="text-emerald-400 hover:underline">Basic LED PAR lights (4x)</a>.</li><li><strong>Hazer:</strong> <a href="https://www.amazon.com/s?k=water+based+hazer" target="_blank" class="text-emerald-400 hover:underline">Compact water-based hazer</a>.</li><li><strong>Achieves:</strong> A cinematic environment that encourages 'embodied presence' at a final cost of effectively $0.</li></ul></div></div>
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🎧 DJ Honorarium - Est. Cost $500</span></div><div class="sextant-details body-regular"><p class="mb-3">To act as a 'cultural catalyst,' we must respect and compensate talent. The selected local DJ receives an honorarium. They will provide their own professional-grade mixer, as is standard practice, eliminating rental costs.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Achieves:</strong> Artist satisfaction, seamless technical performance, and credibility within the electronic music community.</li></ul></div></div>
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">📋 Permits & Licensing - Est. Cost $214</span></div><div class="sextant-details body-regular"><p class="mb-3">Operational integrity is key. Our strategy is to work *with* the city. Sextant's existing permits are an asset, but a dedicated event permit is wisest.</p><ul class="list-disc pl-5 space-y-1"><li><strong>Primary Path:</strong> Review Sextant's existing licenses. If they have a Place of Entertainment (POE) or Limited Live Performance (LLP) permit, this event may fall under its purview, potentially requiring only a notification and minimal fees.</li><li><strong>Secondary Path:</strong> To ensure zero ambiguity, we will apply for a <a href="https://sf.gov/get-entertainment-permit-your-indoor-event" target="_blank" class="text-emerald-400 hover:underline">One-Time Indoor Entertainment permit</a>. This is the cleanest path and builds a positive relationship with the Entertainment Commission for future events.</li><li><strong>Achieves:</strong> The lowest possible permit cost, full legal compliance, and a positive reputation with city officials.</li></ul></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🎧 DJ Honorarium - Est. Cost $300</span></div><div class="sextant-details body-regular"><p class="mb-3">To act as a 'cultural catalyst,' we must respect and compensate talent. The selected local DJ receives a reduced honorarium, offset by the high-value exposure and content opportunities. This cost is the primary target for our "Ambience Partner" sponsorship.</p></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">📋 Permits & Insurance - Est. $350</span></div><div class="sextant-details body-regular">
+                <p class="mb-3 font-semibold text-gray-300">Simplified Permitting (No Alcohol):</p>
+                <p class="mb-3">Operating without alcohol sales dramatically simplifies our compliance path. We bypass the need for an ABC (Alcoholic Beverage Control) license, saving significant time and money. Our event likely requires a simple <a href="https://sf.gov/get-entertainment-permit-your-indoor-event" target="_blank" class="text-emerald-400 hover:underline">One-Time Indoor Entertainment permit</a> from the SFEC, a straightforward process.</p>
+                <p class="mb-3 mt-4 font-semibold text-gray-300">Liability & Protection:</p>
+                <p class="mb-3">To protect both Surface Tension and Sextant Coffee, we will secure a one-day Special Event Liability Insurance policy. Providers like <a href="https://www.thimble.com/" target="_blank" class="text-emerald-400 hover:underline">Thimble</a> offer on-demand policies for as low as ~$136 for this event scale in SF, covering general liability and property damage.</p>
+             </div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🔊/💡 Production Gear - (Sponsored)</span></div><div class="sextant-details body-regular"><p class="mb-3">All A/V equipment, including speakers, lights, and hazer, will be sourced via in-kind sponsorship from our "Sonic Partner." This eliminates approx. $300 in rental costs while providing a marketing platform for our partner.</p></div></div>
         </div>
         <div class="financial-calculator-layout">
             <div class="financial-calculator-container">
                 <div><h3 class="heading-1 text-center mb-4 text-purple-400">Profitability Calculator</h3></div>
-                <div class="calc-row"><label for="num-attendees" class="calc-label">Projected Ticket Holders</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="50" id="num-attendees" oninput="calculateRevenue()"></div></div>
-                <div class="calc-row"><label for="ticket-price" class="calc-label">Ticket Price</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="25" id="ticket-price" oninput="calculateRevenue()"></div></div>
-                <div class="calc-row"><label for="na-spend" class="calc-label">Est. Non-Alcoholic Spend / Person</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="6" id="na-spend" oninput="calculateRevenue()"></div></div>
-                <div class="calc-row"><label for="alc-spend" class="calc-label">Est. Alcoholic Spend / Person</label><div class="calc-input-group"><span class="text-gray-400">$</span><input type="number" class="calc-input-field" value="15" id="alc-spend" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Tier 1(A) Early Bird ($16)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="10" id="tier1a-qty" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Tier 1(B) Early Bird + Drink ($25)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="15" id="tier1b-qty" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Tier 2(A) General ($22)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="10" id="tier2a-qty" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Tier 2(B) General + Drink ($33)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="10" id="tier2b-qty" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Tier 3 Last Call ($27)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="5" id="tier3-qty" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Est. Add-on Drinks/Person</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="0.5" step="0.1" id="addon-drinks-per-person" oninput="calculateRevenue()"></div></div>
+                
                 <div class="mt-4 pt-4 border-t border-dashed border-gray-700 space-y-2">
-                    <div class="flex justify-between items-center text-md"><span class="text-gray-300">Total Gross Revenue:</span><span class="font-bold text-white" id="total-revenue">$2,300</span></div>
-                    <div class="flex justify-between items-center text-md"><span class="text-gray-400">Est. Cost of Goods Sold (22%):</span><span class="font-bold text-red-400" id="cogs">-$231</span></div>
-                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">Sextant Share (50% of Tix+NA):</span><span class="font-bold text-purple-400" id="sextant-share">$775</span></div>
-                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">Surface Tension Gross:</span><span class="font-bold text-emerald-400" id="st-gross">$1,294</span></div>
-                    <div class="flex justify-between items-center text-md mt-2"><span class="text-gray-300">Net Profit (After Prod. Costs):</span><span class="font-bold text-emerald-400" id="st-net-profit">$280</span></div>
+                    <div class="flex justify-between items-center text-md"><span class="text-gray-300">Total Gross Revenue:</span><span class="font-bold text-white" id="total-revenue">$1,950</span></div>
+                    <div class="flex justify-between items-center text-md"><span class="text-gray-400">Est. Cost of Goods Sold (30%):</span><span class="font-bold text-red-400" id="cogs">-$210</span></div>
+                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">Sextant Gross Profit (50%):</span><span class="font-bold text-purple-400" id="sextant-share">$975</span></div>
+                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">ST Gross Profit (50%):</span><span class="font-bold text-emerald-400" id="st-gross">$765</span></div>
+                    <div class="mt-2 pt-2 border-t border-dashed border-gray-500">
+                        <div class="flex justify-between items-center text-md"><span class="text-gray-400">ST Production Costs:</span><span class="font-bold text-red-400" id="st-costs">-$636</span></div>
+                         <div class="flex justify-between items-center text-lg mt-1"><span class="text-emerald-300">ST Net Profit (Pre-Sponsor):</span><span class="font-bold text-emerald-300" id="st-net-profit">$129</span></div>
+                    </div>
                 </div>
             </div>
             <div class="flex items-center justify-center"><div class="chart-container h-[450px] w-[450px]"><canvas id="revenue-pie-chart"></canvas></div></div>
@@ -516,19 +475,21 @@ const techDetails = {
 
 let taskData = [];
 const menuData = [
-    // Non-Alcoholic
-    { id: 'na1', category: 'Non-Alcoholic', name: 'Zenith', price: '$9', color: 'var(--primary-teal)', desc: 'Ceremonial-grade matcha, sparkling yuzu, and a hint of calming lavender.', recipe: '2 oz sparkling yuzu soda<br>1 tsp ceremonial matcha, whisked<br>0.5 oz lavender syrup', ingredients: [{name: 'Mizuba Tea Co. Matcha', link: 'https://www.google.com/search?q=Mizuba+Tea+Co.+Matcha+sf&tbm=shop'}, {name: 'Yuzuco Sparkling Yuzu', link: 'https://www.google.com/search?q=yuzuco+sparkling+yuzu&tbm=shop'}] },
-    { id: 'na2', category: 'Non-Alcoholic', name: 'Axis', price: '$8', color: 'var(--primary-teal)', desc: 'Sextant cold brew, spiced cherry syrup, and a splash of premium tonic.', recipe: '3 oz Sextant cold brew<br>1 oz spiced cherry syrup<br>Top with tonic water', ingredients: [{name: 'Sextant Cold Brew', link: 'https://sextantcoffee.com/collections/all'}, {name: 'Fever-Tree Tonic', link: 'https://www.google.com/search?q=fever-tree+tonic+water&tbm=shop'}] },
-    { id: 'na3', category: 'Non-Alcoholic', name: 'Umbra', price: '$8', color: 'var(--primary-teal)', desc: 'Sextant espresso shaken with pineapple juice and activated charcoal.', recipe: '1 shot Sextant espresso<br>2 oz pineapple juice<br>1/4 tsp activated charcoal', ingredients: [{name: 'Sextant Espresso Beans', link: 'https://sextantcoffee.com/collections/all'}, {name: 'Organic Pineapple Juice', link: 'https://www.google.com/search?q=organic+pineapple+juice&tbm=shop'}] },
-    // Alcoholic
-    { id: 'a1', category: 'Alcoholic', name: 'Geode', price: '$15', color: 'var(--primary-purple)', desc: 'Mezcal, green chartreuse, pineapple juice, and fresh lime.', recipe: '1.5 oz Mezcal<br>0.5 oz Green Chartreuse<br>1 oz pineapple juice<br>0.5 oz lime juice', ingredients: [{name: 'Madre Mezcal', link: 'https://www.google.com/search?q=Madre+Mezcal&tbm=shop'}, {name: 'Green Chartreuse', link: 'https://www.google.com/search?q=Green+Chartreuse&tbm=shop'}] },
-    { id: 'a2', category: 'Alcoholic', name: 'Field Theory', price: '$14', color: 'var(--primary-purple)', desc: 'Terroir gin, elderflower liqueur, sparkling yuzu, and a sprig of mint.', recipe: '1.5 oz Terroir Gin<br>0.5 oz St-Germain<br>Top with sparkling yuzu', ingredients: [{name: 'St. George Terroir Gin', link: 'https://www.google.com/search?q=St.+George+Terroir+Gin&tbm=shop'}, {name: 'St-Germain Liqueur', link: 'https://www.google.com/search?q=St-Germain+Liqueur&tbm=shop'}] },
-    { id: 'a3', category: 'Alcoholic-Coffee', name: 'Dark Matter', price: '$16', color: 'var(--primary-emerald)', desc: 'Aged rum, Sextant cold brew, spiced cherry syrup, and bitters.', recipe: '2 oz aged rum<br>1 oz Sextant cold brew<br>0.5 oz spiced cherry syrup', ingredients: [{name: 'Mount Gay Black Barrel Rum', link: 'https://www.google.com/search?q=Mount+Gay+Black+Barrel+Rum&tbm=shop'}, {name: 'Sextant Cold Brew', link: 'https://sextantcoffee.com/collections/all'}] },
-    { id: 'a4', category: 'Alcoholic-Coffee', name: 'Synapse', price: '$16', color: 'var(--primary-emerald)', desc: 'Vodka, fresh Sextant espresso, and a premium coffee liqueur.', recipe: '1.5 oz Hangar 1 Vodka<br>1 shot Sextant espresso<br>0.5 oz Mr. Black Liqueur', ingredients: [{name: 'Hangar 1 Vodka', link: 'https://www.google.com/search?q=Hangar+1+Vodka&tbm=shop'}, {name: 'Mr. Black Coffee Liqueur', link: 'https://www.google.com/search?q=Mr.+Black+Coffee+Liqueur&tbm=shop'}] },
-    // Simple Serves
-    { id: 's1', category: 'Beer & Wine', name: 'Fieldwork IPA', price: '$9', color: 'white', desc: 'A bright, aromatic, and iconic West Coast IPA from Berkeley.', recipe: 'Pour into glass.', ingredients: [{name: 'Fieldwork Brewing Co.', link: 'https://www.google.com/maps/search/Fieldwork+Brewing+sf'}] },
-    { id: 's2', category: 'Beer & Wine', name: 'Henhouse Saison', price: '$9', color: 'white', desc: 'A crisp, refreshing, and slightly funky saison from Santa Rosa.', recipe: 'Pour into glass.', ingredients: [{name: 'Henhouse Brewing Co.', link: 'https://www.google.com/maps/search/henhouse+brewing+sf'}] },
-    { id: 's3', category: 'Beer & Wine', name: 'Natural Red', price: '$14', color: 'white', desc: 'A vibrant, low-intervention red wine, served chilled.', recipe: 'Pour into glass.', ingredients: [{name: 'Local Natural Wine', link: 'https://www.google.com/maps/search/natural+wine+shop+san+francisco'}] },
+    // Caffeinated Signatures
+    { id: 'cs1', category: 'Caffeinated Signature', name: 'Quantum Leap', price: '$15', color: 'var(--primary-emerald)', desc: 'Sextant espresso, cascara-chai syrup, clarified grapefruit, topped with a saline cloud.', recipe: '1 shot Sextant espresso<br>1.5 oz clarified grapefruit juice<br>0.75 oz cascara-chai syrup<br>Top with saline foam.', ingredients: [{name: 'Sextant Espresso Beans', link: 'https://sextantcoffee.com/collections/all'}, {name: 'Cascara', link: 'https://www.google.com/search?q=cascara+for+sale+san+francisco&tbm=shop'}], prepTime: '4 Mins', profitMargin: '80%' },
+    { id: 'cs2', category: 'Caffeinated Signature', name: 'Axis Mundi', price: '$14', color: 'var(--primary-emerald)', desc: 'Sextant cold brew concentrate, spiced pineapple shrub, and a whisper of smoked salt.', recipe: '2 oz Sextant cold brew<br>1 oz spiced pineapple shrub<br>Stirred, large rock, smoked salt rim.', ingredients: [{name: 'Sextant Cold Brew', link: 'https://sextantcoffee.com/collections/all'}, {name: 'Pineapple Shrub', link: 'https://www.google.com/search?q=pineapple+shrub+for+sale&tbm=shop'}], prepTime: '3 Mins', profitMargin: '85%' },
+    { id: 'cs3', category: 'Caffeinated Signature', name: 'Event Horizon', price: '$16', color: 'var(--primary-emerald)', desc: 'A zero-proof espresso martini with Seedlip Spice 94, espresso, and an adaptogenic tincture.', recipe: '1.5 oz Seedlip Spice 94<br>1 shot Sextant espresso<br>0.5 oz demerara syrup<br>3 drops adaptogen tincture. Shaken.', ingredients: [{name: 'Seedlip Spice 94', link: 'https://www.google.com/search?q=seedlip+spice+94&tbm=shop'}, {name: 'Adaptogenic Tincture', link: 'https://www.google.com/search?q=focus+adaptogen+tincture&tbm=shop'}], prepTime: '4 Mins', profitMargin: '75%' },
+    // Decaf Signatures
+    { id: 'ds1', category: 'Decaf Signature', name: 'Still Point', price: '$14', color: 'var(--primary-purple)', desc: 'Sextant decaf espresso, Ghia non-alcoholic aperitif, and a grapefruit oleo-saccharum.', recipe: '1 shot Sextant decaf espresso<br>1 oz Ghia aperitif<br>0.5 oz grapefruit oleo. Stirred.', ingredients: [{name: 'Sextant Decaf Beans', link: 'https://sextantcoffee.com/collections/all'}, {name: 'Ghia Non-Alcoholic Apéritif', link: 'https://www.google.com/search?q=ghia+non+alcoholic+aperitif&tbm=shop'}], prepTime: '3 Mins', profitMargin: '82%' },
+    { id: 'ds2', category: 'Decaf Signature', name: 'Resonance', price: '$13', color: 'var(--primary-purple)', desc: 'Chilled oolong tea, ginger-turmeric honey, and a splash of yuzu soda.', recipe: '3 oz chilled oolong tea<br>0.75 oz ginger-turmeric honey<br>Top with yuzu soda.', ingredients: [{name: 'Wuyi Oolong Tea', link: 'https://www.google.com/search?q=wuyi+oolong+tea&tbm=shop'}, {name: 'Yuzu Soda', link: 'https://www.google.com/search?q=yuzu+soda&tbm=shop'}], prepTime: '2 Mins', profitMargin: '90%'},
+    // Matcha Mocktails
+    { id: 'mm1', category: 'Matcha Mocktail', name: 'Veridian', price: '$14', color: 'var(--primary-teal)', desc: 'Ceremonial matcha, calamansi juice, pandan syrup, and sparkling coconut water.', recipe: '1 tsp ceremonial matcha, whisked<br>1 oz calamansi juice<br>0.5 oz pandan syrup<br>Top with sparkling coconut water.', ingredients: [{name: 'Ceremonial Grade Matcha', link: 'https://www.google.com/search?q=ceremonial+grade+matcha&tbm=shop'}, {name: 'Calamansi Juice', link: 'https://www.google.com/search?q=calamansi+juice&tbm=shop'}], prepTime: '4 Mins', profitMargin: '78%' },
+    { id: 'mm2', category: 'Matcha Mocktail', name: 'Equilibrium', price: '$15', color: 'var(--primary-teal)', desc: 'Matcha with L-theanine, chilled, served with a salted plum and shiso leaf.', recipe: '2g matcha + 100mg L-theanine<br>Whisked with 3oz water at 175°F, then chilled. Served neat.', ingredients: [{name: 'L-Theanine Powder', link: 'https://www.google.com/search?q=l-theanine+powder&tbm=shop'}, {name: 'Salted Plum', link: 'https://www.google.com/search?q=umeboshi+salted+plum&tbm=shop'}], prepTime: '5 Mins', profitMargin: '75%' },
+    // Other Creations
+    { id: 'oc1', category: 'Other Creation', name: 'Mycelium', price: '$16', color: 'white', desc: 'A chaga mushroom and chicory brew, sweetened with black garlic molasses.', recipe: '4 oz chaga-chicory brew<br>0.5 oz black garlic molasses<br>Served warm.', ingredients: [{name: 'Chaga Mushroom Powder', link: 'https://www.google.com/search?q=chaga+mushroom+powder&tbm=shop'}, {name: 'Black Garlic Molasses', link: 'https://www.google.com/search?q=black+garlic+molasses&tbm=shop'}], prepTime: '3 Mins', profitMargin: '85%' },
+     // Curated Cans & Bottles
+    { id: 'b1', category: 'Curated Cans & Bottles', name: 'Ghia Soda (Lime & Salt)', price: '$9', color: 'white', desc: 'A zesty and complex non-alcoholic soda inspired by Mediterranean aperitivo culture.', recipe: 'Serve chilled in a glass.', ingredients: [{name: 'Ghia Lime & Salt Soda', link: 'https://www.google.com/search?q=Ghia+Lime+and+Salt&tbm=shop'}], prepTime: '1 Min', profitMargin: '50%' },
+    { id: 'b2', category: 'Curated Cans & Bottles', name: 'Curious Elixir No. 1', price: '$12', color: 'white', desc: 'A sophisticated booze-free Negroni riff with pomegranate, orange, and bold botanicals.', recipe: 'Serve over a large ice cube with an orange twist.', ingredients: [{name: 'Curious Elixir No. 1', link: 'https://www.google.com/search?q=Curious+Elixir+No.+1&tbm=shop'}], prepTime: '1 Min', profitMargin: '50%' }
 ];
 
 const timelineData = [
@@ -568,7 +529,8 @@ const App = {
     },
     
     startLoadingSequence() {
-        setTimeout(() => this.finishLoading(), 1500);
+        // Start loading animation and finish after a delay
+        setTimeout(() => this.finishLoading(), 6500); // Increased time for new loading anim
     },
     
     injectSlides() {
@@ -592,8 +554,16 @@ const App = {
         document.addEventListener('keydown', e => this.handleKeydown(e));
         
         let touchStartX = 0, swipeBlocked = false;
-        this.DOM.slideContainer.addEventListener('touchstart', e => { swipeBlocked = !!e.target.closest('a, button, input, .interactive-venue, .timeline-container, .chart-container'); if (!swipeBlocked) touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-        this.DOM.slideContainer.addEventListener('touchend', e => { if (!swipeBlocked && Math.abs(e.changedTouches[0].screenX - touchStartX) > 50) this.changeSlide(e.changedTouches[0].screenX > touchStartX ? -1 : 1); });
+        // Use passive: false for touchevents that might call preventDefault()
+        this.DOM.slideContainer.addEventListener('touchstart', e => { 
+            swipeBlocked = !!e.target.closest('a, button, input, .interactive-venue, .timeline-container, .chart-container'); 
+            if (!swipeBlocked) touchStartX = e.changedTouches[0].screenX; 
+        }, { passive: true });
+        this.DOM.slideContainer.addEventListener('touchend', e => { 
+            if (!swipeBlocked && Math.abs(e.changedTouches[0].screenX - touchStartX) > 50) {
+                 this.changeSlide(e.changedTouches[0].screenX > touchStartX ? -1 : 1);
+            }
+        }, { passive: true });
         
         window.addEventListener('resize', () => Animations.handleResize());
     },
@@ -637,38 +607,181 @@ const Animations = {
     
     init(app) { 
         this.app = app;
-        this.createLoadingPointCloud(); 
+        this.createLoadingAnimation(); 
         this.createHeaderLogo(); 
     },
     
-    createLoadingPointCloud() {
-        const canvas = document.getElementById('loading-canvas'); if (!canvas) return;
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); camera.position.z = 5;
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(250, 250); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); this.renderers.push(renderer);
-        const geometry = new THREE.BufferGeometry();
-        const material = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, blending: THREE.AdditiveBlending, transparent: true });
-        const points = new THREE.Points(geometry, material); scene.add(points);
-        const clock = new THREE.Clock();
-        const animate = () => {
-            if(!this.app.state.loadingComplete) requestAnimationFrame(animate); else { renderer.dispose(); geometry.dispose(); material.dispose(); return; }
-            const t = clock.getElapsedTime(), stage = Math.floor(t / 2) % 3;
-            const particleCount = 1000, positions = new Float32Array(particleCount*3), colors = new Float32Array(particleCount*3);
-            for (let i=0; i<particleCount; i++) {
-                const i3 = i * 3; let r, g, b;
-                switch(stage) {
-                    case 0: [r,g,b]=[0.1,0.7,0.5]; positions[i3]=(Math.random()-0.5)*6; positions[i3+1]=(Math.random()-0.5)*6; positions[i3+2]=(Math.random()-0.5)*6; break;
-                    case 1: [r,g,b]=[0.1,0.7,0.5]; const p=Math.acos(-1+(2*i)/particleCount),h=Math.sqrt(particleCount*Math.PI)*p; positions[i3]=Math.cos(h)*Math.sin(p)*2; positions[i3+1]=Math.sin(h)*Math.sin(p)*2; positions[i3+2]=Math.cos(p)*2; break;
-                    case 2: [r,g,b]=[0.66,0.33,0.96]; const a=(i/particleCount)*Math.PI*2,d=2.2+Math.sin(a*3+t)*0.3; positions[i3]=Math.cos(a)*d; positions[i3+1]=Math.sin(a)*d; positions[i3+2]=Math.sin(t+i*0.1)*0.2; break;
-                }
-                colors[i3]=r; colors[i3+1]=g; colors[i3+2]=b;
+    createLoadingAnimation() {
+        const canvas = document.getElementById('loading-canvas');
+        if (!canvas) return;
+        try {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            camera.position.z = 5;
+
+            const isHighPerf = (navigator.hardwareConcurrency || 4) > 2;
+            const particleCount = isHighPerf ? 2000 : 1000;
+            
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: isHighPerf, alpha: true, powerPreference: "high-performance" });
+            renderer.setSize(250, 250);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+            this.renderers.push(renderer);
+
+            const uniforms = {
+                uTime: { value: 0.0 },
+                uStage: { value: 0.0 },
+                uProgress: { value: 0.0 }
+            };
+            
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const randoms = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                const phi = Math.acos(-1 + (2 * i) / particleCount);
+                const theta = Math.sqrt(particleCount * Math.PI) * phi;
+                positions[i3] = Math.cos(theta) * Math.sin(phi) * 2;
+                positions[i3+1] = Math.sin(theta) * Math.sin(phi) * 2;
+                positions[i3+2] = Math.cos(phi) * 2;
+                
+                randoms[i3] = (Math.random() - 0.5) * 10;
+                randoms[i3+1] = (Math.random() - 0.5) * 10;
+                randoms[i3+2] = (Math.random() - 0.5) * 10;
             }
+
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            points.rotation.y = t * 0.1; points.rotation.x = t * 0.05; renderer.render(scene, camera);
-        };
-        animate();
+            geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 3));
+
+            const material = new THREE.ShaderMaterial({
+                uniforms,
+                vertexShader: `
+                    precision highp float;
+                    uniform float uTime;
+                    uniform float uStage;
+                    uniform float uProgress;
+                    attribute vec3 aRandom;
+                    varying float vAlpha;
+                    
+                    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+                    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+                    float snoise(vec3 v) {
+                        const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+                        const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+                        vec3 i  = floor(v + dot(v, C.yyy) );
+                        vec3 x0 =   v - i + dot(i, C.xxx) ;
+                        vec3 g = step(x0.yzx, x0.xyz);
+                        vec3 l = 1.0 - g;
+                        vec3 i1 = min( g.xyz, l.zxy );
+                        vec3 i2 = max( g.xyz, l.zxy );
+                        vec3 x1 = x0 - i1 + C.xxx;
+                        vec3 x2 = x0 - i2 + C.yyy;
+                        vec3 x3 = x0 - D.yyy;
+                        i = mod289(i);
+                        vec4 p = permute( permute( permute( i.z + vec4(0.0, i1.z, i2.z, 1.0 )) + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+                        float n_ = 0.142857142857;
+                        vec3  ns = n_ * D.wyz - D.xzx;
+                        vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+                        vec4 x_ = floor(j * ns.z);
+                        vec4 y_ = floor(j - 7.0 * x_ );
+                        vec4 x = x_ *ns.x + ns.yyyy;
+                        vec4 y = y_ *ns.x + ns.yyyy;
+                        vec4 h = 1.0 - abs(x) - abs(y);
+                        vec4 b0 = vec4( x.xy, y.xy );
+                        vec4 b1 = vec4( x.zw, y.zw );
+                        vec4 s0 = floor(b0)*2.0 + 1.0;
+                        vec4 s1 = floor(b1)*2.0 + 1.0;
+                        vec4 sh = -step(h, vec4(0.0));
+                        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+                        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+                        vec3 p0 = vec3(a0.xy,h.x);
+                        vec3 p1 = vec3(a0.zw,h.y);
+                        vec3 p2 = vec3(a1.xy,h.z);
+                        vec3 p3 = vec3(a1.zw,h.w);
+                        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+                        p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+                        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+                        m = m * m;
+                        return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+                    }
+
+                    void main() {
+                        vec3 pos = position;
+                        float noise = snoise(pos * 0.5 + uTime * 0.2) * 0.5;
+                        vec3 blobPos = position * (1.0 + noise);
+                        float angle = atan(aRandom.x, aRandom.y);
+                        float radius = 2.0 + aRandom.z * 0.1;
+                        vec3 ensoPos = vec3(cos(angle) * radius, sin(angle) * radius, 0.0);
+                        vec3 scatterPos = aRandom * 2.0;
+                        if (uStage < 1.0) {
+                            pos = blobPos;
+                            vAlpha = 1.0;
+                        } else if (uStage < 2.0) {
+                            pos = mix(blobPos, ensoPos, uProgress);
+                            vAlpha = 1.0;
+                        } else {
+                            pos = mix(ensoPos, scatterPos, uProgress);
+                            vAlpha = 1.0 - uProgress;
+                        }
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        gl_PointSize = (4.0 / -mvPosition.z) * (1.0 + vAlpha);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    precision highp float;
+                    varying float vAlpha;
+                    void main() {
+                        float dist = distance(gl_PointCoord, vec2(0.5));
+                        if(dist > 0.5) discard;
+                        vec3 color = mix(vec3(0.66, 0.33, 0.96), vec3(0.06, 0.73, 0.51), vAlpha);
+                        gl_FragColor = vec4(color, (1.0 - dist * 2.0) * vAlpha * 1.5);
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                depthWrite: false,
+            });
+
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+            
+            const clock = new THREE.Clock();
+            const cycleDuration = 6.0; // Slower cycle
+
+            const animate = () => {
+                if (!this.app.state.loadingComplete) {
+                    requestAnimationFrame(animate);
+                } else {
+                     renderer.dispose(); geometry.dispose(); material.dispose(); return;
+                }
+                const t = clock.getElapsedTime();
+                uniforms.uTime.value = t;
+
+                const cycleTime = t % cycleDuration;
+                if (cycleTime < 2.5) { // Blob stage
+                    uniforms.uStage.value = 0.0;
+                    uniforms.uProgress.value = 0.0;
+                } else if (cycleTime < 4.5) { // Transition to Enso
+                    uniforms.uStage.value = 1.0;
+                    uniforms.uProgress.value = (cycleTime - 2.5) / 2.0;
+                } else { // Transition to Scatter
+                    uniforms.uStage.value = 2.0;
+                    uniforms.uProgress.value = (cycleTime - 4.5) / 1.5;
+                }
+
+                points.rotation.y = t * 0.05;
+                points.rotation.x = t * 0.02;
+                renderer.render(scene, camera);
+            };
+            animate();
+        } catch(e) {
+            console.error("Error creating loading animation:", e);
+            canvas.style.display = 'none';
+        }
     },
     
     createHeaderLogo() {
@@ -769,79 +882,89 @@ const Animations = {
             return this.scenes[id].animate;
         }
         const container = document.getElementById(id); if(!container) return;
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, 0.1, 1000);
-        camera.position.z = options.cameraZ || 5;
+        try {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, 0.1, 1000);
+            camera.position.z = options.cameraZ || 5;
 
-        const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
-        const renderer = new THREE.WebGLRenderer({
-            antialias: highPerf,
-            alpha:true,
-            powerPreference: "high-performance"
-        });
-        renderer.setClearColor(0x000000, 0);
-        renderer.setSize(container.clientWidth,container.clientHeight); 
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, highPerf ? 1.5 : 1));
-        container.innerHTML = ''; 
-        container.appendChild(renderer.domElement); 
-        this.renderers.push(renderer);
-        
-        const sceneObjects = {};
-
-        if (options.objects) { // Handle point clouds
-            options.objects.forEach(objDef => {
-                const geometry = objDef.geometry;
-                const material = new THREE.ShaderMaterial(objDef.shader);
-                let obj = new THREE.Points(geometry, material);
-                scene.add(obj);
-                sceneObjects[objDef.name] = obj;
+            const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
+            const renderer = new THREE.WebGLRenderer({
+                antialias: highPerf,
+                alpha:true,
+                powerPreference: "high-performance"
             });
-        } else if (options.geometry && options.shader) { // Handle meshes with shaders (like the ripple)
-            const material = new THREE.ShaderMaterial(options.shader);
-            const mesh = new THREE.Mesh(options.geometry, material);
-            scene.add(mesh);
-            sceneObjects.main = mesh;
-        } else if (options.geometry) { // Handle basic meshes or points
-            const material = new THREE.PointsMaterial({...options.material});
-            const points = new THREE.Points(options.geometry, material);
-            scene.add(points);
-            sceneObjects.main = points;
-        }
-
-
-        if (options.lighting) {
-            scene.add(new THREE.AmbientLight(options.lighting.ambientColor, options.lighting.ambientIntensity));
-            const light = new THREE.DirectionalLight(options.lighting.directionalColor, options.lighting.directionalIntensity);
-            light.position.copy(options.lighting.directionalPosition);
-            scene.add(light);
-            sceneObjects.light = light;
-        }
-
-        const clock = new THREE.Clock();
-        let lastFrameTime = 0;
-        const animate = (time) => {
-            if(!container.offsetParent) return;
-            if(this.app.state.currentSlide !== options.slideIndex) {
-                 if(this.scenes[id] && this.scenes[id].isActive) {
-                    this.scenes[id].isActive = false;
-                 }
-                 return;
-            }
-            if(this.scenes[id] && !this.scenes[id].isActive) {
-                this.scenes[id].isActive = true;
-            }
-            renderer.setAnimationLoop(animate);
+            renderer.setClearColor(0x000000, 0);
+            renderer.setSize(container.clientWidth,container.clientHeight); 
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, highPerf ? 1.5 : 1));
+            container.innerHTML = ''; 
+            container.appendChild(renderer.domElement); 
+            this.renderers.push(renderer);
             
-            if (time - lastFrameTime < 16.6) return; // Cap at ~60fps
-            lastFrameTime = time;
+            const sceneObjects = {};
 
-            const t = clock.getElapsedTime();
-            if(options.update) options.update({scene, camera, t, ...sceneObjects});
-            renderer.render(scene, camera);
-        };
-        this.scenes[id] = {scene, camera, renderer, animate, objects: sceneObjects, isActive: true}; 
-        renderer.setAnimationLoop(animate);
-        return animate;
+            if (options.geometry && options.shader) {
+                const material = new THREE.ShaderMaterial(options.shader);
+                let obj;
+                if(options.isPoints) {
+                    obj = new THREE.Points(options.geometry, material);
+                } else {
+                     obj = new THREE.Mesh(options.geometry, material);
+                }
+                scene.add(obj);
+                sceneObjects.main = obj;
+            } else if (options.objects) { // Handle point clouds
+                options.objects.forEach(objDef => {
+                    const geometry = objDef.geometry;
+                    const material = new THREE.ShaderMaterial(objDef.shader);
+                    let obj = new THREE.Points(geometry, material);
+                    scene.add(obj);
+                    sceneObjects[objDef.name] = obj;
+                });
+            } else if (options.geometry) {
+                const material = new THREE.PointsMaterial({...options.material});
+                const points = new THREE.Points(options.geometry, material);
+                scene.add(points);
+                sceneObjects.main = points;
+            }
+
+
+            if (options.lighting) {
+                scene.add(new THREE.AmbientLight(options.lighting.ambientColor, options.lighting.ambientIntensity));
+                const light = new THREE.DirectionalLight(options.lighting.directionalColor, options.lighting.directionalIntensity);
+                light.position.copy(options.lighting.directionalPosition);
+                scene.add(light);
+                sceneObjects.light = light;
+            }
+
+            const clock = new THREE.Clock();
+            let lastFrameTime = 0;
+            const animate = (time) => {
+                if(!container.offsetParent) return;
+                if(this.app.state.currentSlide !== options.slideIndex) {
+                     if(this.scenes[id] && this.scenes[id].isActive) {
+                        this.scenes[id].isActive = false;
+                     }
+                     return;
+                }
+                if(this.scenes[id] && !this.scenes[id].isActive) {
+                    this.scenes[id].isActive = true;
+                }
+                renderer.setAnimationLoop(animate);
+                
+                if (time - lastFrameTime < 16.6) return; // Cap at ~60fps
+                lastFrameTime = time;
+
+                const t = clock.getElapsedTime();
+                if(options.update) options.update({scene, camera, t, ...sceneObjects});
+                renderer.render(scene, camera);
+            };
+            this.scenes[id] = {scene, camera, renderer, animate, objects: sceneObjects, isActive: true}; 
+            renderer.setAnimationLoop(animate);
+            return animate;
+        } catch(e) {
+            console.error(`Error creating scene "${id}":`, e);
+            container.innerHTML = `<div class="text-red-500 text-center p-4">Animation failed to load.</div>`
+        }
     },
 
     initCoverSphere() {
@@ -875,15 +998,18 @@ const Animations = {
         const highPerf = navigator.hardwareConcurrency === undefined || navigator.hardwareConcurrency > 4;
         const blobDetail = highPerf ? 64 : 48;
 
-        const anim = this.createScene('cover-sphere-container', {
+        this.createScene('cover-sphere-container', {
             slideIndex: 0,
+            isPoints: true,
             cameraZ: 8,
             objects: [{
                 name: 'points',
                 geometry: new THREE.IcosahedronGeometry(1.8, blobDetail),
                 shader: {
                     uniforms: { uTime: { value: 0 }, uTransition: { value: 0.0 } },
-                    vertexShader: noiseFunc + `
+                    vertexShader: `
+                        precision highp float;
+                        ${noiseFunc}
                         uniform float uTime;
                         uniform float uTransition;
                         varying float vNoise;
@@ -910,7 +1036,7 @@ const Animations = {
                         }
                     `,
                     fragmentShader: `
-                        uniform float uTransition;
+                        precision highp float;
                         varying float vNoise;
                         void main() {
                             float dist = distance(gl_PointCoord, vec2(0.5));
@@ -918,7 +1044,7 @@ const Animations = {
                             vec3 colorEmerald = vec3(0.063, 0.725, 0.506);
                             vec3 colorPurple = vec3(0.659, 0.333, 0.969);
                             vec3 finalColor = mix(colorEmerald, colorPurple, vNoise * 0.5 + 0.5);
-                            float alpha = (1.0 - dist * 2.0) * mix(0.7, 1.0, uTransition);
+                            float alpha = (1.0 - dist * 2.0);
                             gl_FragColor = vec4(finalColor, alpha);
                         }
                     `
@@ -931,12 +1057,12 @@ const Animations = {
                 camera.lookAt(0,0,0);
             }
         });
-        return anim;
     },
 
     initCreatorParticles(id) { 
         return this.createScene(id,{
-            slideIndex:7, cameraZ:2.5, 
+            slideIndex:8, cameraZ:2.5, 
+            isPoints: true,
             geometry:new THREE.IcosahedronGeometry(1.2,5),
             material:{size:0.02,color:id.includes('pratt')?0x10b981:0xa855f7,wireframe:true},
             update:({main, t})=>{main.rotation.y=t*0.1;}
@@ -944,50 +1070,68 @@ const Animations = {
     },
 
     initDripRipple() { 
-        const anim = this.createScene('drip-ripple-container', {
+        const isHighPerf = (navigator.hardwareConcurrency || 4) > 2;
+        const particleCount = isHighPerf ? 10000 : 5000;
+        const positions = new Float32Array(particleCount * 3);
+        for(let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+            const r = Math.sqrt(Math.random()) * 5;
+            const a = Math.random() * Math.PI * 2;
+            positions[i3] = Math.cos(a) * r;
+            positions[i3+1] = Math.sin(a) * r;
+            positions[i3+2] = (Math.random() - 0.5) * 0.1;
+        }
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        this.createScene('drip-ripple-container', {
             slideIndex: 2, 
-            cameraZ: 2,
-            geometry: new THREE.PlaneGeometry(10, 10, 128, 128),
+            cameraZ: 4,
+            isPoints: true,
+            geometry: geometry,
             shader: {
                 uniforms: { 
-                    uTime: { value: 0.0 }, 
-                    uColor1: { value: new THREE.Color('#0A0E1A')}, // Darker base for better contrast
-                    uColor2: { value: new THREE.Color('#3A2D27')}, // Muted coffee color
+                    uTime: { value: 0.0 },
+                    uColor1: { value: new THREE.Color('#6f4e37')}, // Coffee Brown
+                    uColor2: { value: new THREE.Color('#2a1a10')}, // Dark Espresso
                 },
                 vertexShader: `
+                    precision highp float;
                     uniform float uTime;
-                    varying vec2 vUv;
+                    varying float vIntensity;
                     void main() {
-                        vUv = uv;
                         vec3 pos = position;
-                        float dist = length(uv - 0.5);
-                        float wave = sin(dist * 25.0 - uTime * 1.5) * 0.03; // Slower, more subtle wave
-                        pos.z += wave * smoothstep(0.4, 0.0, dist);
-                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                        float dist = length(pos.xy);
+                        float wave = sin(dist * 2.5 - uTime * 2.5) * 0.3;
+                        pos.z += wave * smoothstep(5.0, 0.0, dist);
+                        vIntensity = smoothstep(5.0, 0.5, dist);
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        gl_PointSize = (15.0 / -mvPosition.z) * vIntensity;
+                        gl_Position = projectionMatrix * mvPosition;
                     }
                 `,
                 fragmentShader: `
-                    uniform float uTime;
+                    precision highp float;
                     uniform vec3 uColor1;
                     uniform vec3 uColor2;
-                    varying vec2 vUv;
+                    varying float vIntensity;
                     void main() {
-                        float dist = length(vUv - 0.5);
-                        float wave = sin(dist * 25.0 - uTime * 1.5) * 0.5 + 0.5;
-                        float glow = smoothstep(0.4, 0.1, dist);
-                        vec3 color = mix(uColor1, uColor2, wave);
-                        gl_FragColor = vec4(color, glow);
+                        float dist = distance(gl_PointCoord, vec2(0.5));
+                        if(dist > 0.5) discard;
+                        vec3 color = mix(uColor2, uColor1, vIntensity * 1.5);
+                        gl_FragColor = vec4(color, (1.0 - dist * 2.0) * vIntensity * 1.5);
                     }
                 `,
+                blending: THREE.AdditiveBlending,
                 transparent: true, 
-                depthWrite: false, // Prevents artifacts on transparent surfaces
+                depthWrite: false,
             },
             update: ({main, t, camera}) => {
                 main.material.uniforms.uTime.value = t;
-                main.rotation.x = -Math.PI / 2;
+                main.rotation.z = t * 0.05;
+                camera.position.z = 4.0 - Math.sin(t * 0.3) * 0.5;
             }
         });
-        return anim;
     },
     
     initVenuePointCloud() {
@@ -1020,130 +1164,90 @@ const Animations = {
             sextantColor.toArray(colors, colors.length); 
         }
         
-        const anim = this.createScene('venue-point-cloud', { 
+        this.createScene('venue-point-cloud', { 
             slideIndex:3, cameraZ:10, 
+            isPoints: true,
             geometry: new THREE.BufferGeometry(),
             material:{size:0.1, vertexColors: true, transparent:true,opacity:0.8, blending: THREE.AdditiveBlending},
             update:({main, camera,t})=>{
                 if (!main.geometry.getAttribute('position')) {
-                    main.geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
-                    main.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+                    main.geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(points), 3));
+                    main.geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(colors), 3));
                 }
-                camera.position.x=Math.sin(t*0.05)*20;
-                camera.position.z=Math.cos(t*0.05)*20;
-                camera.position.y=3+Math.sin(t*0.1)*3;
+                camera.position.x = Math.sin(t * 0.05) * 20;
+                camera.position.z = Math.cos(t * 0.05) * 20;
+                camera.position.y = 3 + Math.sin(t * 0.1) * 3;
                 camera.lookAt(0,0,0);
             }
         });
-        return anim;
     },
     
     initFinaleRipple() {
-        const anim = this.createScene('finale-animation', {
-            slideIndex: 9,
+        const isHighPerf = (navigator.hardwareConcurrency || 4) > 2;
+        const segments = isHighPerf ? 256 : 128;
+
+        this.createScene('finale-animation', {
+            slideIndex: 10,
             cameraZ: 5,
-            geometry: new THREE.PlaneGeometry(30, 30, 256, 256),
+            geometry: new THREE.PlaneGeometry(40, 40, segments, segments),
             shader: {
                 uniforms: {
                     uTime: { value: 0.0 },
                     uColor1: { value: new THREE.Color('#10b981') },
-                    uColor2: { value: new THREE.Color('#0a0e1a') }
+                    uColor2: { value: new THREE.Color('#000000') }
                 },
                 vertexShader: `
+                    precision highp float;
                     uniform float uTime;
-                    varying vec2 vUv;
                     varying float vWave;
-
-                    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-                    vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-                    vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
-
-                    float snoise(vec2 v) {
-                        const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-                        vec2 i = floor(v + dot(v, C.yy));
-                        vec2 x0 = v - i + dot(i, C.xx);
-                        vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-                        vec4 x12 = x0.xyxy + C.xxzz;
-                        x12.xy -= i1;
-                        i = mod289(i);
-                        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
-                        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-                        m = m*m;
-                        m = m*m;
-                        vec3 x = 2.0 * fract(p * C.www) - 1.0;
-                        vec3 h = abs(x) - 0.5;
-                        vec3 ox = floor(x + 0.5);
-                        vec3 a0 = x - ox;
-                        m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-                        vec3 g;
-                        g.x  = a0.x  * x0.x  + h.x  * x0.y;
-                        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-                        return 130.0 * dot(m, g);
-                    }
-
                     void main() {
-                        vUv = uv;
                         vec3 pos = position;
-                        float dist = distance(uv, vec2(0.5));
-                        float ripple = sin(dist * 25.0 - uTime * 2.0);
-                        float falloff = pow(1.0 - smoothstep(0.0, 0.5, dist), 2.0);
-                        float noiseFreq = 2.0;
-                        float noise = snoise(uv * noiseFreq + uTime * 0.1);
-                        pos.z += (ripple + noise * 0.2) * (0.3 + noise * 0.1) * falloff;
+                        float dist = length(pos.xy);
+                        float t = uTime * 0.3;
+                        float wave = sin(dist * 1.2 - t) * 1.5;
+                        pos.z = wave * smoothstep(20.0, 0.0, dist);
                         vWave = pos.z;
                         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                     }
                 `,
                 fragmentShader: `
+                    precision highp float;
                     uniform vec3 uColor1;
                     uniform vec3 uColor2;
-                    varying vec2 vUv;
                     varying float vWave;
-
-                    float aastep(float threshold, float value) {
-                        float afwidth = fwidth(value) * 0.5;
-                        return smoothstep(threshold - afwidth, threshold + afwidth, value);
-                    }
-
                     void main() {
-                        float intensity = pow(0.8 - distance(vUv, vec2(0.5)), 2.0) * 2.0;
-                        vec3 surfaceColor = mix(uColor2, uColor1, intensity + vWave * 1.5);
-                        
-                        vec2 gridUv = vUv * 40.0;
-                        vec2 gridLine = abs(fract(gridUv) - 0.5);
-                        float gridThickness = 0.05;
-                        float gridFeather = 0.02;
-                        float grid = 1.0 - (aastep(gridThickness - gridFeather, gridLine.x) + aastep(gridThickness - gridFeather, gridLine.y));
-                        
-                        vec3 gridColor = uColor1 * 0.5;
-                        
-                        vec3 finalColor = mix(surfaceColor, gridColor, 1.0 - grid);
-
-                        gl_FragColor = vec4(finalColor, 1.0);
+                        float intensity = pow(0.5 - distance(gl_PointCoord, vec2(0.5)), 2.0) * 2.0;
+                        float glow = pow(0.1 + abs(vWave), 2.0);
+                        vec3 color = mix(uColor2, uColor1, glow);
+                        float dist = distance(gl_PointCoord, vec2(0.5));
+                        float alpha = (1.0 - dist * 2.0) * glow;
+                        gl_FragColor = vec4(color, alpha);
                     }
-                `
+                `,
+                 blending: THREE.AdditiveBlending,
+                 transparent: true,
+                 depthWrite: false
             },
             update: ({ main, t, camera }) => {
                 main.material.uniforms.uTime.value = t;
-                main.rotation.x = -1.2;
-                camera.position.z = 4.5 + Math.sin(t * 0.2) * 0.5;
-                camera.position.y = 1.0;
+                main.rotation.x = -1.3;
+                camera.position.z = 4.0 + Math.sin(t * 0.2) * 1.0;
+                camera.position.y = 3.5;
                 camera.lookAt(0, 0, 0);
             }
         });
-        return anim;
     },
 
     initChart(id,config){if(this.scenes[id])this.scenes[id].destroy();const c=document.getElementById(id)?.getContext('2d');if(!c)return;this.scenes[id]=new Chart(c,config);},
     initPredictiveChart(){this.initChart('predictive-chart',{type:'line',data:{labels:['Q1','Q2','Q3','Q4'],datasets:[{label:'Coffee Shop Foot Traffic',data:[150,165,170,180],backgroundColor:'rgba(168,85,247,0.3)',borderColor:'#a855f7',tension:0.4},{label:'Coffee/DJ Set Attendance',data:[10,25,60,95],backgroundColor:'rgba(6,182,212,0.3)',borderColor:'#06b6d4',tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'white',boxWidth:12,padding:15}}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}}}}});},
     initTrendsChart(){this.initChart('trends-chart',{type:'bar',data:{labels:['Traditional Cafes','DJ Venues','Hybrid Spaces'],datasets:[{label:'Market Interest (SF)',data:[75,85,110],backgroundColor:['rgba(6,182,212,0.6)','rgba(245,158,11,0.6)','rgba(16,185,129,0.6)'],borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{display:false}}}}});},
     initGrowthChart(){this.initChart('growth-chart',{type:'radar',data:{labels:['Revenue Lift','Brand Awareness','Foot Traffic','Community Growth','Media Buzz'],datasets:[{label:'Projected Growth',data:[85,75,60,95,70],backgroundColor:'rgba(16,185,129,0.3)',borderColor:'#10b981',borderWidth:2,pointBackgroundColor:'#10b981',pointBorderColor:'#fff',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10, 14, 26, 0.8)',bodyFont:{size:12},bodySpacing: 4, padding:12, callbacks:{title:(c)=>c[0].label,label:(c)=>{const v=c.parsed.r;let e='';switch(c.label){case'Revenue Lift':e='Projected increase in nightly revenue from extended hours and premium offerings.';break;case'Brand Awareness':e='Increased social media buzz and word-of-mouth recognition in the target demographic.';break;case'Foot Traffic':e='Attracting new and returning customers during previously off-peak evening hours.';break;case'Community Growth':e='Building a loyal community around unique, shared experiences, fostering retention.';break;case'Media Buzz':e="Generating organic press and influencer mentions due to the event's novelty.";break;}return[`Value: ${v}%`,`Potential: ${e}`];}}}},scales:{r:{angleLines:{color:'rgba(255,255,255,0.1)'},grid:{color:'rgba(255,255,255,0.15)'},pointLabels:{color:'white',font:{size:12,family:"'Inter',sans-serif"}},ticks:{display:false,beginAtZero:true,max:100}}}}});},
-    initRevenuePieChart(){this.initChart('revenue-pie-chart',{type:'pie',data:{labels:['Sextant Share', 'ST Alcohol Sales', 'ST Share of Tix/NA'],datasets:[{data:[800, 750, 800],backgroundColor:['#a855f7','#06b6d4','#10b981'],borderColor:'#0a0e1a',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'white',boxWidth:12,padding:20}},tooltip:{callbacks:{label:(c)=>`${c.label}: $${c.raw.toFixed(0)}`}},datalabels:{formatter:(v,c)=>{const s=c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return s > 0 ? `${(v/s*100).toFixed(0)}%` : '0%';},color:'#fff',font:{weight:'bold'}}}}});},
+    initRevenuePieChart(){this.initChart('revenue-pie-chart',{type:'pie',data:{labels:['Sextant Gross Profit','Surface Tension Gross'],datasets:[{data:[975,765],backgroundColor:['#a855f7','#10b981'],borderColor:'#0a0e1a',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'white',boxWidth:12,padding:20}},tooltip:{callbacks:{label:(c)=>`${c.label}: $${c.raw.toFixed(0)}`}},datalabels:{formatter:(v,c)=>{const s=c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return s > 0 ? `${(v/s*100).toFixed(0)}%` : '0%';},color:'#fff',font:{weight:'bold'}}}}});},
 
     handleResize(){this.renderers.forEach(r=>{const c=r.domElement.parentElement;if(c&&c.clientWidth>0){const m=Object.values(this.scenes).find(s=>s&&s.renderer===r)?.camera;if(m){m.aspect=c.clientWidth/c.clientHeight;m.updateProjectionMatrix();}r.setSize(c.clientWidth,c.clientHeight);}});Object.values(this.scenes).forEach(s=>{if(s instanceof Chart&&s.resize)s.resize();});},
     
     getAnimFunction(slideIndex) {
-        const animMap={0:this.initCoverSphere,2:this.initDripRipple,3:this.initVenuePointCloud,7:() => { this.initCreatorParticles('pratt-particles')(); this.initCreatorParticles('diana-particles')(); },9:this.initFinaleRipple};
+        const animMap={0:this.initCoverSphere,2:this.initDripRipple,3:this.initVenuePointCloud,8:() => { Animations.initCreatorParticles('pratt-particles')(); Animations.initCreatorParticles('diana-particles')(); },10:this.initFinaleRipple};
         return animMap[slideIndex]?.bind(this);
     }
 };
@@ -1157,16 +1261,16 @@ const Content = {
     onSlideChange(slideIndex){
         Object.values(Animations.scenes).forEach(s=>s&&s.renderer&&!s.isActive && s.renderer.setAnimationLoop(null));
         const f=Animations.getAnimFunction(slideIndex);
-        if(f){const r=f();if(r)r();}
+        if(f){try{const r=f();if(r)r();}catch(e){console.error(`Failed to init animation for slide ${slideIndex}`, e)}}
         switch(slideIndex){
             case 1:Animations.createScene('bell-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.CylinderGeometry(0,0.6,1.2,16,4),material:{size:0.05,color:0x10b981},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('heart-cloud',{slideIndex:1,cameraZ:2.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0.25,0.25).bezierCurveTo(0.25,0.25,0.2,0,0,0).bezierCurveTo(-0.3,0,-0.3,0.35,-0.3,0.35).bezierCurveTo(-0.3,0.55,-0.1,0.77,0.25,0.95).bezierCurveTo(0.6,0.77,0.8,0.55,0.8,0.35).bezierCurveTo(0.8,0.35,0.8,0,0.5,0).bezierCurveTo(0.35,0,0.25,0.25,0.25,0.25), 30),material:{size:0.04,color:0xa855f7},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('star-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0,0.5).lineTo(0.1,0.1).lineTo(0.5,0.1).lineTo(0.2,-0.1).lineTo(0.3,-0.5).lineTo(0,-0.2).lineTo(-0.3,-0.5).lineTo(-0.2,-0.1).lineTo(-0.5,0.1).lineTo(-0.1,0.1).lineTo(0,0.5), 10),material:{size:0.04,color:0x06b6d4},update:({main,t})=>{main.rotation.y=t*0.1;}});break;
             case 2:this.setupMenuSystem(); this.setupEventTimeline(); break;
             case 3:this.setupInteractiveVenue();break;
             case 4:Animations.initPredictiveChart();Animations.initTrendsChart();this.setupMarketingExecTabs();break;
-            case 5:this.setupFinancialCalculator();break;
-            case 6:Animations.initGrowthChart();break;
-            case 7: Animations.initCreatorParticles('pratt-particles')(); Animations.initCreatorParticles('diana-particles')(); break;
-            case 8:this.setupTaskPlanner();break;
+            case 6:this.setupFinancialCalculator();break;
+            case 7:Animations.initGrowthChart();break;
+            case 8: Animations.initCreatorParticles('pratt-particles')(); Animations.initCreatorParticles('diana-particles')(); break;
+            case 9:this.setupTaskPlanner();break;
         }
     },
     setupMenuSystem(){
@@ -1192,6 +1296,10 @@ const Content = {
                 <button class="menu-modal-close" onclick="Content.hideMenuModal()">&times;</button>
                 <h3 class="heading-1" style="color:${item.color};">${item.name}</h3>
                 <p class="body-large mt-2">${item.desc}</p>
+                 <div class="menu-modal-details">
+                    <span>Prep Time: ${item.prepTime}</span>
+                    <span>Profit Margin: ~${item.profitMargin}</span>
+                </div>
                 <div class="mt-6 grid md:grid-cols-2 gap-8">
                     <div>
                         <h4 class="font-semibold text-white mb-2">Recipe</h4>
@@ -1235,41 +1343,43 @@ const Content = {
     resetVenueLayout(){document.querySelectorAll('.venue-item').forEach(i=>{const n=this.initialTransforms.get(i);if(n){i.style.transform=n.transform;i.style.top=n.top;i.style.left=n.left;i.style.width=n.width;i.style.height=n.height;}});},
     setupFinancialCalculator(){this.calculateRevenue();},
     calculateRevenue(){
-        const attendees = parseFloat(document.getElementById('num-attendees').value) || 0;
-        const ticketPrice = parseFloat(document.getElementById('ticket-price').value) || 0;
-        const naSpend = parseFloat(document.getElementById('na-spend').value) || 0;
-        const alcSpend = parseFloat(document.getElementById('alc-spend').value) || 0;
-        
-        const purchaseRate = 0.75; 
-        const cogsRate = 0.22;
+        const tier1a = (parseFloat(document.getElementById('tier1a-qty').value) || 0);
+        const tier1b = (parseFloat(document.getElementById('tier1b-qty').value) || 0);
+        const tier2a = (parseFloat(document.getElementById('tier2a-qty').value) || 0);
+        const tier2b = (parseFloat(document.getElementById('tier2b-qty').value) || 0);
+        const tier3 = (parseFloat(document.getElementById('tier3-qty').value) || 0);
+        const addonPerPerson = (parseFloat(document.getElementById('addon-drinks-per-person').value) || 0);
 
-        const totalDrinkSpend = (naSpend + alcSpend) * attendees * purchaseRate;
-        const cogs = totalDrinkSpend * cogsRate;
-
-        const ticketRevenue = attendees * ticketPrice;
-        const naRevenue = attendees * naSpend;
-        const alcRevenue = attendees * alcSpend;
-        const totalGrossRevenue = ticketRevenue + naRevenue + alcRevenue;
+        const totalAttendees = tier1a + tier1b + tier2a + tier2b + tier3;
         
-        const productionCost = 500 + 200 + 100 + 214; 
-        document.getElementById('production-header').querySelector('span').textContent = `$${(productionCost + cogs).toLocaleString('en-US',{maximumFractionDigits:0})}`;
-
-        const sextantShareBase = ticketRevenue + naRevenue;
-        const sextantShare = sextantShareBase * 0.5;
+        const ticketRevenue = (tier1a * 16) + (tier1b * 25) + (tier2a * 22) + (tier2b * 33) + (tier3 * 27);
         
-        const stShare = sextantShareBase * 0.5;
-        const stGross = stShare + alcRevenue - cogs;
+        const includedDrinksValue = (tier1b * 9) + (tier2b * 11);
+        const addonDrinksCount = totalAttendees * addonPerPerson;
+        const addonDrinkRevenue = addonDrinksCount * 14; // Using weighted average price for add-ons
+        const totalDrinkRevenue = includedDrinksValue + addonDrinkRevenue;
+
+        const cogsRate = 0.30;
+        const cogs = totalDrinkRevenue * cogsRate;
+
+        const totalGrossRevenue = ticketRevenue + addonDrinkRevenue;
+        const productionCost = 300 + 100 + 350; // Updated DJ, lighting sponsored, permits+insurance
+        
+        const totalNetRevenue = totalGrossRevenue - cogs;
+        const sextantGrossProfit = totalNetRevenue * 0.5;
+        const stGross = totalNetRevenue * 0.5;
         const stNet = stGross - productionCost;
 
         document.getElementById('total-revenue').textContent = `$${totalGrossRevenue.toLocaleString('en-US',{maximumFractionDigits:0})}`;
         document.getElementById('cogs').textContent = `-$${cogs.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('sextant-share').textContent = `$${sextantShare.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('sextant-share').textContent = `$${sextantGrossProfit.toLocaleString('en-US',{maximumFractionDigits:0})}`;
         document.getElementById('st-gross').textContent = `$${stGross.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('st-costs').textContent = `-$${productionCost.toLocaleString('en-US',{maximumFractionDigits:0})}`;
         document.getElementById('st-net-profit').textContent = `$${stNet.toLocaleString('en-US',{maximumFractionDigits:0})}`;
 
         if(!Animations.scenes['revenue-pie-chart']) Animations.initRevenuePieChart();
         const pieChart = Animations.scenes['revenue-pie-chart'];
-        pieChart.data.datasets[0].data = [sextantShare, alcRevenue, stShare];
+        pieChart.data.datasets[0].data = [sextantGrossProfit, stGross];
         pieChart.update();
     },
     setupTaskPlanner(){
