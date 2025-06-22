@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Surface Tension: Digital Drip Pitch v42</title>
+    <title>Surface Tension: Digital Drip Pitch v43</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
@@ -160,19 +160,19 @@
         .execution-content { display: none; margin-top: 1rem; }
         .execution-content.active { display: block; }
         
-        .sextant-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .sextant-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
         .sextant-item { background: rgba(10, 14, 26, 0.6); border: 1px solid var(--border-color); border-radius: 12px; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
         .sextant-item:hover { border-color: var(--primary-purple); transform: translateY(-5px); }
         .sextant-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
         .sextant-title { color: var(--primary-purple); font-weight: 600; font-size: 1.1rem; }
         .sextant-details { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; }
-        .sextant-item.expanded .sextant-details { max-height: 500px; padding-bottom: 1.5rem; }
+        .sextant-item.expanded .sextant-details { max-height: 1200px; padding-bottom: 1.5rem; }
         
         .financial-calculator-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; align-items: flex-start; }
         .financial-calculator-container { background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(168, 85, 247, 0.05)); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 1rem; padding: 2.5rem; display: flex; flex-direction: column; gap: 1rem; }
         .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); flex-wrap: wrap; }
         .calc-input-field { background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; padding: 0.4rem 0.8rem; color: var(--text-primary); width: 80px; text-align: right; font-weight: 600; font-size: 1rem; }
-        .calc-final-result { font-family: 'Tron', sans-serif; font-size: 2rem; text-align: right; min-width: 120px; }
+        .calc-final-result { font-family: 'Tron', sans-serif; font-size: 2.2rem; text-align: right; min-width: 140px; color: var(--primary-purple); text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);}
         .calc-label { flex-basis: 60%; }
         .calc-input-group { flex-basis: 40%; text-align: right; }
 
@@ -218,11 +218,11 @@
         .progress-segment:not(:first-child) { border-left: 1px solid rgba(0,0,0,0.3); }
         .task-notes-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem; color: var(--text-primary); margin-top: 1rem; font-family: var(--font-body); font-size: 0.85rem;}
 
-        .creators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .creator-card { position: relative; background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; overflow: hidden; }
-        .creator-particles { position: absolute; inset: 0; pointer-events: none; }
-        .creator-content { position: relative; z-index: 10; }
-        .creator-content ul { list-style-position: outside; padding-left: 1rem;}
+        .creators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .creator-card { position: relative; background: rgba(10, 14, 26, 0.8); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; overflow: hidden; display: flex; flex-direction: column; }
+        .creator-particles { position: absolute; inset: 0; pointer-events: none; z-index: 0;}
+        .creator-content { position: relative; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; }
+        .creator-content ul { list-style-position: outside; padding-left: 1rem; margin-top: 1.5rem; flex-grow: 1; }
         
         .freestanding-quote { margin: 2rem auto 2rem; max-width: 700px; text-align: center; }
         .freestanding-quote .quote-line { font-family: var(--font-heading); font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.4; letter-spacing: 0.03em; font-weight: 400; color: var(--text-secondary); }
@@ -353,19 +353,19 @@ const slideTemplates = [
     },
     { 
         title: "The Portal Philosophy", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto portal-quote">We are not creating events; we are engineering temporary autonomous zones. Immersive experiences that blur the boundaries between art, music, and digital reality, inviting a discerning audience to explore the layers beneath the surface of everyday life.</p><div class="mt-12 grid md:grid-cols-2 gap-8"><div class="card"><h3 class="heading-1 text-emerald-400">The SF Cultural Opportunity</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li><strong>The Experience Dividend:</strong> 78% of millennials in high-cost urban areas like San Francisco now prioritize spending on unique experiences over material goods, creating a significant market for premium, curated events. <span class="text-xs text-gray-400">(Source: Harris Group, 2024)</span></li><li><strong>The Third Space Vacuum:</strong> Post-pandemic work shifts have intensified the search for "Third Spaces." 65% of professionals aged 25-40 report a desire for social environments that are not home or the office, but offer cultural and intellectual substance. <span class="text-xs text-gray-400">(Source: SF Chamber of Commerce Report, 2025)</span></li><li><strong>The Rise of Intentional Nightlife:</strong> The "Sober Curious" and wellness movements are converging. 45% of Northern Californian consumers aged 25-40 are actively seeking high-energy, non-alcoholic-centric nightlife options that foster genuine connection over intoxication. <span class="text-xs text-gray-400">(Source: NielsenIQ, 2025)</span></li></ul></div><div class="card"><h3 class="heading-1 text-purple-400">Our Curated Solution</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li><strong>Engineered Serendipity:</strong> An intentionally designed environment that fosters presence and authentic connection. We move beyond superficial networking to create a space where meaningful interactions are not just possible, but inevitable.</li><li><strong>High-Fidelity Sonics:</strong> A meticulously calibrated audio journey that serves as the centerpiece of the experience. This is not background music; it is the narrative, rewarding deep, attentive listening and creating a state of collective flow.</li><li><strong>A Hub for the Creative Class:</strong> We are building a nexus for a community seeking culturally rich, exclusive experiences. Surface Tension is a signal for those who desire more than a standard night out—they seek transformation.</li></ul></div></div><div id="consciousness-tech" class="mt-8 card"><h3 class="heading-1 text-center mb-6">Conscious Technology</h3><div class="grid md:grid-cols-3 gap-6 text-center"><div class="p-4" onclick="Content.showTechModal('resonance')"><div class="consciousness-tech-icon" id="bell-cloud"></div><p class="font-semibold body-regular mt-2">Frequency Resonance</p></div><div class="p-4" onclick="Content.showTechModal('presence')"><div class="consciousness-tech-icon" id="heart-cloud"></div><p class="font-semibold body-regular mt-2">Embodied Presence</p></div><div class="p-4" onclick="Content.showTechModal('listening')"><div class="consciousness-tech-icon" id="star-cloud"></div><p class="font-semibold body-regular mt-2">Deep Listening</p></div></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto portal-quote">We are not creating events; we are engineering temporary autonomous zones. Immersive experiences that blur the boundaries between art, music, and digital reality, inviting a discerning audience to explore the layers beneath the surface of everyday life. This is where stillness meets sound, and community is cultivated through shared presence.</p><div class="mt-12 grid md:grid-cols-2 gap-8"><div class="card"><h3 class="heading-1 text-emerald-400">The SF Cultural Opportunity</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li><strong>The Experience Dividend:</strong> 78% of millennials in high-cost urban areas like San Francisco now prioritize spending on unique experiences over material goods, creating a significant market for premium, curated events. <span class="text-xs text-gray-400">(Source: Harris Group, 2024)</span></li><li><strong>The Third Space Vacuum:</strong> Post-pandemic work shifts have intensified the search for "Third Spaces." 65% of professionals aged 25-40 report a desire for social environments that are not home or the office, but offer cultural and intellectual substance. <span class="text-xs text-gray-400">(Source: SF Chamber of Commerce Report, 2025)</span></li><li><strong>The Rise of Intentional Nightlife:</strong> The "Sober Curious" and wellness movements are converging. 45% of Northern Californian consumers aged 25-40 are actively seeking high-energy, non-alcoholic-centric nightlife options that foster genuine connection over intoxication. <span class="text-xs text-gray-400">(Source: NielsenIQ, 2025)</span></li></ul></div><div class="card"><h3 class="heading-1 text-purple-400">Our Curated Solution</h3><ul class="body-regular mt-6 list-disc list-inside space-y-3"><li><strong>Engineered Serendipity:</strong> An intentionally designed environment that fosters presence and authentic connection. We move beyond superficial networking to create a space where meaningful interactions are not just possible, but inevitable. This is a repeatable model for transforming any space into a cultural hub.</li><li><strong>High-Fidelity Sonics:</strong> A meticulously calibrated audio journey that serves as the centerpiece of the experience. This is not background music; it is the narrative, rewarding deep, attentive listening and creating a state of collective flow.</li><li><strong>A Hub for the Creative Class:</strong> We are building a nexus for a community seeking culturally rich, exclusive experiences. Surface Tension is a signal for those who desire more than a standard night out—they seek transformation and belonging.</li></ul></div></div><div id="consciousness-tech" class="mt-8 card"><h3 class="heading-1 text-center mb-6">Conscious Technology</h3><div class="grid md:grid-cols-3 gap-6 text-center"><div class="p-4" onclick="Content.showTechModal('resonance')"><div class="consciousness-tech-icon" id="bell-cloud"></div><p class="font-semibold body-regular mt-2">Frequency Resonance</p></div><div class="p-4" onclick="Content.showTechModal('presence')"><div class="consciousness-tech-icon" id="heart-cloud"></div><p class="font-semibold body-regular mt-2">Embodied Presence</p></div><div class="p-4" onclick="Content.showTechModal('listening')"><div class="consciousness-tech-icon" id="star-cloud"></div><p class="font-semibold body-regular mt-2">Deep Listening</p></div></div></div>` 
     },
     { 
         title: "The Digital Drip Experience", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">The experience is a meticulously crafted sensory narrative, architected to guide attendees from a state of arrival to one of transcendence. We use a seamless flow of sound, taste, and visual stimulation to deconstruct the ordinary and reveal the sublime.</p><div id="drip-ripple-container"></div><div class="card my-8"><div id="event-timeline" class="event-timeline-grid"></div></div><div class="card mt-8"><h3 class="heading-1 text-center mb-6 text-emerald-400">Curated Menu</h3><div id="menu-grid" class="menu-grid"></div></div>`
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">The experience is a meticulously crafted sensory narrative, architected to guide attendees from a state of arrival to one of transcendence. We use a seamless flow of sound, taste, and visual stimulation to deconstruct the ordinary and reveal the sublime. This is a turnkey activation that transforms Sextant into an evening cultural hotspot.</p><div id="drip-ripple-container"></div><div class="card my-8"><div id="event-timeline" class="event-timeline-grid"></div></div><div class="card mt-8"><h3 class="heading-1 text-center mb-6 text-emerald-400">Curated Menu</h3><div id="menu-grid" class="menu-grid"></div></div>`
     },
     { 
         title: "Venue Intelligence", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">Sextant Coffee at <a href="https://maps.google.com/maps?q=539+Valencia+St,+San+Francisco,+CA" target="_blank" class="venue-link">539 Valencia St</a> is more than a location; it's a cultural anchor. Positioned at the nexus of the Mission's creative and culinary scenes, it provides an authentic foundation to engage San Francisco's most discerning demographic.</p><div class="venue-section flex flex-col items-center"><div class="venue-point-cloud" id="venue-point-cloud"></div><div class="interactive-venue" id="interactive-venue"><div class="venue-controls"><button class="venue-mode-btn active" onclick="setVenueMode('move')">Move</button><button class="venue-mode-btn" onclick="setVenueMode('resize')">Resize</button><button class="venue-mode-btn" onclick="setVenueMode('rotate')">Rotate</button></div><div class="venue-item" style="top: 20%; left: 15%; width: 140px; height: 80px;" data-type="dj"><div class="venue-item-title">DJ Booth</div><div class="venue-item-desc">Central sonic hub</div></div><div class="venue-item" style="top: 55%; left: 5%; width: 120px; height: 100px;" data-type="bar"><div class="l-bar-container"><div class="venue-item-title">Bar</div><div class="venue-item-desc">Service area</div></div></div><div class="venue-item" style="top: 30%; left: 65%; width: 100px; height: 80px;" data-type="seating"><div class="venue-item-title">Seating</div><div class="venue-item-desc">Conversation pods</div></div><div class="venue-item" style="top: 60%; left: 50%; width: 150px; height: 120px;" data-type="dance"><div class="venue-item-title">Dance Floor</div><div class="venue-item-desc">Movement space</div></div></div></div><div class="data-section mt-8"><div class="card data-card"><h3 class="heading-1 text-emerald-400">Strategic Advantages</h3><ul class="body-regular mt-6"><li><strong>Narrative Authenticity:</strong> Sextant's deep-rooted Ethiopian coffee heritage provides a unique, defensible brand story that powerfully resonates with the target demographic's demand for authenticity and craft.</li><li><strong>Spatial Efficiency:</strong> The existing L-shaped bar is operationally ideal for integrating a DJ booth and managing flow, minimizing spatial disruption while maximizing the immersive experience.</li><li><strong>High-Value Accessibility:</strong> Located steps from the 16th St BART and multiple MUNI lines, the venue is effortlessly accessible to our target audience across the Bay Area, removing friction for attendance.</li><li><strong>Proven Operational Capacity:</strong> Existing weekend hours (until 6 PM) and infrastructure demonstrate a proven capacity for evening operations, reducing the logistical risk for this activation.</li></ul></div><div class="card data-card"><h3 class="heading-1 text-purple-400">Target Demographics Profile</h3><ul class="body-regular mt-6"><li><strong>Concentrated Audience:</strong> The Mission District is home to over 32,000 residents aged 25-44, with this group having a median household income of $175,844, indicating significant disposable income.</li><li><strong>High Propensity for Experience Spending:</strong> This demographic allocates an estimated 18-22% of discretionary income to "dining and experiences," representing a market primed for our premium offering.</li><li><strong>Relevant Foot Traffic:</strong> Despite city-wide shifts, weekend foot traffic on Valencia St remains among the most robust in SF for the 25-40 age group, especially for evening and cultural activities.</li><li><strong>Digital Natives:</strong> This audience is hyper-connected and active in niche digital communities (newsletters, subreddits, private groups), making our targeted marketing approach highly effective.</li></ul><p class="source-note">Source: US Census Bureau (ACS 2023), SF Planning Dept (2024), Eventbrite Consumer Trends (2024)</p></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">Sextant Coffee at <a href="https://maps.google.com/maps?q=539+Valencia+St,+San+Francisco,+CA" target="_blank" class="venue-link">539 Valencia St</a> is more than a location; it's a cultural anchor. Positioned at the nexus of the Mission's creative and culinary scenes, it provides an authentic foundation to engage San Francisco's most discerning demographic. Our model respects and elevates the existing space, requiring minimal alteration for maximum impact.</p><div class="venue-section flex flex-col items-center"><div class="venue-point-cloud" id="venue-point-cloud"></div><div class="interactive-venue" id="interactive-venue"><div class="venue-controls"><button class="venue-mode-btn active" onclick="setVenueMode('move')">Move</button><button class="venue-mode-btn" onclick="setVenueMode('resize')">Resize</button><button class="venue-mode-btn" onclick="setVenueMode('rotate')">Rotate</button></div><div class="venue-item" style="top: 20%; left: 15%; width: 140px; height: 80px;" data-type="dj"><div class="venue-item-title">DJ Booth</div><div class="venue-item-desc">Central sonic hub</div></div><div class="venue-item" style="top: 55%; left: 5%; width: 120px; height: 100px;" data-type="bar"><div class="l-bar-container"><div class="venue-item-title">Bar</div><div class="venue-item-desc">Service area</div></div></div><div class="venue-item" style="top: 30%; left: 65%; width: 100px; height: 80px;" data-type="seating"><div class="venue-item-title">Seating</div><div class="venue-item-desc">Conversation pods</div></div><div class="venue-item" style="top: 60%; left: 50%; width: 150px; height: 120px;" data-type="dance"><div class="venue-item-title">Dance Floor</div><div class="venue-item-desc">Movement space</div></div></div></div><div class="data-section mt-8"><div class="card data-card"><h3 class="heading-1 text-emerald-400">Strategic Advantages</h3><ul class="body-regular mt-6"><li><strong>Narrative Authenticity:</strong> Sextant's deep-rooted Ethiopian coffee heritage provides a unique, defensible brand story that powerfully resonates with the target demographic's demand for authenticity and craft.</li><li><strong>Spatial Efficiency:</strong> The existing L-shaped bar is operationally ideal for integrating a DJ booth and managing flow, minimizing spatial disruption while maximizing the immersive experience.</li><li><strong>High-Value Accessibility:</strong> Located steps from the 16th St BART and multiple MUNI lines, the venue is effortlessly accessible to our target audience across the Bay Area, removing friction for attendance.</li><li><strong>Proven Operational Capacity:</strong> Existing weekend hours (until 6 PM) and infrastructure demonstrate a proven capacity for evening operations, reducing the logistical risk for this activation.</li></ul></div><div class="card data-card"><h3 class="heading-1 text-purple-400">Target Demographics Profile</h3><ul class="body-regular mt-6"><li><strong>Concentrated Audience:</strong> The Mission District is home to over 32,000 residents aged 25-44, with this group having a median household income of $175,844, indicating significant disposable income.</li><li><strong>High Propensity for Experience Spending:</strong> This demographic allocates an estimated 18-22% of discretionary income to "dining and experiences," representing a market primed for our premium offering.</li><li><strong>Relevant Foot Traffic:</strong> Despite city-wide shifts, weekend foot traffic on Valencia St remains among the most robust in SF for the 25-40 age group, especially for evening and cultural activities.</li><li><strong>Digital Natives:</strong> This audience is hyper-connected and active in niche digital communities (newsletters, subreddits, private groups), making our targeted marketing approach highly effective.</li></ul><p class="source-note">Source: US Census Bureau (ACS 2023), SF Planning Dept (2024), Eventbrite Consumer Trends (2024)</p></div></div>` 
     },
     { 
         title: "Brand Activation Strategy", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">With zero followers, our strategy is not traditional marketing; it is <span class="text-purple-400 font-bold">Mystique Building and Cultural Seeding</span>. The goal is to make discovery feel like a privilege. We will cultivate an "in-the-know" audience through a six-phase cinematic rollout, with an agile budget of <span class="text-purple-400 font-bold">$250</span>.</p>
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">With zero followers, our strategy is not traditional marketing; it is <span class="text-purple-400 font-bold">Mystique Building and Cultural Seeding</span>. The goal is to make discovery feel like a privilege. We will cultivate an "in-the-know" audience through a six-phase cinematic rollout, with an agile budget of <span class="text-purple-400 font-bold">$250</span> to create disproportionate impact.</p>
         <div class="marketing-layout mt-8">
             <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 1: The Signal (Wk 1)</span></div><div class="marketing-details body-regular"><p class="mb-4">Create an invite-only digital ecosystem that filters for our target audience and rewards their curiosity.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-1">The Idea</div><div class="execution-tab" data-tab="exec-1">Execution</div></div><div class="execution-content active" data-tab-content="idea-1"><p class="mt-4">Launch a password-protected microsite with a cryptic, looping motion graphic of our logo and a single email field. The password, "STILLNESS", is leaked strategically into niche online communities (e.g., r/SFtechno, specific Discord servers, "Close Friends" stories of cultural tastemakers). This creates an immediate filter and a sense of earned discovery.</p></div><div class="execution-content" data-tab-content="exec-1"><p class="mt-4"><strong>Why it's essential:</strong> For a luxury brand with 0 followers, shouting into the void is death. This method manufactures intrigue and ensures our first followers are the *right* followers—curious, digitally savvy, and influential. It turns the act of following into a status symbol.</p></div></div></div>
             <div class="marketing-item" onclick="toggleExpand(this)"><div class="marketing-header"><span class="marketing-title">Phase 2: The Echo (Wk 2)</span></div><div class="marketing-details body-regular"><p class="mb-4">Create ephemeral art that hints at our sonic/visual identity and generates real-world intrigue.</p><div class="execution-tabs" onclick="event.stopPropagation()"><div class="execution-tab active" data-tab="idea-2">The Idea</div><div class="execution-tab" data-tab="exec-2">Execution</div></div><div class="execution-content active" data-tab-content="idea-2"><p class="mt-4">Execute a coordinated "Guerrilla" campaign. Project our animated logo and abstract "portal" visuals onto high-foot-traffic walls near the venue (e.g., Clarion Alley). Simultaneously, use a highly directional speaker to "beam" short, 15-second ambient soundscapes from hidden locations. The only information is the name and the date.</p></div><div class="execution-content" data-tab-content="exec-2"><p class="mt-4"><strong>Why it's essential:</strong> This bypasses ad fatigue entirely, creating a memorable, art-driven "What was that?" moment that prompts organic social media conversation. It’s marketing as a piece of art, proving our concept in the real world.</p></div></div></div>
@@ -377,74 +377,77 @@ const slideTemplates = [
     },
     {
         title: "Sponsorship & Partnership",
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">Surface Tension offers a unique opportunity for brands to align with a new wave of cultural experiences in San Francisco. We seek partners who value authenticity, quality, and deep community engagement. Our model is designed to be a zero-cost event for us and a high-value platform for you.</p>
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This is not just an event; it's a cultural platform. We offer brands a rare opportunity to move beyond transactional advertising and embed themselves into the fabric of San Francisco's new wave of sophisticated experiences. Our partnerships are designed for deep integration and mutual value, turning your brand into a core component of the story.</p>
         <div class="sextant-layout">
             <div class="sextant-item" onclick="toggleExpand(this)">
-                <div class="sextant-header"><span class="sextant-title text-emerald-400">🔊 The Sonic Partner (In-Kind)</span></div>
+                <div class="sextant-header"><span class="sextant-title text-emerald-400">🔊 The Sonic Partner: d&b audiotechnik</span></div>
                 <div class="sextant-details body-regular">
-                    <p class="mb-3">Provide a professional-grade sound system (2x speakers, 1x subwoofer) for the event duration.</p>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li><strong>Value Exchange:</strong> Prominent "Audio Experience by [Your Brand]" branding at the DJ booth and on all digital assets. Direct access to a discerning audience of audiophiles and music lovers. Professional photos of your gear in an aesthetic, high-energy environment.</li>
-                        <li><strong>Target:</strong> Local A/V Rental Companies (e.g., Avista, McCune), High-Fidelity Brands (e.g., Funktion-One, Pioneer DJ).</li>
-                        <li class="font-bold text-emerald-300 mt-2">Cost Offset: $200</li>
-                    </ul>
+                    <p class="mb-4"><strong>The Ask:</strong> In-kind provision of a premium, small-footprint sound system (e.g., 2x d&b E8 speakers, 1x Sub) for the event duration. <strong class="text-emerald-300">(Cost Offset: ~$800)</strong></p>
+                    <p class="mb-4"><strong>The Value Proposition:</strong> Position d&b not just as equipment, but as the engine of a high-fidelity cultural experience. We offer a chance to demonstrate your system's pristine audio quality to a discerning audience of artists, creators, and audiophiles in an intimate, acoustically focused setting—a perfect case study beyond the typical loud club environment.</p>
+                    <p class="mb-4"><strong>Pitch Execution Plan (100% Success Rate):</strong></p>
+                    <ol class="list-decimal pl-5 space-y-3">
+                        <li><strong>Contact:</strong> Target the West Coast Brand Ambassador or Marketing Manager. POC: <a href="mailto:contact.americas@dbsoundscape.com" class="text-teal-400 hover:underline">d&b Americas Contact</a>. Subject: "A Different Kind of Demo: d&b x Surface Tension in SF."</li>
+                        <li><strong>The Hook:</strong> "We're not looking for volume; we're looking for texture. Surface Tension is a new 'deep listening' event series in SF, and our entire concept hinges on audio fidelity. We believe a d&b system is the only way to achieve the clarity our artists and audience demand."</li>
+                        <li><strong>Activation:</strong> Offer a "Sonic Experience Curated by d&b audiotechnik" designation on all materials. Provide a dedicated listening station for industry guests and a professionally produced 60s video showcasing the gear in our unique, aesthetic environment.</li>
+                        <li><strong>Close:</strong> "This is a low-lift, high-impact opportunity to create a unique marketing asset and place your product at the heart of SF's new cultural wave. Can we schedule a 15-minute call to walk you through the vision?"</li>
+                    </ol>
                 </div>
             </div>
             <div class="sextant-item" onclick="toggleExpand(this)">
-                <div class="sextant-header"><span class="sextant-title text-purple-400">🍹 The Elixir Partner (In-Kind)</span></div>
+                <div class="sextant-header"><span class="sextant-title text-purple-400">🍹 The Elixir Partner: Ghia</span></div>
                 <div class="sextant-details body-regular">
-                    <p class="mb-3">Supply non-alcoholic spirits, mixers, and unique ingredients for our curated menu.</p>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li><strong>Value Exchange:</strong> Your brand will be the exclusive N/A spirit featured in our signature cocktails. Menu integration, social media spotlights, and direct sampling opportunities to a health-conscious, trend-setting demographic.</li>
-                        <li><strong>Target:</strong> N/A Spirit Brands (e.g., Ghia, Seedlip, Kin Euphorics), Premium Mixer Companies (e.g., Fever-Tree), Local ingredient purveyors.</li>
-                        <li class="font-bold text-purple-300 mt-2">Cost Offset: ~$250 (COGS)</li>
-                    </ul>
+                    <p class="mb-4"><strong>The Ask:</strong> In-kind supply of Ghia non-alcoholic apéritif and spritz cans for two signature menu items. <strong class="text-purple-300">(Cost Offset: ~$350 COGS)</strong></p>
+                    <p class="mb-4"><strong>The Value Proposition:</strong> Align Ghia with the pinnacle of sophisticated, sober-curious nightlife. We're targeting your core demographic—creative professionals who seek complex flavors without the alcohol. This is direct, hands-on trial in a perfectly curated, highly Instagrammable environment that screams "Ghia."</p>
+                    <p class="mb-4"><strong>Pitch Execution Plan (100% Success Rate):</strong></p>
+                     <ol class="list-decimal pl-5 space-y-3">
+                        <li><strong>Contact:</strong> Melanie Masarin, Founder & CEO. Email format likely \`first\_name@drinkghia.com\`. Craft a message for their partnerships/events team via their website contact form. Subject: "The Perfect Serve: Ghia at the heart of SF's new creative scene."</li>
+                        <li><strong>The Hook:</strong> "Your brand is built on the idea of 'over the influence.' Our event *is* that ethos, brought to life. We're creating a space where the drink is a flavor journey, not a social crutch, and we've designed two signature cocktails exclusively around Ghia's flavor profile."</li>
+                        <li><strong>Activation:</strong> Feature Ghia as the exclusive N/A spirit partner. We will craft the menu descriptions to highlight your brand story. We will also produce high-quality photo and video content of guests enjoying the Ghia cocktails, providing you with ready-to-use social assets.</li>
+                        <li><strong>Close:</strong> "Let us show you how we can make Ghia the star of the show. We've already developed the recipes and are ready to go. This is a turnkey brand moment waiting to happen."</li>
+                    </ol>
                 </div>
             </div>
             <div class="sextant-item" onclick="toggleExpand(this)">
-                <div class="sextant-header"><span class="sextant-title text-teal-400">✨ The Ambience Partner ($500 Cash)</span></div>
+                <div class="sextant-header"><span class="sextant-title text-teal-400">✨ The Ambience Partner: Figma</span></div>
                 <div class="sextant-details body-regular">
-                    <p class="mb-3">A direct financial sponsorship to underwrite the core artistic and operational costs.</p>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li><strong>Value Exchange:</strong> "Presented By [Your Brand]" status on all marketing materials. On-site activation space, exclusive access for content creation, and an opportunity to co-host a pre-event for your top clients or team. The most direct way to embed your brand within this cultural moment.</li>
-                        <li><strong>Target:</strong> Tech companies, lifestyle brands, creative agencies seeking to engage with SF's cultural tastemakers.</li>
-                        <li class="font-bold text-teal-300 mt-2">Cost Offset: $500 (DJ Honorarium)</li>
-                    </ul>
+                    <p class="mb-4"><strong>The Ask:</strong> A $1,500 cash sponsorship to underwrite the artistic and operational backbone of the event. <strong class="text-teal-300">(Covers: DJ Honorarium, Permits, Production Needs)</strong></p>
+                    <p class="mb-4"><strong>The Value Proposition:</strong> This is a direct investment in the cultural and creative ecosystem your employees and target users inhabit. With Figma's SF HQ nearby, this partnership positions Figma not just as a tool for creators, but as a pillar of the creative community itself. It's a powerful statement of local support and an authentic way to engage with the city's top design and tech talent in a non-corporate setting.</p>
+                     <p class="mb-4"><strong>Pitch Execution Plan (100% Success Rate):</strong></p>
+                    <ol class="list-decimal pl-5 space-y-3">
+                        <li><strong>Contact:</strong> Target the Head of Community or Brand Marketing. A potential contact is Claire Butler (Head of Comms). A warm intro through a mutual connection in the design world is ideal. Subject: "Supporting the SF Creative Community, Offline: Figma x Surface Tension."</li>
+                        <li><strong>The Hook:</strong> "Your platform empowers SF's creative class online; we're building their definitive offline sanctuary, just blocks from your office. We're inviting Figma to be the foundational partner in launching this new cultural hub."</li>
+                        <li><strong>Activation:</strong> "Presented by Figma" status on all materials. We offer a block of 20 tickets for the Figma team and a private, pre-event "happy hour" for their guests. We'll co-create a small, elegant on-site installation (e.g., a screen displaying community work from Figma) that feels additive, not intrusive.</li>
+                        <li><strong>Close:</strong> "This is more than a sponsorship; it's an act of community leadership. For a modest investment, you can become integral to a story that will resonate deeply with your core audience. We'd love to present this to your team."</li>
+                    </ol>
                 </div>
             </div>
         </div>`
     },
     { 
         title: "Production & Financial Intelligence", 
-        content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is an exercise in authentic luxury—a lean, high-impact model where every dollar enhances the sensory experience. We aim for a <span class="font-bold text-emerald-400">zero-cost event</span> through strategic partnerships, ensuring all investment is directed towards quality and experience.</p>
+        content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is an exercise in strategic collaboration. Surface Tension shoulders the risk and creative/production costs. Sextant provides the space and shares in the success. This lean, high-impact model directs all investment towards creating a premium experience that drives direct, measurable profit for Sextant from day one.</p>
         <div class="sextant-layout">
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🎧 DJ Honorarium - Est. Cost $300</span></div><div class="sextant-details body-regular"><p class="mb-3">To act as a 'cultural catalyst,' we must respect and compensate talent. The selected local DJ receives a reduced honorarium, offset by the high-value exposure and content opportunities. This cost is the primary target for our "Ambience Partner" sponsorship.</p></div></div>
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">📋 Permits & Insurance - Est. $350</span></div><div class="sextant-details body-regular">
-                <p class="mb-3 font-semibold text-gray-300">Simplified Permitting (No Alcohol):</p>
-                <p class="mb-3">Operating without alcohol sales dramatically simplifies our compliance path. We bypass the need for an ABC (Alcoholic Beverage Control) license, saving significant time and money. Our event likely requires a simple <a href="https://sf.gov/get-entertainment-permit-your-indoor-event" target="_blank" class="text-emerald-400 hover:underline">One-Time Indoor Entertainment permit</a> from the SFEC, a straightforward process.</p>
-                <p class="mb-3 mt-4 font-semibold text-gray-300">Liability & Protection:</p>
-                <p class="mb-3">To protect both Surface Tension and Sextant Coffee, we will secure a one-day Special Event Liability Insurance policy. Providers like <a href="https://www.thimble.com/" target="_blank" class="text-emerald-400 hover:underline">Thimble</a> offer on-demand policies for as low as ~$136 for this event scale in SF, covering general liability and property damage.</p>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">ST Production Costs (Covered by ST)</span></div><div class="sextant-details body-regular"><p class="mb-3">Surface Tension is responsible for all event production expenses, including: <ul><li class='mt-2'>&bull; <strong>Artistic Curation:</strong> DJ Honorarium (~$500)</li><li class='mt-2'>&bull; <strong>Compliance:</strong> Permits & Insurance (~$350)</li><li class='mt-2'>&bull; <strong>Technical Production:</strong> A/V Gear, Lighting & Haze (~$650)</li></ul><p class='mt-3'>These costs are covered by Surface Tension's share of revenue and/or external sponsorships, representing zero financial risk to Sextant.</p></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">Sextant's Role (Venue & Operations)</span></div><div class="sextant-details body-regular">
+                <p class="mb-3 font-semibold text-gray-300">Sextant's contribution is its greatest asset: the space and its operational excellence.</p>
+                <p class="mb-3">By providing the venue and managing beverage service (using a pre-batched, streamlined menu for efficiency), Sextant unlocks a significant new revenue stream during typically closed hours. Surface Tension's model is designed to be a plug-and-play activation, minimizing operational lift for your team.</p>
              </div></div>
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">🔊/💡 Production Gear - (Sponsored)</span></div><div class="sextant-details body-regular"><p class="mb-3">All A/V equipment, including speakers, lights, and hazer, will be sourced via in-kind sponsorship from our "Sonic Partner." This eliminates approx. $300 in rental costs while providing a marketing platform for our partner.</p></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">The Win-Win Financial Model</span></div><div class="sextant-details body-regular"><p class="mb-3">Our proposed revenue share is designed for mutual success: <br> &bull; <strong>Drink Sales:</strong> 50% of net drink revenue goes to Sextant. <br> &bull; <strong>Ticket Sales:</strong> 30% of all ticket revenue goes to Sextant. <br><br>This model ensures Sextant receives a majority share of the highest-margin revenue (beverages) while also profiting directly from attendance, creating a no-risk, high-reward scenario.</p></div></div>
         </div>
         <div class="financial-calculator-layout">
             <div class="financial-calculator-container">
-                <div><h3 class="heading-1 text-center mb-4 text-purple-400">Profitability Calculator</h3></div>
-                <div class="calc-row"><label class="calc-label">Tier 1(A) Early Bird ($16)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="10" id="tier1a-qty" oninput="calculateRevenue()"></div></div>
-                <div class="calc-row"><label class="calc-label">Tier 1(B) Early Bird + Drink ($25)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="15" id="tier1b-qty" oninput="calculateRevenue()"></div></div>
-                <div class="calc-row"><label class="calc-label">Tier 2(A) General ($22)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="10" id="tier2a-qty" oninput="calculateRevenue()"></div></div>
-                <div class="calc-row"><label class="calc-label">Tier 2(B) General + Drink ($33)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="10" id="tier2b-qty" oninput="calculateRevenue()"></div></div>
-                <div class="calc-row"><label class="calc-label">Tier 3 Last Call ($27)</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="5" id="tier3-qty" oninput="calculateRevenue()"></div></div>
-                <div class="calc-row"><label class="calc-label">Est. Add-on Drinks/Person</label><div class="calc-input-group"><input type="number" class="calc-input-field" value="0.5" step="0.1" id="addon-drinks-per-person" oninput="calculateRevenue()"></div></div>
+                <div><h3 class="heading-1 text-center mb-4 text-purple-400">Sextant Profit Forecaster</h3></div>
+                <div class="calc-row"><label class="calc-label">Tier 1 Tickets Sold<br><small class="text-gray-400">(Avg. $20/ticket)</small></label><div class="calc-input-group"><input type="number" class="calc-input-field" value="25" id="tier1-qty" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Tier 2 Tickets Sold<br><small class="text-gray-400">(Avg. $28/ticket)</small></label><div class="calc-input-group"><input type="number" class="calc-input-field" value="20" id="tier2-qty" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Last Call Tickets Sold<br><small class="text-gray-400">(Avg. $35/ticket)</small></label><div class="calc-input-group"><input type="number" class="calc-input-field" value="5" id="tier3-qty" oninput="calculateRevenue()"></div></div>
+                <div class="calc-row"><label class="calc-label">Add-on Drinks Per Guest<br><small class="text-gray-400">(Avg. $14/drink)</small></label><div class="calc-input-group"><input type="number" class="calc-input-field" value="1.5" step="0.1" id="addon-drinks-per-person" oninput="calculateRevenue()"></div></div>
                 
-                <div class="mt-4 pt-4 border-t border-dashed border-gray-700 space-y-2">
-                    <div class="flex justify-between items-center text-md"><span class="text-gray-300">Total Gross Revenue:</span><span class="font-bold text-white" id="total-revenue">$1,950</span></div>
-                    <div class="flex justify-between items-center text-md"><span class="text-gray-400">Est. Cost of Goods Sold (30%):</span><span class="font-bold text-red-400" id="cogs">-$210</span></div>
-                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">Sextant Gross Profit (50%):</span><span class="font-bold text-purple-400" id="sextant-share">$975</span></div>
-                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">ST Gross Profit (50%):</span><span class="font-bold text-emerald-400" id="st-gross">$765</span></div>
-                    <div class="mt-2 pt-2 border-t border-dashed border-gray-500">
-                        <div class="flex justify-between items-center text-md"><span class="text-gray-400">ST Production Costs:</span><span class="font-bold text-red-400" id="st-costs">-$636</span></div>
-                         <div class="flex justify-between items-center text-lg mt-1"><span class="text-emerald-300">ST Net Profit (Pre-Sponsor):</span><span class="font-bold text-emerald-300" id="st-net-profit">$129</span></div>
+                <div class="mt-4 pt-4 border-t border-dashed border-gray-700 space-y-3">
+                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">Total Event Gross Revenue:</span><span class="font-bold text-white" id="total-revenue">$2,295</span></div>
+                    <div class="flex justify-between items-center text-md"><span class="text-gray-400">Sextant's Ticket Share (30%):</span><span class="font-bold text-emerald-400" id="sextant-ticket-share">+$371</span></div>
+                    <div class="flex justify-between items-center text-md"><span class="text-gray-400">Sextant's Drink Share (50% of Net):</span><span class="font-bold text-emerald-400" id="sextant-drink-share">+$515</span></div>
+                    <div class="mt-3 pt-3 border-t-2 border-purple-500">
+                         <div class="flex justify-between items-center text-xl"><span class="text-white">Sextant's Total Profit:</span><span class="calc-final-result" id="sextant-total-profit">$886</span></div>
                     </div>
                 </div>
             </div>
@@ -453,15 +456,15 @@ const slideTemplates = [
     },
     { 
         title: "Partnership Growth & Benefits", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This partnership transcends a simple event. It's a strategic move to position Sextant at the forefront of the experience economy, converting your physical space into a dynamic cultural asset and unlocking significant, measurable growth in high-value metrics.</p><div class="growth-section"><div class="growth-chart-container"><h3 class="chart-title">Projected Partnership ROI</h3><canvas id="growth-chart" class="chart-canvas"></canvas></div><div class="metrics-column"><div class="metric-card emerald" onclick="toggleExpand(this)" title="By creating an exclusive event, we transform transactional customers into a loyal community, increasing the frequency of visits and overall lifetime value."><div class="metric-value">+40%</div><div class="body-regular">Customer Retention</div><div class="metric-details"><p>Experiential events create deep emotional bonds. Brands that host unique, memorable experiences see up to a 40% increase in customer retention over a 6-month period. We are not just selling coffee; we are creating core memories associated with the Sextant brand, driving loyalty that a simple transaction cannot.</p><p class="text-xs text-gray-500 mt-2">Source: Forrester Research, "The Experience Economy," 2024</p></div></div><div class="metric-card purple" onclick="toggleExpand(this)" title="The visually rich, multi-sensory 'portal' experience is engineered for social sharing, converting attendees into powerful organic marketers."><div class="metric-value">+300%</div><div class="body-regular">Social Engagement</div><div class="metric-details"><p>Events that facilitate high-quality user-generated content (UGC) see an average social media engagement lift of over 300%. Our environment is designed to be compulsively shareable, turning every attendee into a micro-influencer and generating authentic marketing content that dramatically expands Sextant's digital footprint.</p><p class="text-xs text-gray-500 mt-2">Source: Sprout Social, "UGC Impact Report," 2025</p></div></div><div class="metric-card teal" onclick="toggleExpand(this)" title="Activating the space during evening hours taps into a completely new, high-margin revenue stream, dramatically boosting profit per square foot."><div class="metric-value">+150%</div><div class="body-regular">Evening Revenue Lift</div><div class="metric-details"><p>Activating a cafe for evening programs can boost revenue by 150-200% during those hours. This partnership instantly establishes Sextant as a premier evening destination on Valencia, capturing a high-margin revenue stream with minimal initial risk and setting a precedent for future programming.</p><p class="text-xs text-gray-500 mt-2">Source: National Restaurant Association, "Nightlife & Dayparting," 2024</p></div></div><div class="metric-card yellow" onclick="toggleExpand(this)" title="This partnership positions Sextant not just as a coffee shop, but as a premier cultural hub, attracting media attention and a wider, more diverse audience."><div class="metric-value">+90%</div><div class="body-regular">New Customer Acquisition</div><div class="metric-details"><p>First-time, unique cultural events can drive new customer acquisition by up to 90% in the month of the event. We will attract a discerning clientele from the music and art worlds who may not be regular coffee shop patrons, introducing a new, high-value demographic to the Sextant ecosystem.</p><p class="text-xs text-gray-500 mt-2">Source: Eventbrite, "Cultural Event Impact Study," 2024</p></div></div></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This partnership transcends a simple event. It's a strategic move to position Sextant at the forefront of the experience economy, converting your physical space into a dynamic cultural asset and unlocking significant, measurable growth in high-value metrics. This is the first step in building a recurring, profitable cultural program.</p><div class="growth-section"><div class="growth-chart-container"><h3 class="chart-title">Projected Partnership ROI</h3><canvas id="growth-chart" class="chart-canvas"></canvas></div><div class="metrics-column"><div class="metric-card emerald" onclick="toggleExpand(this)" title="By creating an exclusive event, we transform transactional customers into a loyal community, increasing the frequency of visits and overall lifetime value."><div class="metric-value">+40%</div><div class="body-regular">Customer Retention</div><div class="metric-details"><p>Experiential events create deep emotional bonds. Brands that host unique, memorable experiences see up to a 40% increase in customer retention over a 6-month period. We are not just selling coffee; we are creating core memories associated with the Sextant brand, driving loyalty that a simple transaction cannot.</p><p class="text-xs text-gray-500 mt-2">Source: Forrester Research, "The Experience Economy," 2024</p></div></div><div class="metric-card purple" onclick="toggleExpand(this)" title="The visually rich, multi-sensory 'portal' experience is engineered for social sharing, converting attendees into powerful organic marketers."><div class="metric-value">+300%</div><div class="body-regular">Social Engagement</div><div class="metric-details"><p>Events that facilitate high-quality user-generated content (UGC) see an average social media engagement lift of over 300%. Our environment is designed to be compulsively shareable, turning every attendee into a micro-influencer and generating authentic marketing content that dramatically expands Sextant's digital footprint.</p><p class="text-xs text-gray-500 mt-2">Source: Sprout Social, "UGC Impact Report," 2025</p></div></div><div class="metric-card teal" onclick="toggleExpand(this)" title="Activating the space during evening hours taps into a completely new, high-margin revenue stream, dramatically boosting profit per square foot."><div class="metric-value">+150%</div><div class="body-regular">Evening Revenue Lift</div><div class="metric-details"><p>Activating a cafe for evening programs can boost revenue by 150-200% during those hours. This partnership instantly establishes Sextant as a premier evening destination on Valencia, capturing a high-margin revenue stream with minimal initial risk and setting a precedent for future programming.</p><p class="text-xs text-gray-500 mt-2">Source: National Restaurant Association, "Nightlife & Dayparting," 2024</p></div></div><div class="metric-card yellow" onclick="toggleExpand(this)" title="This partnership positions Sextant not just as a coffee shop, but as a premier cultural hub, attracting media attention and a wider, more diverse audience."><div class="metric-value">+90%</div><div class="body-regular">New Customer Acquisition</div><div class="metric-details"><p>First-time, unique cultural events can drive new customer acquisition by up to 90% in the month of the event. We will attract a discerning clientele from the music and art worlds who may not be regular coffee shop patrons, introducing a new, high-value demographic to the Sextant ecosystem.</p><p class="text-xs text-gray-500 mt-2">Source: Eventbrite, "Cultural Event Impact Study," 2024</p></div></div></div></div>` 
     },
     { 
         title: "The Creators", 
-        content: `<div class="freestanding-quote"><div class="quote-line">We don't chase trends.</div><div class="quote-line emphasis">We design frequencies.</div></div><div class="creators-grid"><div class="creator-card"><div class="creator-particles" id="pratt-particles"></div><div class="creator-content"><a href="https://www.linkedin.com/in/prxatt" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-emerald-400">Pratt Majmudar</h3></a><p class="body-regular mt-2 text-emerald-300">CEO & Creative Director</p><ul class="body-regular mt-6 space-y-3"><li>Architects the complete <span class='font-semibold text-emerald-300'>Sensory Experience</span>, from the precise frequency calibration of the sound system to the narrative arc of the musical journey.</li><li>Leads <span class='font-semibold text-emerald-300'>Digital & Guerrilla Activation</span>, creating the cryptic signals and cinematic content that build the brand's mystique.</li><li>Acts as the primary <span class='font-semibold text-emerald-300'>Cultural Liaison</span>, securing artistic talent and ensuring every technical detail serves the core philosophy.</li></ul></div></div><div class="creator-card"><div class="creator-particles" id="diana-particles"></div><div class="creator-content"><a href="https://www.linkedin.com/in/diana-komakhidze-168004147/" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-purple-400">Diana Komakhidze</h3></a><p class="body-regular mt-2 text-purple-300">Chief Designer & Marketing Lead</p><ul class="body-regular mt-6 space-y-3"><li>Directs the <span class='font-semibold text-purple-300'>Visual Universe</span> of the brand, designing the logos, posters, and digital artifacts that give the experience its tangible form.</li><li>Orchestrates the <span class='font-semibold text-purple-300'>Physical & Community Marketing</span>, managing in-store promotions and email campaigns to cultivate a core audience.</li><li>Champions a <span class='font-semibold text-purple-300'>Community-First Ethos</span>, ensuring every design choice and marketing touchpoint deepens the connection with our audience.</li></ul></div></div></div>` 
+        content: `<div class="freestanding-quote"><div class="quote-line">We don't chase trends.</div><div class="quote-line emphasis">We design frequencies.</div></div><div class="creators-grid"><div class="creator-card"><div class="creator-particles" id="pratt-particles"></div><div class="creator-content"><div><a href="https://www.linkedin.com/in/prxatt" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-emerald-400">Pratt Majmudar</h3></a><p class="body-regular mt-2 text-emerald-300">CEO & Creative Director</p></div><ul><li class="body-regular">Architects the complete <span class='font-semibold text-emerald-300'>Sensory Experience</span>, from the precise frequency calibration of the sound system to the narrative arc of the musical journey.</li><li class="body-regular">Leads <span class='font-semibold text-emerald-300'>Digital & Guerrilla Activation</span>, creating the cryptic signals and cinematic content that build the brand's mystique.</li><li class="body-regular">Acts as the primary <span class='font-semibold text-emerald-300'>Cultural Liaison</span>, securing artistic talent and ensuring every technical detail serves the core philosophy.</li></ul></div></div><div class="creator-card"><div class="creator-particles" id="diana-particles"></div><div class="creator-content"><div><a href="https://www.linkedin.com/in/diana-komakhidze-168004147/" target="_blank" class="text-decoration-none"><h3 class="heading-1 text-purple-400">Diana Komakhidze</h3></a><p class="body-regular mt-2 text-purple-300">Chief Designer & Marketing Lead</p></div><ul><li class="body-regular">Directs the <span class='font-semibold text-purple-300'>Visual Universe</span> of the brand, designing the logos, posters, and digital artifacts that give the experience its tangible form.</li><li class="body-regular">Orchestrates the <span class='font-semibold text-purple-300'>Physical & Community Marketing</span>, managing in-store promotions and email campaigns to cultivate a core audience.</li><li class="body-regular">Champions a <span class='font-semibold text-purple-300'>Community-First Ethos</span>, ensuring every design choice and marketing touchpoint deepens the connection with our audience.</li></ul></div></div><div class="creator-card"><div class="creator-particles" id="riley-particles"></div><div class="creator-content"><div><a href="https://www.linkedin.com/in/rileytemple/" target="_blank" class="text-decoration-none"><h3 class="heading-1" style="color:#f59e0b">Riley Temple</h3></a><p class="body-regular mt-2" style="color:#fde047">Co-Producer & Operations Lead</p></div><ul><li class="body-regular">Drives <span class='font-semibold' style='color:#fde047'>Operational Excellence</span>, translating creative vision into a flawless, executable reality by managing logistics, permitting, and on-site production.</li><li class="body-regular">Leverages extensive experience in <span class='font-semibold' style='color:#fde047'>Brand Partnership Integration</span> to ensure sponsor activations are seamless and deliver maximum value for all stakeholders.</li><li class="body-regular">Manages the <span class='font-semibold' style='color:#fde047'>Production P&L</span>, ensuring the project is delivered on budget through meticulous planning and vendor negotiation.</li></ul></div></div></div>` 
     },
     { 
         title: "Strategic Roadmap", 
-        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This is a transparent, collaborative roadmap for our inaugural launch on <strong>Friday, July 26th, 2025</strong>. This intensive 4-week 5-day sprint is designed to build momentum, mitigate risk, and ensure a flawlessly executed, high-impact cultural debut.</p><div class="task-planner mt-8"><div class="task-filters"><button class="task-filter active" data-filter="all">All</button><button class="task-filter" data-filter="pratt">Pratt</button><button class="task-filter" data-filter="diana">Diana</button><button class="task-filter" data-filter="riley">Riley</button><button class="task-filter" data-filter="sextant">Sextant</button><button class="task-filter" data-filter="collaborative">Collaborative</button></div><div id="task-list" class="task-planner-grid"></div></div>` 
+        content: `<p class="body-large mt-4 max-w-4xl mx-auto">This is a transparent, collaborative roadmap for our inaugural launch on <strong>Friday, July 25th, 2025</strong>. This intensive 4-week sprint is designed to build momentum, mitigate risk, and ensure a flawlessly executed, high-impact cultural debut.</p><div class="task-planner mt-8"><div class="task-filters"><button class="task-filter active" data-filter="all">All</button><button class="task-filter" data-filter="pratt">Pratt</button><button class="task-filter" data-filter="diana">Diana</button><button class="task-filter" data-filter="riley">Riley</button><button class="task-filter" data-filter="sextant">Sextant</button><button class="task-filter" data-filter="collaborative">Collaborative</button></div><div id="task-list" class="task-planner-grid"></div></div>` 
     },
     { title: null, content: `<div id="finale-container"><div id="finale-animation"></div><div id="finale-title">in stillness, depth</div><div class="finale-content"><div class="finale-links"><a href="https://surfacetension.co" target="_blank" class="finale-link left">surfacetension.co</a><a href="https://prxatt.github.io/STSplash/" target="_blank" class="finale-link right">Experience Preview</a></div></div></div>` }
 ];
@@ -530,7 +533,7 @@ const App = {
     
     startLoadingSequence() {
         // Start loading animation and finish after a delay
-        setTimeout(() => this.finishLoading(), 6500); // Increased time for new loading anim
+        setTimeout(() => this.finishLoading(), 6500);
     },
     
     injectSlides() {
@@ -556,7 +559,7 @@ const App = {
         let touchStartX = 0, swipeBlocked = false;
         // Use passive: false for touchevents that might call preventDefault()
         this.DOM.slideContainer.addEventListener('touchstart', e => { 
-            swipeBlocked = !!e.target.closest('a, button, input, .interactive-venue, .timeline-container, .chart-container'); 
+            swipeBlocked = !!e.target.closest('a, button, input, .interactive-venue, .timeline-container, .chart-container, .task-planner, .sextant-layout'); 
             if (!swipeBlocked) touchStartX = e.changedTouches[0].screenX; 
         }, { passive: true });
         this.DOM.slideContainer.addEventListener('touchend', e => { 
@@ -611,6 +614,7 @@ const Animations = {
         this.createHeaderLogo(); 
     },
     
+    // RESTORED to original code from stmaddeck5am.html
     createLoadingAnimation() {
         const canvas = document.getElementById('loading-canvas');
         if (!canvas) return;
@@ -902,29 +906,29 @@ const Animations = {
             
             const sceneObjects = {};
 
-            if (options.geometry && options.shader) {
-                const material = new THREE.ShaderMaterial(options.shader);
-                let obj;
-                if(options.isPoints) {
-                    obj = new THREE.Points(options.geometry, material);
-                } else {
-                     obj = new THREE.Mesh(options.geometry, material);
-                }
-                scene.add(obj);
-                sceneObjects.main = obj;
-            } else if (options.objects) { // Handle point clouds
+            if (options.objects) { // Handle multiple objects
                 options.objects.forEach(objDef => {
-                    const geometry = objDef.geometry;
-                    const material = new THREE.ShaderMaterial(objDef.shader);
-                    let obj = new THREE.Points(geometry, material);
+                    let obj;
+                    if(objDef.type === 'Points') {
+                        obj = new THREE.Points(objDef.geometry, objDef.material);
+                    } else { // Default to Mesh
+                        obj = new THREE.Mesh(objDef.geometry, objDef.material);
+                    }
                     scene.add(obj);
                     sceneObjects[objDef.name] = obj;
                 });
-            } else if (options.geometry) {
-                const material = new THREE.PointsMaterial({...options.material});
-                const points = new THREE.Points(options.geometry, material);
-                scene.add(points);
-                sceneObjects.main = points;
+            } else if (options.geometry) { // Handle single object definitions
+                 if (options.isPoints) {
+                    const material = options.shader ? new THREE.ShaderMaterial(options.shader) : new THREE.PointsMaterial({...options.material});
+                    const points = new THREE.Points(options.geometry, material);
+                    scene.add(points);
+                    sceneObjects.main = points;
+                } else {
+                    const material = options.shader ? new THREE.ShaderMaterial(options.shader) : new THREE.MeshBasicMaterial({...options.material});
+                    const mesh = new THREE.Mesh(options.geometry, material);
+                    scene.add(mesh);
+                    sceneObjects.main = mesh;
+                }
             }
 
 
@@ -1002,70 +1006,71 @@ const Animations = {
             slideIndex: 0,
             isPoints: true,
             cameraZ: 8,
-            objects: [{
-                name: 'points',
-                geometry: new THREE.IcosahedronGeometry(1.8, blobDetail),
-                shader: {
-                    uniforms: { uTime: { value: 0 }, uTransition: { value: 0.0 } },
-                    vertexShader: `
-                        precision highp float;
-                        ${noiseFunc}
-                        uniform float uTime;
-                        uniform float uTransition;
-                        varying float vNoise;
-                        void main() {
-                            float rippleTime = uTime * 0.4;
-                            float maxRadius = 15.0;
-                            float particleRadius = mod(position.x * 2.5 + rippleTime * 3.0, maxRadius);
-                            float angle = atan(position.z, position.y) + uTime * 0.1;
-                            float life = pow(1.0 - (particleRadius / maxRadius), 2.0);
-                            vec3 ripplePos = vec3(
-                                particleRadius * cos(angle),
-                                particleRadius * sin(angle),
-                                sin(particleRadius * 2.5 - rippleTime * 10.0) * 0.4 * life
-                            );
-                            float noiseFrequency = 0.8;
-                            float noiseStrength = 0.7;
-                            float time = uTime * 0.1;
-                            vec3 displacedPos = position + normal * snoise(position * noiseFrequency + time) * noiseStrength;
-                            vNoise = snoise(position * 2.0 + time * 0.5);
-                            vec3 finalPos = mix(ripplePos, displacedPos, uTransition);
-                            vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
-                            gl_PointSize = (mix(0.8, 1.5, uTransition) * life) * (300.0 / -mvPosition.z);
-                            gl_Position = projectionMatrix * mvPosition;
-                        }
-                    `,
-                    fragmentShader: `
-                        precision highp float;
-                        varying float vNoise;
-                        void main() {
-                            float dist = distance(gl_PointCoord, vec2(0.5));
-                            if (dist > 0.5) discard;
-                            vec3 colorEmerald = vec3(0.063, 0.725, 0.506);
-                            vec3 colorPurple = vec3(0.659, 0.333, 0.969);
-                            vec3 finalColor = mix(colorEmerald, colorPurple, vNoise * 0.5 + 0.5);
-                            float alpha = (1.0 - dist * 2.0);
-                            gl_FragColor = vec4(finalColor, alpha);
-                        }
-                    `
-                }
-            }],
-            update:({ camera, t, points }) => {
-                points.material.uniforms.uTime.value = t;
-                gsap.to(points.material.uniforms.uTransition, { value: 1.0, duration: 8.0, ease: 'power2.inOut' });
-                points.rotation.y = -t * 0.05;
+            geometry: new THREE.IcosahedronGeometry(1.8, blobDetail),
+            shader: {
+                uniforms: { uTime: { value: 0 }, uTransition: { value: 0.0 } },
+                vertexShader: `
+                    precision highp float;
+                    ${noiseFunc}
+                    uniform float uTime;
+                    uniform float uTransition;
+                    varying float vNoise;
+                    void main() {
+                        float rippleTime = uTime * 0.4;
+                        float maxRadius = 15.0;
+                        float particleRadius = mod(position.x * 2.5 + rippleTime * 3.0, maxRadius);
+                        float angle = atan(position.z, position.y) + uTime * 0.1;
+                        float life = pow(1.0 - (particleRadius / maxRadius), 2.0);
+                        vec3 ripplePos = vec3(
+                            particleRadius * cos(angle),
+                            particleRadius * sin(angle),
+                            sin(particleRadius * 2.5 - rippleTime * 10.0) * 0.4 * life
+                        );
+                        float noiseFrequency = 0.8;
+                        float noiseStrength = 0.7;
+                        float time = uTime * 0.1;
+                        vec3 displacedPos = position + normal * snoise(position * noiseFrequency + time) * noiseStrength;
+                        vNoise = snoise(position * 2.0 + time * 0.5);
+                        vec3 finalPos = mix(ripplePos, displacedPos, uTransition);
+                        vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
+                        gl_PointSize = (mix(0.8, 1.5, uTransition) * life) * (300.0 / -mvPosition.z);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    precision highp float;
+                    varying float vNoise;
+                    void main() {
+                        float dist = distance(gl_PointCoord, vec2(0.5));
+                        if (dist > 0.5) discard;
+                        vec3 colorEmerald = vec3(0.063, 0.725, 0.506);
+                        vec3 colorPurple = vec3(0.659, 0.333, 0.969);
+                        vec3 finalColor = mix(colorEmerald, colorPurple, vNoise * 0.5 + 0.5);
+                        float alpha = (1.0 - dist * 2.0);
+                        gl_FragColor = vec4(finalColor, alpha);
+                    }
+                `
+            },
+            update:({ camera, t, main }) => {
+                main.material.uniforms.uTime.value = t;
+                gsap.to(main.material.uniforms.uTransition, { value: 1.0, duration: 8.0, ease: 'power2.inOut' });
+                main.rotation.y = -t * 0.05;
                 camera.lookAt(0,0,0);
             }
         });
     },
 
     initCreatorParticles(id) { 
+        let particleColor = 0x10b981; // Default Pratt
+        if (id.includes('diana')) particleColor = 0xa855f7;
+        if (id.includes('riley')) particleColor = 0xf59e0b;
+
         return this.createScene(id,{
             slideIndex:8, cameraZ:2.5, 
             isPoints: true,
             geometry:new THREE.IcosahedronGeometry(1.2,5),
-            material:{size:0.02,color:id.includes('pratt')?0x10b981:0xa855f7,wireframe:true},
-            update:({main, t})=>{main.rotation.y=t*0.1;}
+            material:{size:0.02, color: particleColor, wireframe:true, transparent:true, opacity:0.7},
+            update:({main, t})=>{main.rotation.y=t*0.1; main.rotation.x=t*0.05;}
         }); 
     },
 
@@ -1182,57 +1187,64 @@ const Animations = {
         });
     },
     
+    // REBUILT finale animation
     initFinaleRipple() {
         const isHighPerf = (navigator.hardwareConcurrency || 4) > 2;
-        const segments = isHighPerf ? 256 : 128;
+        const segments = isHighPerf ? 200 : 128;
+        const geometry = new THREE.PlaneGeometry(30, 30, segments, segments);
 
+        // This function will be shared by both the wireframe and the points
+        const updateVertices = (time, positions) => {
+            const t = time * 0.5;
+            for (let i = 0; i < positions.length; i += 3) {
+                const x = positions[i];
+                const y = positions[i+1];
+                const dist = Math.sqrt(x*x + y*y);
+                const wave1 = Math.sin(dist * 1.2 - t * 1.5);
+                const wave2 = Math.sin((x + y) * 0.8 + t);
+                positions[i+2] = (wave1 + wave2) * 0.4 * Math.pow(1.0 - (dist/20.0), 2.0);
+            }
+        };
+        
+        // We will have two objects: a wireframe mesh and points on top
         this.createScene('finale-animation', {
             slideIndex: 10,
-            cameraZ: 5,
-            geometry: new THREE.PlaneGeometry(40, 40, segments, segments),
-            shader: {
-                uniforms: {
-                    uTime: { value: 0.0 },
-                    uColor1: { value: new THREE.Color('#10b981') },
-                    uColor2: { value: new THREE.Color('#000000') }
+            cameraZ: 10,
+            objects: [
+                {
+                    name: 'surface',
+                    type: 'Mesh',
+                    geometry: geometry,
+                    material: new THREE.MeshBasicMaterial({
+                        color: 0x10b981,
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.2
+                    })
                 },
-                vertexShader: `
-                    precision highp float;
-                    uniform float uTime;
-                    varying float vWave;
-                    void main() {
-                        vec3 pos = position;
-                        float dist = length(pos.xy);
-                        float t = uTime * 0.3;
-                        float wave = sin(dist * 1.2 - t) * 1.5;
-                        pos.z = wave * smoothstep(20.0, 0.0, dist);
-                        vWave = pos.z;
-                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-                    }
-                `,
-                fragmentShader: `
-                    precision highp float;
-                    uniform vec3 uColor1;
-                    uniform vec3 uColor2;
-                    varying float vWave;
-                    void main() {
-                        float intensity = pow(0.5 - distance(gl_PointCoord, vec2(0.5)), 2.0) * 2.0;
-                        float glow = pow(0.1 + abs(vWave), 2.0);
-                        vec3 color = mix(uColor2, uColor1, glow);
-                        float dist = distance(gl_PointCoord, vec2(0.5));
-                        float alpha = (1.0 - dist * 2.0) * glow;
-                        gl_FragColor = vec4(color, alpha);
-                    }
-                `,
-                 blending: THREE.AdditiveBlending,
-                 transparent: true,
-                 depthWrite: false
-            },
-            update: ({ main, t, camera }) => {
-                main.material.uniforms.uTime.value = t;
-                main.rotation.x = -1.3;
-                camera.position.z = 4.0 + Math.sin(t * 0.2) * 1.0;
-                camera.position.y = 3.5;
+                {
+                    name: 'particles',
+                    type: 'Points',
+                    geometry: geometry,
+                    material: new THREE.PointsMaterial({
+                        color: 0xa855f7,
+                        size: 0.05,
+                        transparent: true,
+                        opacity: 0.7,
+                        blending: THREE.AdditiveBlending,
+                        depthWrite: false,
+                    })
+                }
+            ],
+            update: ({ camera, t, surface, particles }) => {
+                const positions = surface.geometry.attributes.position.array;
+                updateVertices(t, positions);
+                surface.geometry.attributes.position.needsUpdate = true;
+                
+                // Keep camera slowly rotating
+                camera.position.x = Math.sin(t * 0.1) * 5;
+                camera.position.z = Math.cos(t * 0.1) * 10;
+                camera.position.y = 6;
                 camera.lookAt(0, 0, 0);
             }
         });
@@ -1242,12 +1254,12 @@ const Animations = {
     initPredictiveChart(){this.initChart('predictive-chart',{type:'line',data:{labels:['Q1','Q2','Q3','Q4'],datasets:[{label:'Coffee Shop Foot Traffic',data:[150,165,170,180],backgroundColor:'rgba(168,85,247,0.3)',borderColor:'#a855f7',tension:0.4},{label:'Coffee/DJ Set Attendance',data:[10,25,60,95],backgroundColor:'rgba(6,182,212,0.3)',borderColor:'#06b6d4',tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'white',boxWidth:12,padding:15}}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}}}}});},
     initTrendsChart(){this.initChart('trends-chart',{type:'bar',data:{labels:['Traditional Cafes','DJ Venues','Hybrid Spaces'],datasets:[{label:'Market Interest (SF)',data:[75,85,110],backgroundColor:['rgba(6,182,212,0.6)','rgba(245,158,11,0.6)','rgba(16,185,129,0.6)'],borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{display:false}}}}});},
     initGrowthChart(){this.initChart('growth-chart',{type:'radar',data:{labels:['Revenue Lift','Brand Awareness','Foot Traffic','Community Growth','Media Buzz'],datasets:[{label:'Projected Growth',data:[85,75,60,95,70],backgroundColor:'rgba(16,185,129,0.3)',borderColor:'#10b981',borderWidth:2,pointBackgroundColor:'#10b981',pointBorderColor:'#fff',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10, 14, 26, 0.8)',bodyFont:{size:12},bodySpacing: 4, padding:12, callbacks:{title:(c)=>c[0].label,label:(c)=>{const v=c.parsed.r;let e='';switch(c.label){case'Revenue Lift':e='Projected increase in nightly revenue from extended hours and premium offerings.';break;case'Brand Awareness':e='Increased social media buzz and word-of-mouth recognition in the target demographic.';break;case'Foot Traffic':e='Attracting new and returning customers during previously off-peak evening hours.';break;case'Community Growth':e='Building a loyal community around unique, shared experiences, fostering retention.';break;case'Media Buzz':e="Generating organic press and influencer mentions due to the event's novelty.";break;}return[`Value: ${v}%`,`Potential: ${e}`];}}}},scales:{r:{angleLines:{color:'rgba(255,255,255,0.1)'},grid:{color:'rgba(255,255,255,0.15)'},pointLabels:{color:'white',font:{size:12,family:"'Inter',sans-serif"}},ticks:{display:false,beginAtZero:true,max:100}}}}});},
-    initRevenuePieChart(){this.initChart('revenue-pie-chart',{type:'pie',data:{labels:['Sextant Gross Profit','Surface Tension Gross'],datasets:[{data:[975,765],backgroundColor:['#a855f7','#10b981'],borderColor:'#0a0e1a',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'white',boxWidth:12,padding:20}},tooltip:{callbacks:{label:(c)=>`${c.label}: $${c.raw.toFixed(0)}`}},datalabels:{formatter:(v,c)=>{const s=c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return s > 0 ? `${(v/s*100).toFixed(0)}%` : '0%';},color:'#fff',font:{weight:'bold'}}}}});},
+    initRevenuePieChart(){this.initChart('revenue-pie-chart',{type:'pie',data:{labels:['Sextant Profit', 'Surface Tension Share'],datasets:[{data:[886,1409],backgroundColor:['#a855f7','#10b981'],borderColor:'#0a0e1a',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'white',boxWidth:12,padding:20}},tooltip:{callbacks:{label:(c)=>`${c.label}: $${c.raw.toFixed(0)}`}},datalabels:{formatter:(v,c)=>{const s=c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return s > 0 ? `${(v/s*100).toFixed(0)}%` : '0%';},color:'#fff',font:{weight:'bold'}}}}});},
 
     handleResize(){this.renderers.forEach(r=>{const c=r.domElement.parentElement;if(c&&c.clientWidth>0){const m=Object.values(this.scenes).find(s=>s&&s.renderer===r)?.camera;if(m){m.aspect=c.clientWidth/c.clientHeight;m.updateProjectionMatrix();}r.setSize(c.clientWidth,c.clientHeight);}});Object.values(this.scenes).forEach(s=>{if(s instanceof Chart&&s.resize)s.resize();});},
     
     getAnimFunction(slideIndex) {
-        const animMap={0:this.initCoverSphere,2:this.initDripRipple,3:this.initVenuePointCloud,8:() => { Animations.initCreatorParticles('pratt-particles')(); Animations.initCreatorParticles('diana-particles')(); },10:this.initFinaleRipple};
+        const animMap={0:this.initCoverSphere,2:this.initDripRipple,3:this.initVenuePointCloud,8:() => { Animations.initCreatorParticles('pratt-particles')(); Animations.initCreatorParticles('diana-particles')(); Animations.initCreatorParticles('riley-particles')(); },10:this.initFinaleRipple};
         return animMap[slideIndex]?.bind(this);
     }
 };
@@ -1266,10 +1278,10 @@ const Content = {
             case 1:Animations.createScene('bell-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.CylinderGeometry(0,0.6,1.2,16,4),material:{size:0.05,color:0x10b981},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('heart-cloud',{slideIndex:1,cameraZ:2.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0.25,0.25).bezierCurveTo(0.25,0.25,0.2,0,0,0).bezierCurveTo(-0.3,0,-0.3,0.35,-0.3,0.35).bezierCurveTo(-0.3,0.55,-0.1,0.77,0.25,0.95).bezierCurveTo(0.6,0.77,0.8,0.55,0.8,0.35).bezierCurveTo(0.8,0.35,0.8,0,0.5,0).bezierCurveTo(0.35,0,0.25,0.25,0.25,0.25), 30),material:{size:0.04,color:0xa855f7},update:({main,t})=>{main.rotation.y=t*0.1;}});Animations.createScene('star-cloud',{slideIndex:1,cameraZ:1.5,geometry:new THREE.ShapeGeometry(new THREE.Shape().moveTo(0,0.5).lineTo(0.1,0.1).lineTo(0.5,0.1).lineTo(0.2,-0.1).lineTo(0.3,-0.5).lineTo(0,-0.2).lineTo(-0.3,-0.5).lineTo(-0.2,-0.1).lineTo(-0.5,0.1).lineTo(-0.1,0.1).lineTo(0,0.5), 10),material:{size:0.04,color:0x06b6d4},update:({main,t})=>{main.rotation.y=t*0.1;}});break;
             case 2:this.setupMenuSystem(); this.setupEventTimeline(); break;
             case 3:this.setupInteractiveVenue();break;
-            case 4:Animations.initPredictiveChart();Animations.initTrendsChart();this.setupMarketingExecTabs();break;
+            case 4:this.setupMarketingExecTabs();break;
             case 6:this.setupFinancialCalculator();break;
             case 7:Animations.initGrowthChart();break;
-            case 8: Animations.initCreatorParticles('pratt-particles')(); Animations.initCreatorParticles('diana-particles')(); break;
+            case 8: Animations.initCreatorParticles('pratt-particles')(); Animations.initCreatorParticles('diana-particles')(); Animations.initCreatorParticles('riley-particles')(); break;
             case 9:this.setupTaskPlanner();break;
         }
     },
@@ -1343,64 +1355,66 @@ const Content = {
     resetVenueLayout(){document.querySelectorAll('.venue-item').forEach(i=>{const n=this.initialTransforms.get(i);if(n){i.style.transform=n.transform;i.style.top=n.top;i.style.left=n.left;i.style.width=n.width;i.style.height=n.height;}});},
     setupFinancialCalculator(){this.calculateRevenue();},
     calculateRevenue(){
-        const tier1a = (parseFloat(document.getElementById('tier1a-qty').value) || 0);
-        const tier1b = (parseFloat(document.getElementById('tier1b-qty').value) || 0);
-        const tier2a = (parseFloat(document.getElementById('tier2a-qty').value) || 0);
-        const tier2b = (parseFloat(document.getElementById('tier2b-qty').value) || 0);
-        const tier3 = (parseFloat(document.getElementById('tier3-qty').value) || 0);
+        const tier1Qty = (parseFloat(document.getElementById('tier1-qty').value) || 0);
+        const tier2Qty = (parseFloat(document.getElementById('tier2-qty').value) || 0);
+        const tier3Qty = (parseFloat(document.getElementById('tier3-qty').value) || 0);
         const addonPerPerson = (parseFloat(document.getElementById('addon-drinks-per-person').value) || 0);
 
-        const totalAttendees = tier1a + tier1b + tier2a + tier2b + tier3;
-        
-        const ticketRevenue = (tier1a * 16) + (tier1b * 25) + (tier2a * 22) + (tier2b * 33) + (tier3 * 27);
-        
-        const includedDrinksValue = (tier1b * 9) + (tier2b * 11);
-        const addonDrinksCount = totalAttendees * addonPerPerson;
-        const addonDrinkRevenue = addonDrinksCount * 14; // Using weighted average price for add-ons
-        const totalDrinkRevenue = includedDrinksValue + addonDrinkRevenue;
-
+        const tier1Price = 20;
+        const tier2Price = 28;
+        const tier3Price = 35;
+        const avgDrinkPrice = 14;
         const cogsRate = 0.30;
-        const cogs = totalDrinkRevenue * cogsRate;
 
-        const totalGrossRevenue = ticketRevenue + addonDrinkRevenue;
-        const productionCost = 300 + 100 + 350; // Updated DJ, lighting sponsored, permits+insurance
+        const totalAttendees = tier1Qty + tier2Qty + tier3Qty;
         
-        const totalNetRevenue = totalGrossRevenue - cogs;
-        const sextantGrossProfit = totalNetRevenue * 0.5;
-        const stGross = totalNetRevenue * 0.5;
-        const stNet = stGross - productionCost;
+        const totalTicketRevenue = (tier1Qty * tier1Price) + (tier2Qty * tier2Price) + (tier3Qty * tier3Price);
+        
+        const addonDrinkRevenue = totalAttendees * addonPerPerson * avgDrinkPrice;
+        
+        const totalGrossRevenue = totalTicketRevenue + addonDrinkRevenue;
 
+        // Sextant's Share Calculation
+        const sextantTicketShare = totalTicketRevenue * 0.30;
+        const netDrinkRevenue = addonDrinkRevenue * (1 - cogsRate); // Assuming COGS only applies to add-on drinks for this simple model
+        const sextantDrinkShare = netDrinkRevenue * 0.50;
+        const sextantTotalProfit = sextantTicketShare + sextantDrinkShare;
+
+        // Surface Tension's Share Calculation (for pie chart)
+        const stTicketShare = totalTicketRevenue * 0.70;
+        const stDrinkShare = netDrinkRevenue * 0.50;
+        const stGrossProfit = stTicketShare + stDrinkShare;
+        
+        // Update DOM
         document.getElementById('total-revenue').textContent = `$${totalGrossRevenue.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('cogs').textContent = `-$${cogs.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('sextant-share').textContent = `$${sextantGrossProfit.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('st-gross').textContent = `$${stGross.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('st-costs').textContent = `-$${productionCost.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('st-net-profit').textContent = `$${stNet.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('sextant-ticket-share').textContent = `+$${sextantTicketShare.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('sextant-drink-share').textContent = `+$${sextantDrinkShare.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('sextant-total-profit').textContent = `$${sextantTotalProfit.toLocaleString('en-US',{maximumFractionDigits:0})}`;
 
         if(!Animations.scenes['revenue-pie-chart']) Animations.initRevenuePieChart();
         const pieChart = Animations.scenes['revenue-pie-chart'];
-        pieChart.data.datasets[0].data = [sextantGrossProfit, stGross];
+        pieChart.data.datasets[0].data = [sextantTotalProfit, stGrossProfit];
         pieChart.update();
     },
     setupTaskPlanner(){
         const savedTasks = localStorage.getItem('surfaceTensionTasks');
         taskData = savedTasks ? JSON.parse(savedTasks) : [
             { id: 1, week: 1, title: "Partnership & Financials Finalized", assignee: "pratt", status: 'completed', dates: {start: "20250623", end: "20250624"}, desc: "<b>Goal:</b> Execute final partnership agreement. <br><b>Action:</b> Sign agreement with Sextant outlining roles, and the updated financial structure.", notes: "Agreement signed. Financial model confirmed." },
-            { id: 2, week: 1, title: "Initiate Permit Investigation", assignee: "riley", status: 'completed', dates: {start: "20250624", end: "20250627"}, desc: "<b>Goal:</b> Determine the exact permit path of least resistance and cost. <br><b>Action:</b> Contact SF Entertainment Commission. Confirmed One-Time Indoor permit is the correct path. <br><b>Reference:</b> <a href='https://sf.gov/get-entertainment-permit-your-indoor-event' target='_blank' class='text-teal-400 hover:underline'>SF.gov Indoor Permit</a>", notes: "Confirmed path with city clerk. Ready to file." },
+            { id: 2, week: 1, title: "Initiate Permit & Insurance Path", assignee: "riley", status: 'completed', dates: {start: "20250624", end: "20250627"}, desc: "<b>Goal:</b> Determine the exact compliance path of least resistance and cost. <br><b>Action:</b> Contact SFEC, confirm One-Time Indoor permit. Secure quotes for one-day event liability insurance. <br><b>Reference:</b> <a href='https://sf.gov/get-entertainment-permit-your-indoor-event' target='_blank' class='text-teal-400 hover:underline'>SF.gov Indoor Permit</a>", notes: "Confirmed path with city. Insurance quotes received." },
             { id: 3, week: 1, title: "Launch Phase 1: Digital Speakeasy", assignee: "pratt", status: 'completed', dates: {start: "20250625", end: "20250628"}, desc: "<b>Goal:</b> Create the initial layer of mystique. <br><b>Action:</b> Launch password-protected microsite. Begin leaking password 'STILLNESS' into niche online communities.", notes: "Microsite is live. Initial seeding in progress." },
-            { id: 4, week: 1, title: "Finalize Menu & Sourcing", assignee: "sextant", status: 'approval', dates: {start: "20250624", end: "20250628"}, desc: "<b>Goal:</b> Lock in the complete beverage offering. <br><b>Action:</b> Finalize all supplier agreements. Set pars for all ingredients.", notes: "Waiting on final confirmation for local bourbon." },
-            { id: 5, week: 2, title: "Submit Permit Application", assignee: "riley", status: 'in_progress', dates: {start: "20250630", end: "20250702"}, desc: "<b>Goal:</b> Formally file for all necessary permits. <br><b>Action:</b> Submit the One-Time Indoor Permit application with all required documentation from Sextant.", notes: "Application submitted. Awaiting confirmation of receipt." },
+            { id: 4, week: 1, title: "Finalize Menu & Sourcing", assignee: "sextant", status: 'approval', dates: {start: "20250624", end: "20250628"}, desc: "<b>Goal:</b> Lock in the complete beverage offering based on the curated menu. <br><b>Action:</b> Finalize all supplier agreements for in-kind sponsorships and purchased goods. Set pars for all ingredients.", notes: "Awaiting final confirmation on N/A spirit sponsor." },
+            { id: 5, week: 2, title: "Submit Permit & Bind Insurance", assignee: "riley", status: 'in_progress', dates: {start: "20250630", end: "20250702"}, desc: "<b>Goal:</b> Formally file for all necessary compliance documents. <br><b>Action:</b> Submit the One-Time Indoor Permit application. Bind the selected event insurance policy.", notes: "Application submitted. Awaiting confirmation of receipt." },
             { id: 6, week: 2, title: "Artist Confirmation & Briefing", assignee: "pratt", status: 'completed', dates: {start: "20250701", end: "20250703"}, desc: "<b>Goal:</b> Secure musical talent. <br><b>Action:</b> Finalize agreement and honorarium with the selected DJ. Conducted creative briefing call.", notes: "DJ confirmed and briefed on sonic direction." },
-            { id: 7, week: 2, title: "Design Physical & Digital Assets", assignee: "diana", status: 'in_progress', dates: {start: "20250702", end: "20250705"}, desc: "<b>Goal:</b> Create all marketing visuals. <br><b>Action:</b> Design the A5 poster, digital stickers, and social media graphic templates.", notes: "Poster design in final review." },
-            { id: 8, week: 2, title: "Order & Receive Production Gear", assignee: "riley", status: 'initiated', dates: {start: "20250630", end: "20250705"}, desc: "<b>Goal:</b> Secure all production equipment for testing. <br><b>Action:</b> Order the <a href='https://www.amazon.com/s?k=12+inch+pa+speaker+system' target='_blank' class='text-teal-400 hover:underline'>PA system</a>, <a href='https://www.amazon.com/s?k=led+par+lights' target='_blank' class='text-teal-400 hover:underline'>lights</a>, and <a href='https://www.amazon.com/s?k=water+based+hazer' target='_blank' class='text-teal-400 hover:underline'>hazer</a> from Amazon.", notes: "All items ordered. Awaiting delivery." },
-            { id: 9, week: 3, title: "Execute Phase 3: The Artifacts", assignee: "diana", status: 'not_started', dates: {start: "20250707", end: "20250711"}, desc: "<b>Goal:</b> Deepen the brand mythos. <br><b>Action:</b> Print and distribute the 50 physical posters. Launch email campaign to initial signups.", notes: "Dependent on completing poster design." },
-            { id: 10, week: 3, title: "Permit Follow-up", assignee: "riley", status: 'not_started', dates: {start: "20250708", end: "20250710"}, desc: "<b>Goal:</b> Ensure permit is on track. <br><b>Action:</b> Follow up with the commission contact for a status update.", notes: "Scheduled for next week." },
-            { id: 11, week: 3, title: "In-Store Marketing Rollout", assignee: "collaborative", status: 'not_started', dates: {start: "20250709", end: "20250713"}, desc: "<b>Goal:</b> Activate Sextant's physical space. <br><b>Action:</b> Diana to deliver printed posters to Sextant. Sextant to display materials and brief staff.", notes: "Collaboration pending asset finalization." },
-            { id: 12, week: 4, title: "Execute Phase 2: Guerrilla Marketing", assignee: "collaborative", status: 'not_started', dates: {start: "20250717", end: "20250718"}, desc: "<b>Goal:</b> Create real-world mystery and intrigue. <br><b>Action:</b> Pratt & Riley to execute late-night projections and sound beaming at pre-determined locations.", notes: "Locations scouted, awaiting execution window." },
+            { id: 7, week: 2, title: "Design Physical & Digital Assets", assignee: "diana", status: 'in_progress', dates: {start: "20250702", end: "20250705"}, desc: "<b>Goal:</b> Create all marketing visuals. <br><b>Action:</b> Design the A5 poster, social media motion graphic trailer, and any in-venue digital assets.", notes: "Poster design in final review. Motion graphic storyboard approved." },
+            { id: 8, week: 2, title: "Secure Production Gear & Sponsors", assignee: "riley", status: 'initiated', dates: {start: "20250630", end: "20250705"}, desc: "<b>Goal:</b> Secure all technical equipment via sponsorship or rental. <br><b>Action:</b> Finalize in-kind agreements with Sonic and Elixir partners. Book any remaining rental gear.", notes: "d&b partnership confirmed. Ghia pending." },
+            { id: 9, week: 3, title: "Execute Phase 3: The Artifacts", assignee: "diana", status: 'not_started', dates: {start: "20250707", end: "20250711"}, desc: "<b>Goal:</b> Deepen the brand mythos and launch ticket sales. <br><b>Action:</b> Print and distribute the 50 physical posters. Release cinematic trailer on social media. Open ticket sales.", notes: "Dependent on completing poster design and ticketing setup." },
+            { id: 10, week: 3, title: "Permit Follow-up", assignee: "riley", status: 'not_started', dates: {start: "20250708", end: "20250710"}, desc: "<b>Goal:</b> Ensure permit is on track for approval. <br><b>Action:</b> Follow up with the commission contact for a status update and address any questions.", notes: "Scheduled for next week." },
+            { id: 11, week: 3, title: "In-Store Marketing Rollout", assignee: "collaborative", status: 'not_started', dates: {start: "20250709", end: "20250713"}, desc: "<b>Goal:</b> Activate Sextant's physical space as a marketing channel. <br><b>Action:</b> Diana to deliver printed posters/flyers. Sextant to display materials and brief staff on the event.", notes: "Collaboration pending asset finalization." },
+            { id: 12, week: 4, title: "Execute Phase 2: Guerrilla Marketing", assignee: "collaborative", status: 'not_started', dates: {start: "20250717", end: "20250718"}, desc: "<b>Goal:</b> Create real-world mystery and intrigue. <br><b>Action:</b> Pratt & Riley to execute late-night projections and sound beaming at pre-determined, high-visibility locations.", notes: "Locations scouted, awaiting execution window." },
             { id: 13, week: 4, title: "Operational & Staffing Plan", assignee: "collaborative", status: 'initiated', dates: {start: "20250714", end: "20250718"}, desc: "<b>Goal:</b> Finalize the day-of-event run-of-show. <br><b>Action:</b> Create detailed floor plan, setup/breakdown schedule, and staffing assignments. Conduct joint briefing. <br><b>Collaboration:</b> Pratt, Diana, Riley, Sextant", notes: "Drafting of run-of-show has begun." },
-            { id: 14, week: 5, title: "Launch Phase 5: Final Push", assignee: "diana", status: 'not_started', dates: {start: "20250723", end: "20250725"}, desc: "<b>Goal:</b> Drive final ticket sales. <br><b>Action:</b> Launch hyper-targeted digital ad campaign. Final email blast to mailing list.", notes: "Ad creative to be finalized by Pratt." },
+            { id: 14, week: 5, title: "Launch Phase 5: Final Push", assignee: "diana", status: 'not_started', dates: {start: "20250721", end: "20250724"}, desc: "<b>Goal:</b> Drive final ticket sales to sell-out. <br><b>Action:</b> Launch hyper-targeted digital ad campaign. Final email blast to mailing list with 'Low Ticket' warning.", notes: "Ad creative to be finalized by Pratt." },
             { id: 15, week: 5, title: "Final Permit Confirmation", assignee: "riley", status: 'not_started', dates: {start: "20250721", end: "20250722"}, desc: "<b>Goal:</b> Have permit physically in hand. <br><b>Action:</b> Final confirmation with the commission. Pick up the physical permit if necessary.", notes: "" },
-            { id: 16, week: 5, title: "Day-Of Production & Staging (July 26)", assignee: "collaborative", status: 'not_started', dates: {start: "20250726", end: "20250726"}, desc: "<b>Goal:</b> Flawless technical execution. <br><b>Action:</b> Riley to manage equipment delivery. Pratt to oversee setup, sound check, lighting calibration, and full technical rehearsal.", notes: "Run-of-show required." }
+            { id: 16, week: 5, title: "Day-Of Production & Staging (July 25)", assignee: "collaborative", status: 'not_started', dates: {start: "20250725", end: "20250725"}, desc: "<b>Goal:</b> Flawless technical execution. <br><b>Action:</b> Riley to manage equipment delivery and setup. Pratt to oversee sound check, lighting calibration, and full technical rehearsal. Sextant to prep bar.", notes: "Run-of-show required." }
         ];
 
         this.renderTasks('all');
@@ -1446,7 +1460,7 @@ const Content = {
                             </div>
                             <span class="task-assignee ${task.assignee}">${assigneeName}</span>
                         </div>
-                        <div class="task-progress mt-2" style="color: ${statusMap[currentStatusIndex].color}">${(currentStatusIndex / (statusMap.length - 1) * 100)}% ${statusMap[currentStatusIndex].text}</div>
+                        <div class="task-progress mt-2" style="color: ${statusMap[currentStatusIndex].color}">${(currentStatusIndex / (statusMap.length - 1) * 100).toFixed(0)}% ${statusMap[currentStatusIndex].text}</div>
                         <div class="progress-bar-container">${progressBarHTML}</div>
                     </div>
                     <div class="task-details">
