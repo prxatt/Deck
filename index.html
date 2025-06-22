@@ -106,9 +106,9 @@
         .item-card-desc { font-size: 0.85rem; color: var(--text-secondary); }
         .item-card-price { font-weight: 700; margin-top: 1rem; }
         
-        #menu-modal-container { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 5000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
-        #menu-modal-container.visible { opacity: 1; pointer-events: all; }
-        .menu-modal-content { max-width: 600px; width: 90%; }
+        #menu-modal-container, #revenue-modal-container { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 5000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        #menu-modal-container.visible, #revenue-modal-container.visible { opacity: 1; pointer-events: all; }
+        .menu-modal-content, .revenue-modal-content { max-width: 600px; width: 90%; }
         .menu-modal-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
 
         .venue-section { margin-top: 2rem; }
@@ -175,6 +175,8 @@
         .calc-final-result { font-family: 'Tron', sans-serif; font-size: 2.2rem; text-align: right; min-width: 140px; color: var(--primary-purple); text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);}
         .calc-label { flex-basis: 60%; }
         .calc-input-group { flex-basis: 40%; text-align: right; }
+        #total-revenue-row { cursor: pointer; transition: background-color 0.2s ease; border-radius: 8px; }
+        #total-revenue-row:hover { background-color: rgba(255,255,255,0.05); }
 
         .growth-section { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
         .metrics-column { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -279,8 +281,7 @@
         .tech-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 5000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
         .tech-modal.visible { opacity: 1; pointer-events: all; }
         .menu-modal-details { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.75rem; display: flex; justify-content: space-between; opacity: 0.8;}
-        .menu-modal-content { max-width: 600px; width: 90%; }
-        .menu-modal-close { position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
+        
 
         @media (max-width: 900px) {
             .data-section, .marketing-layout, .sextant-layout, .creators-grid, .marketing-charts-container, .event-timeline-grid { grid-template-columns: 1fr; }
@@ -316,6 +317,7 @@
         <div id="slide-container"></div>
         <div id="tech-modal-container"></div>
         <div id="menu-modal-container"></div>
+        <div id="revenue-modal-container"></div>
 
         <div class="navigation-container">
             <nav class="navigation" id="navigation">
@@ -424,15 +426,15 @@ const slideTemplates = [
         </div>`
     },
     { 
-        title: "Production & Financial Intelligence", 
-        content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is an exercise in strategic collaboration. Surface Tension shoulders the risk and creative/production costs. Sextant provides the space and shares in the success. This lean, high-impact model directs all investment towards creating a premium experience that drives direct, measurable profit for Sextant from day one.</p>
+        title: "Financial Intelligence", 
+        content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is structured for mutual growth and minimal risk. We've simplified the model to be transparent and highly favorable to Sextant, ensuring you benefit directly from the event's success while we handle the production complexities.</p>
         <div class="sextant-layout">
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">ST Production Costs (Covered by ST)</span></div><div class="sextant-details body-regular"><p class="mb-3">Surface Tension is responsible for all event production expenses, including: <ul><li class='mt-2'>&bull; <strong>Artistic Curation:</strong> DJ Honorarium (~$500)</li><li class='mt-2'>&bull; <strong>Compliance:</strong> Permits & Insurance (~$350)</li><li class='mt-2'>&bull; <strong>Technical Production:</strong> A/V Gear, Lighting & Haze (~$650)</li></ul><p class='mt-3'>These costs are covered by Surface Tension's share of revenue and/or external sponsorships, representing zero financial risk to Sextant.</p></div></div>
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">Sextant's Role (Venue & Operations)</span></div><div class="sextant-details body-regular">
-                <p class="mb-3 font-semibold text-gray-300">Sextant's contribution is its greatest asset: the space and its operational excellence.</p>
-                <p class="mb-3">By providing the venue and managing beverage service (using a pre-batched, streamlined menu for efficiency), Sextant unlocks a significant new revenue stream during typically closed hours. Surface Tension's model is designed to be a plug-and-play activation, minimizing operational lift for your team.</p>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title text-purple-400">Sextant's Costs & Responsibilities</span></div><div class="sextant-details body-regular">Sextant's role is focused and leverages your core strengths: providing the venue and covering direct operational costs that you already manage.<ul><li class='mt-2'>&bull; <strong>Permits & Compliance:</strong> Est. $350 for the one-time event permit.</li><li class='mt-2'>&bull; <strong>Drink Ingredients (COGS):</strong> Cost of goods for all beverages sold during the event.</li></ul><p class='mt-3'>This clear division of responsibility means you have full control over your primary expenses.</p></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title text-emerald-400">Surface Tension's Costs</span></div><div class="sextant-details body-regular">
+                <p class="mb-3 font-semibold text-gray-300">Surface Tension covers all creative, talent, and production-related expenses, including:</p>
+                <ul><li class='mt-2'>&bull; <strong>Artistic & Production Labor:</strong> DJ Honorarium, Barista wages for the event duration.</li><li class='mt-2'>&bull; <strong>Technical Production:</strong> All A/V gear, lighting, and atmospheric effects.</li><li class='mt-2'>&bull; <strong>Marketing & Promotion:</strong> All costs associated with our multi-phase campaign.</li></ul><p class='mt-3'>These are funded entirely by ST's portion of the revenue, representing zero financial outlay for Sextant.</p>
              </div></div>
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">The Win-Win Financial Model</span></div><div class="sextant-details body-regular"><p class="mb-3">Our proposed revenue share is designed for mutual success: <br> &bull; <strong>Drink Sales:</strong> 50% of net drink revenue goes to Sextant. <br> &bull; <strong>Ticket Sales:</strong> 30% of all ticket revenue goes to Sextant. <br><br>This model ensures Sextant receives a majority share of the highest-margin revenue (beverages) while also profiting directly from attendance, creating a no-risk, high-reward scenario.</p></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">The Win-Win Financial Model</span></div><div class="sextant-details body-regular"><p class="mb-3">Our revised revenue share is designed for simplicity and profitability for Sextant: <br> &bull; <strong>Drink Sales:</strong> 50% of net drink revenue goes to Sextant. <br> &bull; <strong>Ticket Sales:</strong> 30% of all ticket revenue goes to Sextant. <br><br>This model gives Sextant the majority share of high-margin beverage sales and a direct percentage of attendance, creating a no-risk, high-reward scenario.</p></div></div>
         </div>
         <div class="financial-calculator-layout">
             <div class="financial-calculator-container">
@@ -441,17 +443,18 @@ const slideTemplates = [
                 <div class="calc-row"><label class="calc-label">Tier 2 Tickets Sold<br><small class="text-gray-400">(Avg. $28/ticket)</small></label><div class="calc-input-group"><input type="number" class="calc-input-field" value="20" id="tier2-qty" oninput="calculateRevenue()"></div></div>
                 <div class="calc-row"><label class="calc-label">Last Call Tickets Sold<br><small class="text-gray-400">(Avg. $35/ticket)</small></label><div class="calc-input-group"><input type="number" class="calc-input-field" value="5" id="tier3-qty" oninput="calculateRevenue()"></div></div>
                 <div class="calc-row"><label class="calc-label">Add-on Drinks Per Guest<br><small class="text-gray-400">(Avg. $14/drink)</small></label><div class="calc-input-group"><input type="number" class="calc-input-field" value="1.5" step="0.1" id="addon-drinks-per-person" oninput="calculateRevenue()"></div></div>
+                 <div class="calc-row"><label class="calc-label">Barista Costs for Event<br><small class="text-gray-400">(Covered by ST)</small></label><div class="calc-input-group"><input type="number" class="calc-input-field" value="300" id="barista-costs" oninput="calculateRevenue()"></div></div>
                 
                 <div class="mt-4 pt-4 border-t border-dashed border-gray-700 space-y-3">
-                    <div class="flex justify-between items-center text-lg"><span class="text-gray-300">Total Event Gross Revenue:</span><span class="font-bold text-white" id="total-revenue">$2,295</span></div>
+                    <div class="flex justify-between items-center text-lg p-2 rounded-lg" id="total-revenue-row" onclick="Content.showRevenueBreakdown()" title="Click for full P&L breakdown"><span class="text-gray-300">Total Event Gross Revenue:</span><span class="font-bold text-white" id="total-revenue">$2,295</span></div>
                     <div class="flex justify-between items-center text-md"><span class="text-gray-400">Sextant's Ticket Share (30%):</span><span class="font-bold text-emerald-400" id="sextant-ticket-share">+$371</span></div>
                     <div class="flex justify-between items-center text-md"><span class="text-gray-400">Sextant's Drink Share (50% of Net):</span><span class="font-bold text-emerald-400" id="sextant-drink-share">+$515</span></div>
                     <div class="mt-3 pt-3 border-t-2 border-purple-500">
-                         <div class="flex justify-between items-center text-xl"><span class="text-white">Sextant's Total Profit:</span><span class="calc-final-result" id="sextant-total-profit">$886</span></div>
+                         <div class="flex justify-between items-center text-xl"><span class="text-white">Sextant's Total Profit:</span><span class="calc-final-result" id="sextant-total-profit">$536</span></div>
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-center"><div class="chart-container h-[450px] w-[450px]"><canvas id="revenue-pie-chart"></canvas></div></div>
+            <div class="flex items-center justify-center"><div class="chart-container"><canvas id="sales-breakdown-chart"></canvas></div></div>
         </div>` 
     },
     { 
@@ -477,6 +480,7 @@ const techDetails = {
 };
 
 let taskData = [];
+let revenueBreakdownCache = {};
 const menuData = [
     // Caffeinated Signatures
     { id: 'cs1', category: 'Caffeinated Signature', name: 'Quantum Leap', price: '$15', color: 'var(--primary-emerald)', desc: 'Sextant espresso, cascara-chai syrup, clarified grapefruit, topped with a saline cloud.', recipe: '1 shot Sextant espresso<br>1.5 oz clarified grapefruit juice<br>0.75 oz cascara-chai syrup<br>Top with saline foam.', ingredients: [{name: 'Sextant Espresso Beans', link: 'https://sextantcoffee.com/collections/all'}, {name: 'Cascara', link: 'https://www.google.com/search?q=cascara+for+sale+san+francisco&tbm=shop'}], prepTime: '4 Mins', profitMargin: '80%' },
@@ -506,7 +510,7 @@ const timelineData = [
 // --- GLOBAL OBJECTS --- //
 const App = {
     init() {
-        this.state = { currentSlide: 0, totalSlides: slideTemplates.length, isAnimating: false, loadingComplete: false };
+        this.state = { currentSlide: 0, totalSlides: slideTemplates.length, isAnimating: false, loadingComplete: false, activeSlideElement: null };
         this.setupDOM();
         this.injectSlides();
         this.bindEvents();
@@ -521,6 +525,7 @@ const App = {
             loadingScreen: document.getElementById('loading-screen'),
             appContainer: document.getElementById('app-container'),
             header: document.getElementById('app-header'),
+            headerLogo: document.getElementById('header-logo-canvas'),
             slideIndicator: document.getElementById('slide-indicator'),
             slideContainer: document.getElementById('slide-container'),
             dotsContainer: document.getElementById('nav-dots'),
@@ -528,11 +533,11 @@ const App = {
             nextBtn: document.getElementById('nextBtn'),
             techModalContainer: document.getElementById('tech-modal-container'),
             menuModalContainer: document.getElementById('menu-modal-container'),
+            revenueModalContainer: document.getElementById('revenue-modal-container'),
         };
     },
     
     startLoadingSequence() {
-        // Start loading animation and finish after a delay
         setTimeout(() => this.finishLoading(), 6500);
     },
     
@@ -557,7 +562,6 @@ const App = {
         document.addEventListener('keydown', e => this.handleKeydown(e));
         
         let touchStartX = 0, swipeBlocked = false;
-        // Use passive: false for touchevents that might call preventDefault()
         this.DOM.slideContainer.addEventListener('touchstart', e => { 
             swipeBlocked = !!e.target.closest('a, button, input, .interactive-venue, .timeline-container, .chart-container, .task-planner, .sextant-layout'); 
             if (!swipeBlocked) touchStartX = e.changedTouches[0].screenX; 
@@ -568,7 +572,10 @@ const App = {
             }
         }, { passive: true });
         
-        window.addEventListener('resize', () => Animations.handleResize());
+        window.addEventListener('resize', () => {
+            Animations.handleResize();
+            Content.updateLogoContrast();
+        });
     },
 
     handleKeydown(e) {
@@ -578,10 +585,21 @@ const App = {
     },
     
     update() {
-        this.DOM.slides.forEach((slide, index) => slide.classList.toggle('active', index === this.state.currentSlide));
+        if (this.state.activeSlideElement) {
+            this.state.activeSlideElement.classList.remove('active');
+            this.state.activeSlideElement.removeEventListener('scroll', Content.updateLogoContrast);
+        }
+        
+        const newActiveSlide = this.DOM.slides[this.state.currentSlide];
+        newActiveSlide.classList.add('active');
+        newActiveSlide.addEventListener('scroll', Content.updateLogoContrast, { passive: true });
+        this.state.activeSlideElement = newActiveSlide;
+
         this.DOM.dotsContainer.innerHTML = Array.from({ length: this.state.totalSlides }, (_, i) => `<div class="nav-dot ${i === this.state.currentSlide ? 'active' : ''}" data-index="${i}"></div>`).join('');
         this.DOM.slideIndicator.textContent = `${(this.state.currentSlide + 1).toString().padStart(2, '0')} / ${this.state.totalSlides}`;
         this.DOM.header.style.display = this.state.currentSlide === this.state.totalSlides - 1 ? 'none' : 'flex';
+        
+        Content.updateLogoContrast();
     },
     
     changeSlide(dir) { this.goToSlide((this.state.currentSlide + dir + this.state.totalSlides) % this.state.totalSlides); },
@@ -614,7 +632,6 @@ const Animations = {
         this.createHeaderLogo(); 
     },
     
-    // RESTORED to original code from stmaddeck5am.html
     createLoadingAnimation() {
         const canvas = document.getElementById('loading-canvas');
         if (!canvas) return;
@@ -754,7 +771,7 @@ const Animations = {
             scene.add(points);
             
             const clock = new THREE.Clock();
-            const cycleDuration = 6.0; // Slower cycle
+            const cycleDuration = 6.0;
 
             const animate = () => {
                 if (!this.app.state.loadingComplete) {
@@ -766,13 +783,13 @@ const Animations = {
                 uniforms.uTime.value = t;
 
                 const cycleTime = t % cycleDuration;
-                if (cycleTime < 2.5) { // Blob stage
+                if (cycleTime < 2.5) {
                     uniforms.uStage.value = 0.0;
                     uniforms.uProgress.value = 0.0;
-                } else if (cycleTime < 4.5) { // Transition to Enso
+                } else if (cycleTime < 4.5) {
                     uniforms.uStage.value = 1.0;
                     uniforms.uProgress.value = (cycleTime - 2.5) / 2.0;
-                } else { // Transition to Scatter
+                } else {
                     uniforms.uStage.value = 2.0;
                     uniforms.uProgress.value = (cycleTime - 4.5) / 1.5;
                 }
@@ -788,6 +805,7 @@ const Animations = {
         }
     },
     
+    // UPDATED to be smarter and more interactive
     createHeaderLogo() {
         const canvas = document.getElementById('header-logo-canvas');
         if (!canvas) return;
@@ -798,85 +816,124 @@ const Animations = {
 
         const ctx = canvas.getContext('2d');
         const particles = [];
-        let mode = 'st'; // 'st' or 'enso'
-        let targetPositions = [];
+        let mode = 'st';
+        let targetPositions = {};
+        const mouse = { x: -9999, y: -9999, radius: w * 0.6 };
 
-        // Generate target positions for "ST"
         const stTarget = [];
         ctx.font = `500 ${w / 1.5}px "ivypresto-display", serif`;
         try {
             const m = ctx.measureText("ST");
             ctx.fillText("ST", (w - m.width) / 2, h / 2 + m.actualBoundingBoxAscent / 2.2);
         } catch (e) {
-            return setTimeout(() => this.createHeaderLogo(), 200);
+             return setTimeout(() => this.createHeaderLogo(), 200);
         }
         const data = ctx.getImageData(0, 0, w, h).data;
         ctx.clearRect(0, 0, w, h);
-        for (let x = 0; x < w; x += Math.round(w / 100)) {
-            for (let y = 0; y < h; y += Math.round(w / 100)) {
+        for (let x = 0; x < w; x += Math.round(w / 80)) {
+            for (let y = 0; y < h; y += Math.round(w / 80)) {
                 if (data[((x + y * w) * 4) + 3] > 150) {
                     stTarget.push({ x, y });
                 }
             }
         }
+        targetPositions.st = stTarget;
 
-        // Generate target positions for Enso
         const ensoTarget = [];
         const radius = w * 0.35;
         const centerX = w / 2;
         const centerY = h / 2;
-        for (let i = 0; i < 200; i++) {
-            const angle = (i / 190) * Math.PI * 1.85 - Math.PI * 0.9; // Incomplete circle
+        for (let i = 0; i < 150; i++) {
+            const angle = (i / 140) * Math.PI * 1.85 - Math.PI * 0.9;
             ensoTarget.push({
                 x: centerX + Math.cos(angle) * radius,
                 y: centerY + Math.sin(angle) * radius,
             });
         }
+        targetPositions.enso = ensoTarget;
         
-        // Initialize particles
-        for(let i=0; i<200; i++) {
+        const numParticles = 150;
+        const baseColor = { r: 16, g: 185, b: 129 };
+        const darkColor = { r: 100, g: 100, b: 100 };
+        for(let i=0; i<numParticles; i++) {
             particles.push({
                 x: Math.random()*w, y: Math.random()*h,
-                ox: Math.random()*w, oy: Math.random()*h,
-                r: 1 + Math.random() * 1.5,
-                c: 'rgba(16, 185, 129, 0.8)',
-                target: stTarget[i % stTarget.length] || {x:w/2, y:h/2}
+                vx: 0, vy: 0,
+                r: 1 + Math.random() * 1,
+                color: {...baseColor},
+                target: targetPositions.st[i % targetPositions.st.length] || {x:w/2, y:h/2}
             });
         }
-        targetPositions = stTarget;
 
-        const animateParticles = () => {
-            particles.forEach((p, i) => {
-                let currentTarget = targetPositions[i % targetPositions.length] || {x:w/2, y:h/2};
-                gsap.to(p, {
-                    x: currentTarget.x,
-                    y: currentTarget.y,
-                    duration: 1.5,
-                    ease: 'power3.out'
-                });
-            });
-        };
+        const spring = 0.08;
+        const friction = 0.85;
 
         const loop = () => {
             ctx.clearRect(0, 0, w, h);
             particles.forEach(p => {
+                const dxMouse = p.x - mouse.x;
+                const dyMouse = p.y - mouse.y;
+                const distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
+                
+                let forceX = 0;
+                let forceY = 0;
+
+                if (distMouse < mouse.radius) {
+                    const angle = Math.atan2(dyMouse, dxMouse);
+                    const force = (mouse.radius - distMouse) * 0.02;
+                    forceX += Math.cos(angle) * force;
+                    forceY += Math.sin(angle) * force;
+                }
+
+                p.vx += (p.target.x - p.x) * spring;
+                p.vy += (p.target.y - p.y) * spring;
+                p.vx += forceX;
+                p.vy += forceY;
+                p.vx *= friction;
+                p.vy *= friction;
+                p.x += p.vx;
+                p.y += p.vy;
+
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = p.c;
+                ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.8)`;
                 ctx.fill();
             });
             requestAnimationFrame(loop);
         };
         loop();
         
-        setTimeout(() => {
-             animateParticles();
-        }, 500);
+        this.logoAnimator = {
+            setColor(isDark) {
+                const targetColor = isDark ? darkColor : baseColor;
+                particles.forEach(p => {
+                    gsap.to(p.color, {
+                        r: targetColor.r,
+                        g: targetColor.g,
+                        b: targetColor.b,
+                        duration: 0.5,
+                        ease: 'power2.out'
+                    });
+                });
+            }
+        };
 
         canvas.addEventListener('click', () => {
             mode = mode === 'st' ? 'enso' : 'st';
-            targetPositions = mode === 'st' ? stTarget : ensoTarget;
-            animateParticles();
+            const newTargets = targetPositions[mode];
+            particles.forEach((p, i) => {
+                p.target = newTargets[i % newTargets.length];
+            });
+        });
+        
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = (e.clientX - rect.left) * (w / rect.width);
+            mouse.y = (e.clientY - rect.top) * (h / rect.height);
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            mouse.x = -9999; mouse.y = -9999;
         });
     },
     
@@ -1193,7 +1250,6 @@ const Animations = {
         const segments = isHighPerf ? 200 : 128;
         const geometry = new THREE.PlaneGeometry(30, 30, segments, segments);
 
-        // This function will be shared by both the wireframe and the points
         const updateVertices = (time, positions) => {
             const t = time * 0.5;
             for (let i = 0; i < positions.length; i += 3) {
@@ -1206,7 +1262,6 @@ const Animations = {
             }
         };
         
-        // We will have two objects: a wireframe mesh and points on top
         this.createScene('finale-animation', {
             slideIndex: 10,
             cameraZ: 10,
@@ -1214,7 +1269,7 @@ const Animations = {
                 {
                     name: 'surface',
                     type: 'Mesh',
-                    geometry: geometry,
+                    geometry: geometry.clone(),
                     material: new THREE.MeshBasicMaterial({
                         color: 0x10b981,
                         wireframe: true,
@@ -1225,7 +1280,7 @@ const Animations = {
                 {
                     name: 'particles',
                     type: 'Points',
-                    geometry: geometry,
+                    geometry: geometry, // Use the same geometry
                     material: new THREE.PointsMaterial({
                         color: 0xa855f7,
                         size: 0.05,
@@ -1237,11 +1292,12 @@ const Animations = {
                 }
             ],
             update: ({ camera, t, surface, particles }) => {
-                const positions = surface.geometry.attributes.position.array;
+                const positions = particles.geometry.attributes.position.array;
                 updateVertices(t, positions);
-                surface.geometry.attributes.position.needsUpdate = true;
+                particles.geometry.attributes.position.needsUpdate = true;
                 
-                // Keep camera slowly rotating
+                surface.geometry.attributes.position.needsUpdate = true;
+
                 camera.position.x = Math.sin(t * 0.1) * 5;
                 camera.position.z = Math.cos(t * 0.1) * 10;
                 camera.position.y = 6;
@@ -1251,11 +1307,9 @@ const Animations = {
     },
 
     initChart(id,config){if(this.scenes[id])this.scenes[id].destroy();const c=document.getElementById(id)?.getContext('2d');if(!c)return;this.scenes[id]=new Chart(c,config);},
-    initPredictiveChart(){this.initChart('predictive-chart',{type:'line',data:{labels:['Q1','Q2','Q3','Q4'],datasets:[{label:'Coffee Shop Foot Traffic',data:[150,165,170,180],backgroundColor:'rgba(168,85,247,0.3)',borderColor:'#a855f7',tension:0.4},{label:'Coffee/DJ Set Attendance',data:[10,25,60,95],backgroundColor:'rgba(6,182,212,0.3)',borderColor:'#06b6d4',tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'white',boxWidth:12,padding:15}}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}}}}});},
-    initTrendsChart(){this.initChart('trends-chart',{type:'bar',data:{labels:['Traditional Cafes','DJ Venues','Hybrid Spaces'],datasets:[{label:'Market Interest (SF)',data:[75,85,110],backgroundColor:['rgba(6,182,212,0.6)','rgba(245,158,11,0.6)','rgba(16,185,129,0.6)'],borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'white'},grid:{color:'rgba(255,255,255,0.1)'}},y:{ticks:{color:'white'},grid:{display:false}}}}});},
+    initSalesChart(){this.initChart('sales-breakdown-chart',{type:'bar',data:{labels:['Ticket Sales', 'Drink Sales'],datasets:[{label: 'Revenue', data: [1235, 1050], backgroundColor:['#10b981', '#a855f7']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{color:'white',callback:v=>`$${v}`},grid:{color:'rgba(255,255,255,0.1)'}},x:{ticks:{color:'white'},grid:{display:false}}}}});},
     initGrowthChart(){this.initChart('growth-chart',{type:'radar',data:{labels:['Revenue Lift','Brand Awareness','Foot Traffic','Community Growth','Media Buzz'],datasets:[{label:'Projected Growth',data:[85,75,60,95,70],backgroundColor:'rgba(16,185,129,0.3)',borderColor:'#10b981',borderWidth:2,pointBackgroundColor:'#10b981',pointBorderColor:'#fff',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10, 14, 26, 0.8)',bodyFont:{size:12},bodySpacing: 4, padding:12, callbacks:{title:(c)=>c[0].label,label:(c)=>{const v=c.parsed.r;let e='';switch(c.label){case'Revenue Lift':e='Projected increase in nightly revenue from extended hours and premium offerings.';break;case'Brand Awareness':e='Increased social media buzz and word-of-mouth recognition in the target demographic.';break;case'Foot Traffic':e='Attracting new and returning customers during previously off-peak evening hours.';break;case'Community Growth':e='Building a loyal community around unique, shared experiences, fostering retention.';break;case'Media Buzz':e="Generating organic press and influencer mentions due to the event's novelty.";break;}return[`Value: ${v}%`,`Potential: ${e}`];}}}},scales:{r:{angleLines:{color:'rgba(255,255,255,0.1)'},grid:{color:'rgba(255,255,255,0.15)'},pointLabels:{color:'white',font:{size:12,family:"'Inter',sans-serif"}},ticks:{display:false,beginAtZero:true,max:100}}}}});},
-    initRevenuePieChart(){this.initChart('revenue-pie-chart',{type:'pie',data:{labels:['Sextant Profit', 'Surface Tension Share'],datasets:[{data:[886,1409],backgroundColor:['#a855f7','#10b981'],borderColor:'#0a0e1a',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'white',boxWidth:12,padding:20}},tooltip:{callbacks:{label:(c)=>`${c.label}: $${c.raw.toFixed(0)}`}},datalabels:{formatter:(v,c)=>{const s=c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return s > 0 ? `${(v/s*100).toFixed(0)}%` : '0%';},color:'#fff',font:{weight:'bold'}}}}});},
-
+    
     handleResize(){this.renderers.forEach(r=>{const c=r.domElement.parentElement;if(c&&c.clientWidth>0){const m=Object.values(this.scenes).find(s=>s&&s.renderer===r)?.camera;if(m){m.aspect=c.clientWidth/c.clientHeight;m.updateProjectionMatrix();}r.setSize(c.clientWidth,c.clientHeight);}});Object.values(this.scenes).forEach(s=>{if(s instanceof Chart&&s.resize)s.resize();});},
     
     getAnimFunction(slideIndex) {
@@ -1285,6 +1339,23 @@ const Content = {
             case 9:this.setupTaskPlanner();break;
         }
     },
+    updateLogoContrast() {
+        if (!App.state.activeSlideElement || !Animations.logoAnimator) return;
+        const logoRect = App.DOM.headerLogo.getBoundingClientRect();
+        const titleEl = App.state.activeSlideElement.querySelector('.display-2');
+        if (!titleEl) {
+            Animations.logoAnimator.setColor(false); // Default to bright if no title
+            return;
+        }
+        const titleRect = titleEl.getBoundingClientRect();
+        
+        const isOverlapping = !(logoRect.right < titleRect.left || 
+                                logoRect.left > titleRect.right || 
+                                logoRect.bottom < titleRect.top || 
+                                logoRect.top > titleRect.bottom);
+                                
+        Animations.logoAnimator.setColor(isOverlapping);
+    },
     setupMenuSystem(){
         const grid = document.getElementById('menu-grid');
         if (!grid || grid.children.length > 0) return;
@@ -1305,7 +1376,7 @@ const Content = {
 
         container.innerHTML = `
             <div class="menu-modal-content card" onclick="event.stopPropagation()">
-                <button class="menu-modal-close" onclick="Content.hideMenuModal()">&times;</button>
+                <button class="menu-modal-close" onclick="Content.hideModal('menuModalContainer')">&times;</button>
                 <h3 class="heading-1" style="color:${item.color};">${item.name}</h3>
                 <p class="body-large mt-2">${item.desc}</p>
                  <div class="menu-modal-details">
@@ -1325,10 +1396,6 @@ const Content = {
             </div>
         `;
         container.classList.add('visible');
-    },
-    hideMenuModal() {
-        const container = this.app.DOM.menuModalContainer;
-        container.classList.remove('visible');
     },
     setupEventTimeline(){const w=document.getElementById('event-timeline');if(!w||w.children.length>0)return;w.innerHTML=timelineData.map(e=>`<div class="timeline-event" onclick="toggleExpand(this)"><div class="timeline-event-main" style="border-top: 2px solid ${e.color};"><div class="time" style="color:${e.color};">${e.time}</div><h4 style="color:${e.color};">${e.title}</h4><p>${e.desc}</p></div><div class="timeline-event-details body-regular"><p class="font-semibold text-gray-300 mb-2">Sensory Focus:</p><p class="text-gray-400 mb-4">${e.sensory_focus}</p><p class="font-semibold text-gray-300 mb-2">Content Capture:</p><p class="text-gray-400">${e.content_capture}</p></div></div>`).join('');},
     setupInteractiveVenue(){const v=document.getElementById('interactive-venue');if(!v||v.dataset.i)return;v.dataset.i='1';let a=null,o={x:0,y:0},s={x:0,y:0},z={w:0,h:0},g=0;const t=e=>{const i=e.target.closest('.venue-item');if(!i)return;a=i;document.querySelectorAll('.venue-item').forEach(l=>l.classList.remove('selected'));a.classList.add('selected');a.style.zIndex=100;const n=e.touches?e.touches[0]:e,r=a.getBoundingClientRect();o={x:n.clientX-r.left,y:n.clientY-r.top};z={w:a.offsetWidth,h:a.offsetHeight};s={x:n.clientX,y:n.clientY};const c=new DOMMatrix(window.getComputedStyle(a).transform),d=Math.atan2(c.b,c.a);g=d-Math.atan2(n.clientY-(r.top+r.height/2),n.clientX-(r.left+r.width/2));window.addEventListener('mousemove',m);window.addEventListener('mouseup',p);window.addEventListener('touchmove',m,{passive:!1});window.addEventListener('touchend',p);e.preventDefault();};const m=e=>{if(!a)return;e.preventDefault();const i=e.touches?e.touches[0]:e,n=v.getBoundingClientRect(),r=this.currentVenueMode;if(r==='move'){let c=i.clientX-n.left-o.x,d=i.clientY-n.top-o.y;c=Math.max(0,Math.min(c,n.width-a.offsetWidth));d=Math.max(0,Math.min(d,n.height-a.offsetHeight));a.style.left=`${c}px`;a.style.top=`${d}px`;}else if(r==='resize'){const c=i.clientX-s.x,d=i.clientY-s.y;a.style.width=`${Math.max(50,z.w+c)}px`;a.style.height=`${Math.max(50,z.h+d)}px`;}else if(r==='rotate'){const c=a.getBoundingClientRect(),d=Math.atan2(i.clientY-(c.top+c.height/2),i.clientX-(c.left+c.width/2));a.style.transform=`rotate(${g+d}rad)`;}};const p=()=>{if(a){a.classList.remove('selected');a.style.zIndex='';}a=null;window.removeEventListener('mousemove',m);window.removeEventListener('mouseup',p);window.removeEventListener('touchmove',m);window.removeEventListener('touchend',p);};v.addEventListener('mousedown',t);v.addEventListener('touchstart',t,{passive:!1});},
@@ -1355,46 +1422,87 @@ const Content = {
     resetVenueLayout(){document.querySelectorAll('.venue-item').forEach(i=>{const n=this.initialTransforms.get(i);if(n){i.style.transform=n.transform;i.style.top=n.top;i.style.left=n.left;i.style.width=n.width;i.style.height=n.height;}});},
     setupFinancialCalculator(){this.calculateRevenue();},
     calculateRevenue(){
-        const tier1Qty = (parseFloat(document.getElementById('tier1-qty').value) || 0);
-        const tier2Qty = (parseFloat(document.getElementById('tier2-qty').value) || 0);
-        const tier3Qty = (parseFloat(document.getElementById('tier3-qty').value) || 0);
-        const addonPerPerson = (parseFloat(document.getElementById('addon-drinks-per-person').value) || 0);
-
-        const tier1Price = 20;
-        const tier2Price = 28;
-        const tier3Price = 35;
-        const avgDrinkPrice = 14;
-        const cogsRate = 0.30;
+        const f = (id) => parseFloat(document.getElementById(id).value) || 0;
+        const tier1Qty = f('tier1-qty'), tier2Qty = f('tier2-qty'), tier3Qty = f('tier3-qty');
+        const addonPerPerson = f('addon-drinks-per-person'), baristaCosts = f('barista-costs');
+        
+        const tier1Price = 20, tier2Price = 28, tier3Price = 35;
+        const avgDrinkPrice = 14, cogsRate = 0.3, permitCost = 350;
+        const djCost = 500, productionCost = 650;
 
         const totalAttendees = tier1Qty + tier2Qty + tier3Qty;
-        
         const totalTicketRevenue = (tier1Qty * tier1Price) + (tier2Qty * tier2Price) + (tier3Qty * tier3Price);
+        const totalDrinkRevenue = totalAttendees * addonPerPerson * avgDrinkPrice;
+        const totalGrossRevenue = totalTicketRevenue + totalDrinkRevenue;
         
-        const addonDrinkRevenue = totalAttendees * addonPerPerson * avgDrinkPrice;
-        
-        const totalGrossRevenue = totalTicketRevenue + addonDrinkRevenue;
+        const drinkCOGS = totalDrinkRevenue * cogsRate;
 
-        // Sextant's Share Calculation
+        // Sextant P&L
         const sextantTicketShare = totalTicketRevenue * 0.30;
-        const netDrinkRevenue = addonDrinkRevenue * (1 - cogsRate); // Assuming COGS only applies to add-on drinks for this simple model
-        const sextantDrinkShare = netDrinkRevenue * 0.50;
-        const sextantTotalProfit = sextantTicketShare + sextantDrinkShare;
+        const sextantDrinkShare = (totalDrinkRevenue - drinkCOGS) * 0.50;
+        const sextantCosts = drinkCOGS + permitCost;
+        const sextantProfit = sextantTicketShare + sextantDrinkShare - permitCost;
 
-        // Surface Tension's Share Calculation (for pie chart)
+        // Surface Tension P&L
         const stTicketShare = totalTicketRevenue * 0.70;
-        const stDrinkShare = netDrinkRevenue * 0.50;
-        const stGrossProfit = stTicketShare + stDrinkShare;
-        
+        const stDrinkShare = (totalDrinkRevenue - drinkCOGS) * 0.50;
+        const stCosts = djCost + productionCost + baristaCosts;
+        const stProfit = stTicketShare + stDrinkShare - stCosts;
+
         // Update DOM
         document.getElementById('total-revenue').textContent = `$${totalGrossRevenue.toLocaleString('en-US',{maximumFractionDigits:0})}`;
         document.getElementById('sextant-ticket-share').textContent = `+$${sextantTicketShare.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('sextant-drink-share').textContent = `+$${sextantDrinkShare.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('sextant-total-profit').textContent = `$${sextantTotalProfit.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('sextant-drink-share').textContent = `+$${(totalDrinkRevenue * (1-cogsRate) * 0.5).toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('sextant-total-profit').textContent = `$${sextantProfit.toLocaleString('en-US',{maximumFractionDigits:0})}`;
 
-        if(!Animations.scenes['revenue-pie-chart']) Animations.initRevenuePieChart();
-        const pieChart = Animations.scenes['revenue-pie-chart'];
-        pieChart.data.datasets[0].data = [sextantTotalProfit, stGrossProfit];
-        pieChart.update();
+        // Update Chart
+        if(!Animations.scenes['sales-breakdown-chart']) Animations.initSalesChart();
+        const salesChart = Animations.scenes['sales-breakdown-chart'];
+        salesChart.data.datasets[0].data = [totalTicketRevenue, totalDrinkRevenue];
+        salesChart.update();
+        
+        // Cache data for modal
+        revenueBreakdownCache = {
+            totalGrossRevenue, totalTicketRevenue, totalDrinkRevenue,
+            sextantTicketShare, sextantDrinkShare: (totalDrinkRevenue * (1-cogsRate) * 0.5), permitCost, drinkCOGS, sextantProfit,
+            stTicketShare, stDrinkShare: (totalDrinkRevenue * (1-cogsRate) * 0.5), djCost, productionCost, baristaCosts, stProfit
+        };
+    },
+    showRevenueBreakdown() {
+        const data = revenueBreakdownCache;
+        const F = (val) => val.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        const container = App.DOM.revenueModalContainer;
+        container.innerHTML = `
+            <div class="revenue-modal-content card" onclick="event.stopPropagation()">
+                <button class="menu-modal-close" onclick="Content.hideModal('revenueModalContainer')">&times;</button>
+                <h3 class="heading-1">Full P&L Breakdown</h3>
+                <div class="grid grid-cols-2 gap-8 mt-6 body-regular">
+                    <div>
+                        <h4 class="font-semibold text-purple-400 mb-2 border-b border-purple-800 pb-1">Sextant P&L</h4>
+                        <div class="flex justify-between"><span>Ticket Share (30%):</span> <span class="text-green-400">${F(data.sextantTicketShare)}</span></div>
+                        <div class="flex justify-between"><span>Drink Share (50% Net):</span> <span class="text-green-400">${F(data.sextantDrinkShare)}</span></div>
+                        <div class="flex justify-between mt-2 pt-2 border-t border-dashed border-gray-700"><span>Gross Profit:</span> <span>${F(data.sextantTicketShare + data.sextantDrinkShare)}</span></div>
+                        <div class="flex justify-between text-red-400"><span>- COGS:</span> <span>(${F(data.drinkCOGS)})</span></div>
+                        <div class="flex justify-between text-red-400"><span>- Permits:</span> <span>(${F(data.permitCost)})</span></div>
+                        <div class="flex justify-between mt-2 pt-2 border-t border-purple-500 font-bold text-lg"><span class="text-purple-300">Net Profit:</span> <span class="text-purple-300">${F(data.sextantProfit)}</span></div>
+                    </div>
+                     <div>
+                        <h4 class="font-semibold text-emerald-400 mb-2 border-b border-emerald-800 pb-1">Surface Tension P&L</h4>
+                        <div class="flex justify-between"><span>Ticket Share (70%):</span> <span class="text-green-400">${F(data.stTicketShare)}</span></div>
+                        <div class="flex justify-between"><span>Drink Share (50% Net):</span> <span class="text-green-400">${F(data.stDrinkShare)}</span></div>
+                        <div class="flex justify-between mt-2 pt-2 border-t border-dashed border-gray-700"><span>Gross Profit:</span> <span>${F(data.stTicketShare + data.stDrinkShare)}</span></div>
+                        <div class="flex justify-between text-red-400"><span>- DJ:</span> <span>(${F(data.djCost)})</span></div>
+                        <div class="flex justify-between text-red-400"><span>- Production:</span> <span>(${F(data.productionCost)})</span></div>
+                        <div class="flex justify-between text-red-400"><span>- Baristas:</span> <span>(${F(data.baristaCosts)})</span></div>
+                        <div class="flex justify-between mt-2 pt-2 border-t border-emerald-500 font-bold text-lg"><span class="text-emerald-300">Net Profit:</span> <span class="text-emerald-300">${F(data.stProfit)}</span></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.classList.add('visible');
+    },
+    hideModal(id) {
+        App.DOM[id].classList.remove('visible');
     },
     setupTaskPlanner(){
         const savedTasks = localStorage.getItem('surfaceTensionTasks');
@@ -1490,8 +1598,7 @@ const Content = {
         }
     },
     getCalendarLink(t){const b="https://www.google.com/calendar/render?action=TEMPLATE",e=encodeURIComponent(`ST: ${t.title}`),d=`${t.dates.start}T090000/${t.dates.end}T170000`,s=encodeURIComponent(t.desc.replace(/<br>/g,'\n').replace(/<[^>]*>?/gm,'')),l=encodeURIComponent("Sextant Coffee Roasters, 539 Valencia St, San Francisco, CA");return`${b}&text=${e}&dates=${d}&details=${s}&location=${l}`;},
-    showTechModal(techKey){const details=techDetails[techKey];if(!details)return;const modal=document.createElement('div');modal.className='tech-modal';modal.onclick=()=>this.hideTechModal(modal);modal.innerHTML=`<div class="tech-modal-content card" onclick="event.stopPropagation()"><button class="tech-modal-close" onclick="Content.hideTechModal(this.closest('.tech-modal'))">&times;</button><h3 class="heading-1" style="color:${details.color};">${details.title}</h3><p class="body-regular mt-4">${details.desc}</p></div>`;this.app.DOM.techModalContainer.appendChild(modal);setTimeout(()=>modal.classList.add('visible'),10);},
-    hideTechModal(modal){modal.classList.remove('visible');setTimeout(()=>modal.remove(),300);}
+    showTechModal(techKey){const details=techDetails[techKey];if(!details)return;const modal=document.createElement('div');modal.className='tech-modal';modal.onclick=()=>this.hideModal('techModalContainer');modal.innerHTML=`<div class="menu-modal-content card" onclick="event.stopPropagation()"><button class="menu-modal-close" onclick="Content.hideModal('techModalContainer')">&times;</button><h3 class="heading-1" style="color:${details.color};">${details.title}</h3><p class="body-regular mt-4">${details.desc}</p></div>`;this.app.DOM.techModalContainer.appendChild(modal);setTimeout(()=>modal.classList.add('visible'),10);},
 };
 
 window.showMenuCategory=c=>Content.showMenuCategory(c);
