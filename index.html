@@ -430,10 +430,10 @@ const slideTemplates = [
         title: "Financial Intelligence", 
         content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is structured for mutual growth and minimal risk. We've simplified the model to be transparent and highly favorable to Sextant, ensuring you benefit directly from the event's success while we handle the production complexities.</p>
         <div class="sextant-layout">
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title text-purple-400">Sextant's Responsibilities & Costs</span></div><div class="sextant-details body-regular">Sextant's role is focused on its core strengths. Your team provides the venue and covers direct operational costs:<ul><li class='mt-2'>&bull; <strong>Permit Fee:</strong> The one-time city event permit (Est. $200).</li><li class='mt-2'>&bull; <strong>Drink Ingredients (COGS):</strong> Cost of goods for all beverages sold.</li><li class='mt-2'>&bull; <strong>Barista Staffing:</strong> Your expert baristas to craft the menu.</li></ul><p class='mt-3'>This clear division of responsibility keeps you in full control of your primary event-related expenses.</p></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title text-purple-400">Sextant's Responsibilities & Costs</span></div><div class="sextant-details body-regular">Sextant's role is focused on its core strengths. Your team provides the venue and covers direct operational costs:<ul><li class='mt-2'>&bull; <strong>Permit Fee:</strong> The one-time city event permit (Est. $200).</li><li class='mt-2'>&bull; <strong>Drink Ingredients (COGS):</strong> 50% of the cost of goods for beverages.</li><li class='mt-2'>&bull; <strong>Barista Staffing:</strong> Your expert baristas to craft the menu (Est. $225).</li><li class='mt-2'>&bull; <strong>Print Marketing:</strong> In-store promotional materials (Est. $150).</li></ul><p class='mt-3'>This clear division of responsibility keeps you in full control of your primary event-related expenses.</p></div></div>
             <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title text-emerald-400">Surface Tension's Responsibilities & Costs</span></div><div class="sextant-details body-regular">
                 <p class="mb-3 font-semibold text-gray-300">Surface Tension covers all creative, talent, and production-related expenses, including:</p>
-                <ul><li class='mt-2'>&bull; <strong>Talent Fees:</strong> DJ Honorarium ($400).</li><li class='mt-2'>&bull; <strong>Insurance & Liability:</strong> Full event insurance coverage (Est. $150).</li><li class='mt-2'>&bull; <strong>Production:</strong> All A/V gear, lighting, and atmospherics (sponsorship-backed).</li><li class='mt-2'>&bull; <strong>Marketing:</strong> All costs for our multi-phase campaign.</li></ul><p class='mt-3'>These are funded entirely by ST's portion of the revenue, representing zero financial outlay for Sextant beyond your standard operational costs.</p>
+                <ul><li class='mt-2'>&bull; <strong>Talent Fees:</strong> DJ Honorarium ($400).</li><li class='mt-2'>&bull; <strong>Insurance & Liability:</strong> Full event insurance coverage (Est. $150).</li><li class='mt-2'>&bull; <strong>Drink Ingredients (COGS):</strong> 50% of the cost of goods for beverages.</li><li class='mt-2'>&bull; <strong>Digital Marketing & Promotion:</strong> All costs for our online campaign.</li></ul><p class='mt-3'>These are funded entirely by ST's portion of the revenue, representing zero financial outlay for Sextant beyond your standard operational costs.</p>
              </div></div>
             <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">The Win-Win Financial Model</span></div><div class="sextant-details body-regular"><p class="mb-3">Our revised revenue share is designed for simplicity and profitability for Sextant: <br> &bull; <strong>Drink Sales:</strong> 50% of net drink revenue goes to Sextant. <br> &bull; <strong>Ticket Sales:</strong> 30% of all ticket revenue goes to Sextant. <br><br>This model gives Sextant the majority share of high-margin beverage sales and a direct percentage of attendance, creating a no-risk, high-reward scenario.</p></div></div>
         </div>
@@ -450,7 +450,7 @@ const slideTemplates = [
                     <div class="flex justify-between items-center text-md"><span class="text-gray-400">Sextant's Ticket Share (30%):</span><span class="font-bold text-emerald-400" id="sextant-ticket-share">+$371</span></div>
                     <div class="flex justify-between items-center text-md"><span class="text-gray-400">Sextant's Drink Share (50% of Net):</span><span class="font-bold text-emerald-400" id="sextant-drink-share">+$515</span></div>
                     <div class="mt-3 pt-3 border-t-2 border-purple-500">
-                         <div class="flex justify-between items-center text-xl"><span class="text-white">Sextant's Est. Net Profit:</span><span class="calc-final-result" id="sextant-total-profit">$386</span></div>
+                         <div class="flex justify-between items-center text-xl"><span class="text-white">Sextant's Est. Gross Profit:</span><span class="calc-final-result" id="sextant-gross-profit">$886</span></div>
                     </div>
                 </div>
             </div>
@@ -805,45 +805,56 @@ const Animations = {
         }
     },
     
-    // UPDATED to fix cutoff and add VFX
+    // REWORKED logo animation
     createHeaderLogo() {
         const canvas = document.getElementById('header-logo-canvas');
         if (!canvas) return;
         
-        let w = canvas.width = canvas.clientWidth * 2;
-        let h = canvas.height = canvas.clientHeight * 2;
-        if (!w) return setTimeout(() => this.createHeaderLogo(), 100);
+        let w = canvas.clientWidth * 2;
+        let h = canvas.clientHeight * 2;
+        canvas.width = w;
+        canvas.height = h;
+
+        if (!w || !h) return setTimeout(() => this.createHeaderLogo(), 100);
 
         const ctx = canvas.getContext('2d');
         const particles = [];
         let mode = 'st';
         let targetPositions = {};
-        const mouse = { x: -9999, y: -9999, radius: w * 0.7 };
+        const mouse = { x: -9999, y: -9999, radius: w * 0.8 };
 
-        // Generate target positions for "ST"
-        const stTarget = [];
-        ctx.font = `500 ${w / 1.7}px "ivypresto-display", serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
-        try {
-            ctx.fillText("ST", w / 2, h / 2);
-        } catch (e) {
-             console.error("Failed to render font for logo, retrying...", e);
-             return setTimeout(() => this.createHeaderLogo(), 200);
-        }
-        
-        const data = ctx.getImageData(0, 0, w, h).data;
-        ctx.clearRect(0, 0, w, h);
-        
-        for (let x = 0; x < w; x += 2) {
-            for (let y = 0; y < h; y += 2) {
-                if (data[((x + y * w) * 4) + 3] > 150) {
-                    stTarget.push({ x, y });
+        // Generate target positions
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = w;
+        tempCanvas.height = h;
+
+        const getPointsForText = (text, font) => {
+            tempCtx.clearRect(0, 0, w, h);
+            tempCtx.font = font;
+            tempCtx.textAlign = 'center';
+            tempCtx.textBaseline = 'middle';
+            tempCtx.fillStyle = '#fff';
+            tempCtx.fillText(text, w / 2, h / 2);
+            
+            const data = tempCtx.getImageData(0, 0, w, h).data;
+            const points = [];
+            for (let x = 0; x < w; x += 2) {
+                for (let y = 0; y < h; y += 2) {
+                    if (data[((x + y * w) * 4) + 3] > 150) {
+                        points.push({ x, y });
+                    }
                 }
             }
+            return points;
+        };
+        
+        try {
+            targetPositions.st = getPointsForText("ST", `500 ${w / 1.7}px "ivypresto-display", serif`);
+        } catch(e) {
+            console.error("Font loading error, retrying logo...", e);
+            return setTimeout(() => this.createHeaderLogo(), 300);
         }
-        targetPositions.st = stTarget;
 
         const ensoTarget = [];
         const radius = w * 0.35;
@@ -851,7 +862,7 @@ const Animations = {
         const centerY = h / 2;
         const numEnsoParticles = 200;
         for (let i = 0; i < numEnsoParticles; i++) {
-            const angle = (i / (numEnsoParticles-10)) * Math.PI * 1.85 - Math.PI * 0.9;
+            const angle = (i / (numEnsoParticles - 10)) * Math.PI * 1.85 - Math.PI * 0.9;
             ensoTarget.push({
                 x: centerX + Math.cos(angle) * radius,
                 y: centerY + Math.sin(angle) * radius,
@@ -861,24 +872,24 @@ const Animations = {
         
         const numParticles = 200;
         const baseColor = { r: 16, g: 185, b: 129 };
-        const darkColor = { r: 100, g: 100, b: 100 };
+        const darkColor = { r: 80, g: 80, b: 90 };
         for(let i=0; i<numParticles; i++) {
             particles.push({
                 x: Math.random()*w, y: Math.random()*h,
                 vx: 0, vy: 0,
-                baseRadius: 0.5 + Math.random() * 1,
+                baseRadius: 0.5 + Math.random() * 1.2,
                 radius: 1,
                 color: {...baseColor},
                 target: targetPositions.st[i % targetPositions.st.length] || {x:w/2, y:h/2}
             });
         }
 
-        const spring = 0.04;
-        const friction = 0.9;
+        const spring = 0.03;
+        const friction = 0.92;
 
         const loop = () => {
-            ctx.fillStyle = 'rgba(0,0,0,0.1)'; // Subtle motion blur
-            ctx.fillRect(0,0,w,h);
+            ctx.clearRect(0, 0, w, h); // Clear for seamless background
+            ctx.globalCompositeOperation = 'lighter'; // Additive blending for glow
 
             particles.forEach(p => {
                 const dxMouse = p.x - mouse.x;
@@ -890,7 +901,7 @@ const Animations = {
 
                 if (distMouse < mouse.radius) {
                     const angle = Math.atan2(dyMouse, dxMouse);
-                    const force = (mouse.radius - distMouse) * 0.015;
+                    const force = (mouse.radius - distMouse) * 0.01;
                     forceX += Math.cos(angle) * force;
                     forceY += Math.sin(angle) * force;
                 }
@@ -905,13 +916,15 @@ const Animations = {
                 p.y += p.vy;
                 
                 const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
-                p.radius = p.baseRadius + speed * 0.5;
+                p.radius = p.baseRadius + speed * 0.3;
 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.9)`;
                 ctx.fill();
             });
+            
+            ctx.globalCompositeOperation = 'source-over'; // Reset blend mode
             requestAnimationFrame(loop);
         };
         loop();
@@ -936,11 +949,7 @@ const Animations = {
             const newTargets = targetPositions[mode];
             const maxTargets = newTargets.length;
             particles.forEach((p, i) => {
-                gsap.to(p, {
-                    target: newTargets[i % maxTargets],
-                    duration: 1.5, // Slower transition
-                    ease: 'power2.inOut' 
-                });
+                 p.target = newTargets[i % maxTargets];
             });
         });
         
@@ -1034,7 +1043,7 @@ const Animations = {
                 lastFrameTime = time;
 
                 const t = clock.getElapsedTime();
-                if(options.update) options.update({scene, camera, t, ...sceneObjects});
+                if(options.update) options.update({scene, camera, t, ...sceneObjects, renderer});
                 renderer.render(scene, camera);
             };
             this.scenes[id] = {scene, camera, renderer, animate, objects: sceneObjects, isActive: true}; 
@@ -1262,21 +1271,26 @@ const Animations = {
         });
     },
     
-    // REBUILT finale animation
+    // REBUILT finale animation with hover
     initFinaleRipple() {
         const isHighPerf = (navigator.hardwareConcurrency || 4) > 2;
         const segments = isHighPerf ? 200 : 128;
         const geometry = new THREE.PlaneGeometry(30, 30, segments, segments);
+        const mouse = new THREE.Vector2(-99, -99);
+        const targetMouse = new THREE.Vector2(-99, -99);
 
-        const updateVertices = (time, positions) => {
+        const updateVertices = (time, positions, mousePos) => {
             const t = time * 0.5;
             for (let i = 0; i < positions.length; i += 3) {
                 const x = positions[i];
                 const y = positions[i+1];
                 const dist = Math.sqrt(x*x + y*y);
-                const wave1 = Math.sin(dist * 1.2 - t * 1.5);
-                const wave2 = Math.sin((x + y) * 0.8 + t);
-                positions[i+2] = (wave1 + wave2) * 0.4 * Math.pow(1.0 - (dist/20.0), 2.0);
+                const idleWave = (Math.sin(dist * 1.2 - t * 1.5) + Math.sin((x + y) * 0.8 + t)) * 0.4 * Math.pow(1.0 - (dist/20.0), 2.0);
+                
+                const mouseDist = Math.sqrt(Math.pow(x - mousePos.x, 2) + Math.pow(y - mousePos.y, 2));
+                const mouseWave = Math.pow(Math.max(0.0, 1.0 - mouseDist / 4.0), 2.0) * -3.0;
+
+                positions[i+2] = idleWave + mouseWave;
             }
         };
         
@@ -1309,17 +1323,38 @@ const Animations = {
                     })
                 }
             ],
-            update: ({ camera, t, surface, particles }) => {
+            update: ({ camera, t, surface, particles, renderer }) => {
+                mouse.lerp(targetMouse, 0.05);
+
                 const positions = particles.geometry.attributes.position.array;
-                updateVertices(t, positions);
+                updateVertices(t, positions, mouse);
                 particles.geometry.attributes.position.needsUpdate = true;
-                
                 surface.geometry.attributes.position.needsUpdate = true;
 
                 camera.position.x = Math.sin(t * 0.1) * 5;
                 camera.position.z = Math.cos(t * 0.1) * 10;
                 camera.position.y = 6;
                 camera.lookAt(0, 0, 0);
+
+                if (!renderer.domElement.hasAttribute('data-mouse-listener')) {
+                    renderer.domElement.setAttribute('data-mouse-listener', 'true');
+                    const raycaster = new THREE.Raycaster();
+                    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+                    renderer.domElement.addEventListener('mousemove', (e) => {
+                        const rect = renderer.domElement.getBoundingClientRect();
+                        const pointer = new THREE.Vector2(
+                            ((e.clientX - rect.left) / rect.width) * 2 - 1,
+                           -((e.clientY - rect.top) / rect.height) * 2 + 1
+                        );
+                        raycaster.setFromCamera(pointer, camera);
+                        const intersectPoint = new THREE.Vector3();
+                        raycaster.ray.intersectPlane(plane, intersectPoint);
+                        targetMouse.set(intersectPoint.x, intersectPoint.y);
+                    }, false);
+                    renderer.domElement.addEventListener('mouseleave', () => {
+                        targetMouse.set(-99,-99);
+                    });
+                }
             }
         });
     },
@@ -1451,8 +1486,10 @@ const Content = {
         const permitCost = 200;
         const insuranceCost = 150;
         const djCost = 400;
-        const productionCost = 650; // Sponsorship-backed, but we'll show it as a cost for ST
-        const baristaCosts = 300; // Paid by Sextant
+        const productionCost = 250; 
+        const marketingPrintCost = 150;
+        const marketingDigitalCost = 100;
+        const baristaCosts = 225;
 
         const totalAttendees = tier1Qty + tier2Qty + tier3Qty;
         const totalTicketRevenue = (tier1Qty * tier1Price) + (tier2Qty * tier2Price) + (tier3Qty * tier3Price);
@@ -1464,19 +1501,20 @@ const Content = {
         // Sextant P&L
         const sextantTicketShare = totalTicketRevenue * 0.30;
         const sextantDrinkShare = (totalDrinkRevenue - drinkCOGS) * 0.50;
-        const sextantProfit = sextantTicketShare + sextantDrinkShare - permitCost - baristaCosts;
+        const sextantGrossProfit = sextantTicketShare + sextantDrinkShare;
+        const sextantNetProfit = sextantGrossProfit - permitCost - baristaCosts - (drinkCOGS / 2) - marketingPrintCost;
 
         // Surface Tension P&L
         const stTicketShare = totalTicketRevenue * 0.70;
         const stDrinkShare = (totalDrinkRevenue - drinkCOGS) * 0.50;
-        const stCosts = djCost + productionCost + insuranceCost;
+        const stCosts = djCost + productionCost + insuranceCost + marketingDigitalCost + (drinkCOGS / 2);
         const stProfit = stTicketShare + stDrinkShare - stCosts;
 
         // Update DOM
         document.getElementById('total-revenue').textContent = `$${totalGrossRevenue.toLocaleString('en-US',{maximumFractionDigits:0})}`;
         document.getElementById('sextant-ticket-share').textContent = `+$${sextantTicketShare.toLocaleString('en-US',{maximumFractionDigits:0})}`;
         document.getElementById('sextant-drink-share').textContent = `+$${sextantDrinkShare.toLocaleString('en-US',{maximumFractionDigits:0})}`;
-        document.getElementById('sextant-total-profit').textContent = `$${sextantProfit.toLocaleString('en-US',{maximumFractionDigits:0})}`;
+        document.getElementById('sextant-gross-profit').textContent = `$${sextantGrossProfit.toLocaleString('en-US',{maximumFractionDigits:0})}`;
 
         // Update Chart
         if(!Animations.scenes['sales-breakdown-chart']) Animations.initSalesChart();
@@ -1486,9 +1524,8 @@ const Content = {
         
         // Cache data for modal
         revenueBreakdownCache = {
-            totalGrossRevenue, totalTicketRevenue, totalDrinkRevenue,
-            sextantTicketShare, sextantDrinkShare, permitCost, drinkCOGS, baristaCosts, sextantProfit,
-            stTicketShare, stDrinkShare, djCost, productionCost, insuranceCost, stProfit
+            sextantGrossProfit, permitCost, baristaCosts, marketingPrintCost, sextantCOGS: drinkCOGS/2, sextantNetProfit,
+            stGrossProfit: stTicketShare + stDrinkShare, djCost, productionCost, insuranceCost, marketingDigitalCost, stCOGS: drinkCOGS/2, stProfit
         };
     },
     showRevenueBreakdown() {
@@ -1502,22 +1539,21 @@ const Content = {
                 <div class="grid grid-cols-2 gap-8 mt-6 body-regular">
                     <div>
                         <h4 class="font-semibold text-purple-400 mb-2 border-b border-purple-800 pb-1">Sextant P&L</h4>
-                        <div class="flex justify-between"><span>Ticket Share (30%):</span> <span class="text-green-400">${F(data.sextantTicketShare)}</span></div>
-                        <div class="flex justify-between"><span>Drink Share (50% Net):</span> <span class="text-green-400">${F(data.sextantDrinkShare)}</span></div>
-                        <div class="flex justify-between mt-2 pt-2 border-t border-dashed border-gray-700"><span>Gross Profit:</span> <span>${F(data.sextantTicketShare + data.sextantDrinkShare)}</span></div>
-                        <div class="flex justify-between text-red-400"><span>- COGS:</span> <span>(${F(data.drinkCOGS)})</span></div>
+                        <div class="flex justify-between"><span>Gross Profit:</span> <span class="text-green-400">${F(data.sextantGrossProfit)}</span></div>
+                        <div class="flex justify-between text-red-400"><span>- 50% COGS:</span> <span>(${F(data.sextantCOGS)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- Permit:</span> <span>(${F(data.permitCost)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- Baristas:</span> <span>(${F(data.baristaCosts)})</span></div>
-                        <div class="flex justify-between mt-2 pt-2 border-t border-purple-500 font-bold text-lg"><span class="text-purple-300">Net Profit:</span> <span class="text-purple-300">${F(data.sextantProfit)}</span></div>
+                        <div class="flex justify-between text-red-400"><span>- Print Marketing:</span> <span>(${F(data.marketingPrintCost)})</span></div>
+                        <div class="flex justify-between mt-2 pt-2 border-t border-purple-500 font-bold text-lg"><span class="text-purple-300">Net Profit:</span> <span class="text-purple-300">${F(data.sextantNetProfit)}</span></div>
                     </div>
                      <div>
                         <h4 class="font-semibold text-emerald-400 mb-2 border-b border-emerald-800 pb-1">Surface Tension P&L</h4>
-                        <div class="flex justify-between"><span>Ticket Share (70%):</span> <span class="text-green-400">${F(data.stTicketShare)}</span></div>
-                        <div class="flex justify-between"><span>Drink Share (50% Net):</span> <span class="text-green-400">${F(data.stDrinkShare)}</span></div>
-                        <div class="flex justify-between mt-2 pt-2 border-t border-dashed border-gray-700"><span>Gross Profit:</span> <span>${F(data.stTicketShare + data.stDrinkShare)}</span></div>
+                        <div class="flex justify-between"><span>Gross Profit:</span> <span class="text-green-400">${F(data.stGrossProfit)}</span></div>
+                        <div class="flex justify-between text-red-400"><span>- 50% COGS:</span> <span>(${F(data.stCOGS)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- DJ:</span> <span>(${F(data.djCost)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- Production:</span> <span>(${F(data.productionCost)})</span></div>
-                         <div class="flex justify-between text-red-400"><span>- Insurance:</span> <span>(${F(data.insuranceCost)})</span></div>
+                        <div class="flex justify-between text-red-400"><span>- Insurance:</span> <span>(${F(data.insuranceCost)})</span></div>
+                        <div class="flex justify-between text-red-400"><span>- Digital Marketing:</span> <span>(${F(data.marketingDigitalCost)})</span></div>
                         <div class="flex justify-between mt-2 pt-2 border-t border-emerald-500 font-bold text-lg"><span class="text-emerald-300">Net Profit:</span> <span class="text-emerald-300">${F(data.stProfit)}</span></div>
                     </div>
                 </div>
