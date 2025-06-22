@@ -430,10 +430,10 @@ const slideTemplates = [
         title: "Financial Intelligence", 
         content: `<p id="production-header" class="body-large mt-4 max-w-4xl mx-auto">This partnership is structured for mutual growth and minimal risk. We've simplified the model to be transparent and highly favorable to Sextant, ensuring you benefit directly from the event's success while we handle the production complexities.</p>
         <div class="sextant-layout">
-            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title text-purple-400">Sextant's Responsibilities & Costs</span></div><div class="sextant-details body-regular">Sextant's role is focused on its core strengths. Your team provides the venue and covers direct operational costs:<ul><li class='mt-2'>&bull; <strong>Permit Fee:</strong> The one-time city event permit (Est. $200).</li><li class='mt-2'>&bull; <strong>Drink Ingredients (COGS):</strong> 50% of the cost of goods for beverages.</li><li class='mt-2'>&bull; <strong>Barista Staffing:</strong> Your expert baristas to craft the menu (Est. $225).</li><li class='mt-2'>&bull; <strong>Print Marketing:</strong> In-store promotional materials (Est. $150).</li></ul><p class='mt-3'>This clear division of responsibility keeps you in full control of your primary event-related expenses.</p></div></div>
+            <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title text-purple-400">Sextant's Responsibilities & Costs</span></div><div class="sextant-details body-regular">Sextant's role is focused on its core strengths. Your team provides the venue and covers direct operational costs:<ul><li class='mt-2'>&bull; <strong>Permit Fee:</strong> The one-time city event permit (Est. $200).</li><li class='mt-2'>&bull; <strong>Drink Ingredients (COGS):</strong> 100% of the cost of goods for beverages.</li><li class='mt-2'>&bull; <strong>Barista Staffing:</strong> Your expert baristas to craft the menu (Est. $225).</li><li class='mt-2'>&bull; <strong>Print Marketing:</strong> In-store promotional materials (Est. $150).</li></ul><p class='mt-3'>This clear division of responsibility keeps you in full control of your primary event-related expenses.</p></div></div>
             <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title text-emerald-400">Surface Tension's Responsibilities & Costs</span></div><div class="sextant-details body-regular">
                 <p class="mb-3 font-semibold text-gray-300">Surface Tension covers all creative, talent, and production-related expenses, including:</p>
-                <ul><li class='mt-2'>&bull; <strong>Talent Fees:</strong> DJ Honorarium ($400).</li><li class='mt-2'>&bull; <strong>Insurance & Liability:</strong> Full event insurance coverage (Est. $150).</li><li class='mt-2'>&bull; <strong>Drink Ingredients (COGS):</strong> 50% of the cost of goods for beverages.</li><li class='mt-2'>&bull; <strong>Digital Marketing & Promotion:</strong> All costs for our online campaign.</li></ul><p class='mt-3'>These are funded entirely by ST's portion of the revenue, representing zero financial outlay for Sextant beyond your standard operational costs.</p>
+                <ul><li class='mt-2'>&bull; <strong>Talent Fees:</strong> DJ Honorarium ($500).</li><li class='mt-2'>&bull; <strong>Insurance & Liability:</strong> Full event insurance coverage (Est. $150).</li><li class='mt-2'>&bull; <strong>Production:</strong> All A/V gear, lighting, and atmospherics (sponsorship-backed).</li><li class='mt-2'>&bull; <strong>Marketing:</strong> All costs for our multi-phase digital campaign (Est. $300).</li></ul><p class='mt-3'>These are funded entirely by ST's portion of the revenue, representing zero financial outlay for Sextant beyond your standard operational costs.</p>
              </div></div>
             <div class="sextant-item" onclick="toggleExpand(this)"><div class="sextant-header"><span class="sextant-title">The Win-Win Financial Model</span></div><div class="sextant-details body-regular"><p class="mb-3">Our revised revenue share is designed for simplicity and profitability for Sextant: <br> &bull; <strong>Drink Sales:</strong> 50% of net drink revenue goes to Sextant. <br> &bull; <strong>Ticket Sales:</strong> 30% of all ticket revenue goes to Sextant. <br><br>This model gives Sextant the majority share of high-margin beverage sales and a direct percentage of attendance, creating a no-risk, high-reward scenario.</p></div></div>
         </div>
@@ -632,16 +632,17 @@ const Animations = {
         this.createHeaderLogo(); 
     },
     
+    // UPDATED loading animation
     createLoadingAnimation() {
         const canvas = document.getElementById('loading-canvas');
         if (!canvas) return;
         try {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            camera.position.z = 5;
+            camera.position.z = 10;
 
             const isHighPerf = (navigator.hardwareConcurrency || 4) > 2;
-            const particleCount = isHighPerf ? 2000 : 1000;
+            const particleCount = isHighPerf ? 8000 : 4000;
             
             const renderer = new THREE.WebGLRenderer({ canvas, antialias: isHighPerf, alpha: true, powerPreference: "high-performance" });
             renderer.setSize(250, 250);
@@ -650,8 +651,8 @@ const Animations = {
 
             const uniforms = {
                 uTime: { value: 0.0 },
-                uStage: { value: 0.0 },
-                uProgress: { value: 0.0 }
+                uProgress: { value: 0.0 },
+                uStage: { value: 0.0 }
             };
             
             const geometry = new THREE.BufferGeometry();
@@ -660,15 +661,13 @@ const Animations = {
 
             for (let i = 0; i < particleCount; i++) {
                 const i3 = i * 3;
-                const phi = Math.acos(-1 + (2 * i) / particleCount);
-                const theta = Math.sqrt(particleCount * Math.PI) * phi;
-                positions[i3] = Math.cos(theta) * Math.sin(phi) * 2;
-                positions[i3+1] = Math.sin(theta) * Math.sin(phi) * 2;
-                positions[i3+2] = Math.cos(phi) * 2;
+                positions[i3] = (Math.random() - 0.5);
+                positions[i3+1] = (Math.random() - 0.5);
+                positions[i3+2] = (Math.random() - 0.5);
                 
-                randoms[i3] = (Math.random() - 0.5) * 10;
-                randoms[i3+1] = (Math.random() - 0.5) * 10;
-                randoms[i3+2] = (Math.random() - 0.5) * 10;
+                randoms[i3] = Math.random();
+                randoms[i3+1] = Math.random();
+                randoms[i3+2] = Math.random();
             }
 
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -679,87 +678,62 @@ const Animations = {
                 vertexShader: `
                     precision highp float;
                     uniform float uTime;
-                    uniform float uStage;
                     uniform float uProgress;
+                    uniform float uStage;
                     attribute vec3 aRandom;
-                    varying float vAlpha;
-                    
-                    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-                    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-                    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
-                    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
 
-                    float snoise(vec3 v) {
-                        const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
-                        const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
-                        vec3 i  = floor(v + dot(v, C.yyy) );
-                        vec3 x0 =   v - i + dot(i, C.xxx) ;
-                        vec3 g = step(x0.yzx, x0.xyz);
-                        vec3 l = 1.0 - g;
-                        vec3 i1 = min( g.xyz, l.zxy );
-                        vec3 i2 = max( g.xyz, l.zxy );
-                        vec3 x1 = x0 - i1 + C.xxx;
-                        vec3 x2 = x0 - i2 + C.yyy;
-                        vec3 x3 = x0 - D.yyy;
-                        i = mod289(i);
-                        vec4 p = permute( permute( permute( i.z + vec4(0.0, i1.z, i2.z, 1.0 )) + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
-                        float n_ = 0.142857142857;
-                        vec3  ns = n_ * D.wyz - D.xzx;
-                        vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-                        vec4 x_ = floor(j * ns.z);
-                        vec4 y_ = floor(j - 7.0 * x_ );
-                        vec4 x = x_ *ns.x + ns.yyyy;
-                        vec4 y = y_ *ns.x + ns.yyyy;
-                        vec4 h = 1.0 - abs(x) - abs(y);
-                        vec4 b0 = vec4( x.xy, y.xy );
-                        vec4 b1 = vec4( x.zw, y.zw );
-                        vec4 s0 = floor(b0)*2.0 + 1.0;
-                        vec4 s1 = floor(b1)*2.0 + 1.0;
-                        vec4 sh = -step(h, vec4(0.0));
-                        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-                        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-                        vec3 p0 = vec3(a0.xy,h.x);
-                        vec3 p1 = vec3(a0.zw,h.y);
-                        vec3 p2 = vec3(a1.xy,h.z);
-                        vec3 p3 = vec3(a1.zw,h.w);
-                        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
-                        p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-                        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-                        m = m * m;
-                        return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+                    varying vec3 vColor;
+
+                    vec3 getTorusKnotPosition(float t) {
+                        float p = 2.0; float q = 3.0;
+                        float r = cos(q * t) + 2.0;
+                        return vec3(
+                            r * cos(p * t),
+                            r * sin(p * t),
+                            -sin(q * t)
+                        );
                     }
 
+
                     void main() {
-                        vec3 pos = position;
-                        float noise = snoise(pos * 0.5 + uTime * 0.2) * 0.5;
-                        vec3 blobPos = position * (1.0 + noise);
-                        float angle = atan(aRandom.x, aRandom.y);
-                        float radius = 2.0 + aRandom.z * 0.1;
-                        vec3 ensoPos = vec3(cos(angle) * radius, sin(angle) * radius, 0.0);
-                        vec3 scatterPos = aRandom * 2.0;
-                        if (uStage < 1.0) {
-                            pos = blobPos;
-                            vAlpha = 1.0;
-                        } else if (uStage < 2.0) {
-                            pos = mix(blobPos, ensoPos, uProgress);
-                            vAlpha = 1.0;
-                        } else {
-                            pos = mix(ensoPos, scatterPos, uProgress);
-                            vAlpha = 1.0 - uProgress;
-                        }
-                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-                        gl_PointSize = (4.0 / -mvPosition.z) * (1.0 + vAlpha);
+                        // --- Stage 1: Ripples ---
+                        float angle = aRandom.x * 6.283;
+                        float radius = 2.0 + aRandom.y * 8.0;
+                        vec3 ripplePos = vec3(cos(angle) * radius, sin(angle) * radius, 0.0);
+                        ripplePos.z += sin(radius * 0.5 - uTime * 2.0) * 0.5;
+
+                        // --- Stage 2: Torus Knot ---
+                        vec3 torusKnotPos = getTorusKnotPosition(aRandom.x * 6.283 * 2.0) * 2.0;
+                        
+                        // --- Stage 3: Convergence ---
+                        vec3 convergePos = vec3(0.0);
+
+                        // --- Transitions ---
+                        vec3 finalPos;
+                        float stage1_to_2 = smoothstep(0.0, 1.0, uStage);
+                        finalPos = mix(ripplePos, torusKnotPos, stage1_to_2);
+                        
+                        float stage2_to_3 = smoothstep(1.0, 2.0, uStage);
+                        finalPos = mix(finalPos, convergePos, stage2_to_3);
+                        
+                        vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
+                        float pointSize = (20.0 / -mvPosition.z) * (1.0 - stage2_to_3);
+                        gl_PointSize = max(1.0, pointSize);
                         gl_Position = projectionMatrix * mvPosition;
+
+                        // Color mixing
+                        vec3 color1 = vec3(0.06, 0.73, 0.51); // Emerald
+                        vec3 color2 = vec3(0.66, 0.33, 0.96); // Purple
+                        vColor = mix(color1, color2, aRandom.z);
                     }
                 `,
                 fragmentShader: `
                     precision highp float;
-                    varying float vAlpha;
+                    varying vec3 vColor;
                     void main() {
                         float dist = distance(gl_PointCoord, vec2(0.5));
                         if(dist > 0.5) discard;
-                        vec3 color = mix(vec3(0.66, 0.33, 0.96), vec3(0.06, 0.73, 0.51), vAlpha);
-                        gl_FragColor = vec4(color, (1.0 - dist * 2.0) * vAlpha * 1.5);
+                        gl_FragColor = vec4(vColor, (1.0 - dist * 2.0) * 0.7);
                     }
                 `,
                 blending: THREE.AdditiveBlending,
@@ -771,31 +745,28 @@ const Animations = {
             scene.add(points);
             
             const clock = new THREE.Clock();
-            const cycleDuration = 6.0;
+            
+            const tl = gsap.timeline({
+                onComplete: () => {
+                     if (!this.app.state.loadingComplete) {
+                        renderer.dispose();
+                        geometry.dispose();
+                        material.dispose();
+                    }
+                }
+            });
+            tl.to(uniforms.uStage, { value: 1.0, duration: 2.5, ease: "power1.inOut" }, 0);
+            tl.to(uniforms.uStage, { value: 2.0, duration: 2.5, ease: "power2.in" }, "+=1.0");
 
             const animate = () => {
-                if (!this.app.state.loadingComplete) {
-                    requestAnimationFrame(animate);
-                } else {
-                     renderer.dispose(); geometry.dispose(); material.dispose(); return;
+                if (this.app.state.loadingComplete) {
+                     renderer.dispose();
+                     geometry.dispose();
+                     material.dispose();
+                     return;
                 }
-                const t = clock.getElapsedTime();
-                uniforms.uTime.value = t;
-
-                const cycleTime = t % cycleDuration;
-                if (cycleTime < 2.5) {
-                    uniforms.uStage.value = 0.0;
-                    uniforms.uProgress.value = 0.0;
-                } else if (cycleTime < 4.5) {
-                    uniforms.uStage.value = 1.0;
-                    uniforms.uProgress.value = (cycleTime - 2.5) / 2.0;
-                } else {
-                    uniforms.uStage.value = 2.0;
-                    uniforms.uProgress.value = (cycleTime - 4.5) / 1.5;
-                }
-
-                points.rotation.y = t * 0.05;
-                points.rotation.x = t * 0.02;
+                requestAnimationFrame(animate);
+                uniforms.uTime.value = clock.getElapsedTime();
                 renderer.render(scene, camera);
             };
             animate();
@@ -823,14 +794,11 @@ const Animations = {
         let targetPositions = {};
         const mouse = { x: -9999, y: -9999, radius: w * 0.8 };
 
-        // Generate target positions
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCanvas.width = w;
-        tempCanvas.height = h;
-
         const getPointsForText = (text, font) => {
-            tempCtx.clearRect(0, 0, w, h);
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = w;
+            tempCanvas.height = h;
             tempCtx.font = font;
             tempCtx.textAlign = 'center';
             tempCtx.textBaseline = 'middle';
@@ -849,118 +817,117 @@ const Animations = {
             return points;
         };
         
-        try {
+        document.fonts.load('500 1px "ivypresto-display"').then(() => {
             targetPositions.st = getPointsForText("ST", `500 ${w / 1.7}px "ivypresto-display", serif`);
-        } catch(e) {
-            console.error("Font loading error, retrying logo...", e);
-            return setTimeout(() => this.createHeaderLogo(), 300);
-        }
 
-        const ensoTarget = [];
-        const radius = w * 0.35;
-        const centerX = w / 2;
-        const centerY = h / 2;
-        const numEnsoParticles = 200;
-        for (let i = 0; i < numEnsoParticles; i++) {
-            const angle = (i / (numEnsoParticles - 10)) * Math.PI * 1.85 - Math.PI * 0.9;
-            ensoTarget.push({
-                x: centerX + Math.cos(angle) * radius,
-                y: centerY + Math.sin(angle) * radius,
-            });
-        }
-        targetPositions.enso = ensoTarget;
-        
-        const numParticles = 200;
-        const baseColor = { r: 16, g: 185, b: 129 };
-        const darkColor = { r: 80, g: 80, b: 90 };
-        for(let i=0; i<numParticles; i++) {
-            particles.push({
-                x: Math.random()*w, y: Math.random()*h,
-                vx: 0, vy: 0,
-                baseRadius: 0.5 + Math.random() * 1.2,
-                radius: 1,
-                color: {...baseColor},
-                target: targetPositions.st[i % targetPositions.st.length] || {x:w/2, y:h/2}
-            });
-        }
-
-        const spring = 0.03;
-        const friction = 0.92;
-
-        const loop = () => {
-            ctx.clearRect(0, 0, w, h); // Clear for seamless background
-            ctx.globalCompositeOperation = 'lighter'; // Additive blending for glow
-
-            particles.forEach(p => {
-                const dxMouse = p.x - mouse.x;
-                const dyMouse = p.y - mouse.y;
-                const distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
-                
-                let forceX = 0;
-                let forceY = 0;
-
-                if (distMouse < mouse.radius) {
-                    const angle = Math.atan2(dyMouse, dxMouse);
-                    const force = (mouse.radius - distMouse) * 0.01;
-                    forceX += Math.cos(angle) * force;
-                    forceY += Math.sin(angle) * force;
-                }
-
-                p.vx += (p.target.x - p.x) * spring;
-                p.vy += (p.target.y - p.y) * spring;
-                p.vx += forceX;
-                p.vy += forceY;
-                p.vx *= friction;
-                p.vy *= friction;
-                p.x += p.vx;
-                p.y += p.vy;
-                
-                const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
-                p.radius = p.baseRadius + speed * 0.3;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.9)`;
-                ctx.fill();
-            });
-            
-            ctx.globalCompositeOperation = 'source-over'; // Reset blend mode
-            requestAnimationFrame(loop);
-        };
-        loop();
-        
-        this.logoAnimator = {
-            setColor(isDark) {
-                const targetColor = isDark ? darkColor : baseColor;
-                particles.forEach(p => {
-                    gsap.to(p.color, {
-                        r: targetColor.r,
-                        g: targetColor.g,
-                        b: targetColor.b,
-                        duration: 0.5,
-                        ease: 'power2.out'
-                    });
+            const ensoTarget = [];
+            const radius = w * 0.35;
+            const centerX = w / 2;
+            const centerY = h / 2;
+            const numEnsoParticles = 200;
+            for (let i = 0; i < numEnsoParticles; i++) {
+                const angle = (i / (numEnsoParticles - 10)) * Math.PI * 1.85 - Math.PI * 0.9;
+                ensoTarget.push({
+                    x: centerX + Math.cos(angle) * radius,
+                    y: centerY + Math.sin(angle) * radius,
                 });
             }
-        };
+            targetPositions.enso = ensoTarget;
+            
+            const numParticles = 200;
+            const baseColor = { r: 16, g: 185, b: 129 };
+            const darkColor = { r: 80, g: 80, b: 90 };
+            for(let i=0; i<numParticles; i++) {
+                particles.push({
+                    x: Math.random()*w, y: Math.random()*h,
+                    vx: 0, vy: 0,
+                    baseRadius: 0.5 + Math.random() * 1.2,
+                    radius: 1,
+                    color: {...baseColor},
+                    target: targetPositions.st[i % targetPositions.st.length] || {x:w/2, y:h/2}
+                });
+            }
 
-        canvas.addEventListener('click', () => {
-            mode = mode === 'st' ? 'enso' : 'st';
-            const newTargets = targetPositions[mode];
-            const maxTargets = newTargets.length;
-            particles.forEach((p, i) => {
-                 p.target = newTargets[i % maxTargets];
+            const spring = 0.03;
+            const friction = 0.92;
+
+            const loop = () => {
+                ctx.clearRect(0, 0, w, h);
+                ctx.globalCompositeOperation = 'lighter';
+
+                particles.forEach(p => {
+                    const dxMouse = p.x - mouse.x;
+                    const dyMouse = p.y - mouse.y;
+                    const distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
+                    
+                    let forceX = 0;
+                    let forceY = 0;
+
+                    if (distMouse < mouse.radius) {
+                        const angle = Math.atan2(dyMouse, dxMouse);
+                        const force = (mouse.radius - distMouse) * 0.01;
+                        forceX += Math.cos(angle) * force;
+                        forceY += Math.sin(angle) * force;
+                    }
+                    
+                    p.vx += (p.target.x - p.x) * spring;
+                    p.vy += (p.target.y - p.y) * spring;
+                    p.vx += forceX;
+                    p.vy += forceY;
+                    p.vx *= friction;
+                    p.vy *= friction;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+                    p.radius = p.baseRadius + speed * 0.3;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.9)`;
+                    ctx.fill();
+                });
+                
+                ctx.globalCompositeOperation = 'source-over';
+                requestAnimationFrame(loop);
+            };
+            loop();
+            
+            this.logoAnimator = {
+                setColor(isDark) {
+                    const targetColor = isDark ? darkColor : baseColor;
+                    particles.forEach(p => {
+                        gsap.to(p.color, {
+                            r: targetColor.r,
+                            g: targetColor.g,
+                            b: targetColor.b,
+                            duration: 0.5,
+                            ease: 'power2.out'
+                        });
+                    });
+                }
+            };
+
+            canvas.addEventListener('click', () => {
+                mode = mode === 'st' ? 'enso' : 'st';
+                const newTargets = targetPositions[mode];
+                const maxTargets = newTargets.length;
+                particles.forEach((p, i) => {
+                     p.target = newTargets[i % maxTargets];
+                });
             });
-        });
-        
-        canvas.addEventListener('mousemove', e => {
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = (e.clientX - rect.left) * (w / rect.width);
-            mouse.y = (e.clientY - rect.top) * (h / rect.height);
-        });
-        
-        canvas.addEventListener('mouseleave', () => {
-            mouse.x = -9999; mouse.y = -9999;
+            
+            canvas.addEventListener('mousemove', e => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = (e.clientX - rect.left) * (w / rect.width);
+                mouse.y = (e.clientY - rect.top) * (h / rect.height);
+            });
+            
+            canvas.addEventListener('mouseleave', () => {
+                mouse.x = -9999; mouse.y = -9999;
+            });
+        }).catch(err => {
+            console.error("Font failed to load for logo, animation disabled.", err)
         });
     },
     
@@ -1340,20 +1307,32 @@ const Animations = {
                     renderer.domElement.setAttribute('data-mouse-listener', 'true');
                     const raycaster = new THREE.Raycaster();
                     const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-                    renderer.domElement.addEventListener('mousemove', (e) => {
+                    
+                    const handlePointerMove = (x, y) => {
                         const rect = renderer.domElement.getBoundingClientRect();
                         const pointer = new THREE.Vector2(
-                            ((e.clientX - rect.left) / rect.width) * 2 - 1,
-                           -((e.clientY - rect.top) / rect.height) * 2 + 1
+                            ((x - rect.left) / rect.width) * 2 - 1,
+                           -((y - rect.top) / rect.height) * 2 + 1
                         );
                         raycaster.setFromCamera(pointer, camera);
                         const intersectPoint = new THREE.Vector3();
-                        raycaster.ray.intersectPlane(plane, intersectPoint);
-                        targetMouse.set(intersectPoint.x, intersectPoint.y);
-                    }, false);
-                    renderer.domElement.addEventListener('mouseleave', () => {
-                        targetMouse.set(-99,-99);
-                    });
+                        if (raycaster.ray.intersectPlane(plane, intersectPoint)) {
+                           targetMouse.set(intersectPoint.x, intersectPoint.y);
+                        }
+                    };
+
+                    renderer.domElement.addEventListener('mousemove', (e) => handlePointerMove(e.clientX, e.clientY));
+                    renderer.domElement.addEventListener('touchmove', (e) => {
+                        if (e.touches.length > 0) {
+                           handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+                        }
+                    }, { passive: false });
+
+                    const handlePointerLeave = () => {
+                         targetMouse.set(-99,-99);
+                    };
+                    renderer.domElement.addEventListener('mouseleave', handlePointerLeave);
+                    renderer.domElement.addEventListener('touchend', handlePointerLeave);
                 }
             }
         });
@@ -1485,10 +1464,9 @@ const Content = {
         // Costs
         const permitCost = 200;
         const insuranceCost = 150;
-        const djCost = 400;
+        const djCost = 500;
         const productionCost = 250; 
-        const marketingPrintCost = 150;
-        const marketingDigitalCost = 100;
+        const marketingCost = 300;
         const baristaCosts = 225;
 
         const totalAttendees = tier1Qty + tier2Qty + tier3Qty;
@@ -1502,12 +1480,12 @@ const Content = {
         const sextantTicketShare = totalTicketRevenue * 0.30;
         const sextantDrinkShare = (totalDrinkRevenue - drinkCOGS) * 0.50;
         const sextantGrossProfit = sextantTicketShare + sextantDrinkShare;
-        const sextantNetProfit = sextantGrossProfit - permitCost - baristaCosts - (drinkCOGS / 2) - marketingPrintCost;
+        const sextantNetProfit = sextantGrossProfit - permitCost - baristaCosts - drinkCOGS - 150; 
 
         // Surface Tension P&L
         const stTicketShare = totalTicketRevenue * 0.70;
         const stDrinkShare = (totalDrinkRevenue - drinkCOGS) * 0.50;
-        const stCosts = djCost + productionCost + insuranceCost + marketingDigitalCost + (drinkCOGS / 2);
+        const stCosts = djCost + productionCost + insuranceCost + marketingCost;
         const stProfit = stTicketShare + stDrinkShare - stCosts;
 
         // Update DOM
@@ -1524,8 +1502,8 @@ const Content = {
         
         // Cache data for modal
         revenueBreakdownCache = {
-            sextantGrossProfit, permitCost, baristaCosts, marketingPrintCost, sextantCOGS: drinkCOGS/2, sextantNetProfit,
-            stGrossProfit: stTicketShare + stDrinkShare, djCost, productionCost, insuranceCost, marketingDigitalCost, stCOGS: drinkCOGS/2, stProfit
+            sextantGrossProfit, permitCost, baristaCosts, drinkCOGS, marketingPrintCost: 150, sextantNetProfit,
+            stGrossProfit: stTicketShare + stDrinkShare, djCost, productionCost, insuranceCost, marketingCost, stProfit
         };
     },
     showRevenueBreakdown() {
@@ -1540,7 +1518,7 @@ const Content = {
                     <div>
                         <h4 class="font-semibold text-purple-400 mb-2 border-b border-purple-800 pb-1">Sextant P&L</h4>
                         <div class="flex justify-between"><span>Gross Profit:</span> <span class="text-green-400">${F(data.sextantGrossProfit)}</span></div>
-                        <div class="flex justify-between text-red-400"><span>- 50% COGS:</span> <span>(${F(data.sextantCOGS)})</span></div>
+                        <div class="flex justify-between text-red-400"><span>- COGS:</span> <span>(${F(data.drinkCOGS)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- Permit:</span> <span>(${F(data.permitCost)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- Baristas:</span> <span>(${F(data.baristaCosts)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- Print Marketing:</span> <span>(${F(data.marketingPrintCost)})</span></div>
@@ -1549,11 +1527,10 @@ const Content = {
                      <div>
                         <h4 class="font-semibold text-emerald-400 mb-2 border-b border-emerald-800 pb-1">Surface Tension P&L</h4>
                         <div class="flex justify-between"><span>Gross Profit:</span> <span class="text-green-400">${F(data.stGrossProfit)}</span></div>
-                        <div class="flex justify-between text-red-400"><span>- 50% COGS:</span> <span>(${F(data.stCOGS)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- DJ:</span> <span>(${F(data.djCost)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- Production:</span> <span>(${F(data.productionCost)})</span></div>
                         <div class="flex justify-between text-red-400"><span>- Insurance:</span> <span>(${F(data.insuranceCost)})</span></div>
-                        <div class="flex justify-between text-red-400"><span>- Digital Marketing:</span> <span>(${F(data.marketingDigitalCost)})</span></div>
+                        <div class="flex justify-between text-red-400"><span>- Marketing:</span> <span>(${F(data.marketingCost)})</span></div>
                         <div class="flex justify-between mt-2 pt-2 border-t border-emerald-500 font-bold text-lg"><span class="text-emerald-300">Net Profit:</span> <span class="text-emerald-300">${F(data.stProfit)}</span></div>
                     </div>
                 </div>
@@ -1580,7 +1557,7 @@ const Content = {
             { id: 11, week: 3, title: "In-Store Marketing Rollout", assignee: "collaborative", status: 'not_started', dates: {start: "20250709", end: "20250713"}, desc: "<b>Goal:</b> Activate Sextant's physical space as a marketing channel. <br><b>Action:</b> Diana to deliver printed posters/flyers. Sextant to display materials and brief staff on the event.", notes: "Collaboration pending asset finalization." },
             { id: 12, week: 4, title: "Execute Phase 2: Guerrilla Marketing", assignee: "collaborative", status: 'not_started', dates: {start: "20250717", end: "20250718"}, desc: "<b>Goal:</b> Create real-world mystery and intrigue. <br><b>Action:</b> Pratt & Riley to execute late-night projections and sound beaming at pre-determined, high-visibility locations.", notes: "Locations scouted, awaiting execution window." },
             { id: 13, week: 4, title: "Operational & Staffing Plan", assignee: "collaborative", status: 'initiated', dates: {start: "20250714", end: "20250718"}, desc: "<b>Goal:</b> Finalize the day-of-event run-of-show. <br><b>Action:</b> Create detailed floor plan, setup/breakdown schedule, and staffing assignments. Conduct joint briefing. <br><b>Collaboration:</b> Pratt, Diana, Riley, Sextant", notes: "Drafting of run-of-show has begun." },
-            { id: 14, week: 5, title: "Launch Phase 5: Final Push", assignee: "diana", status: 'not_started', dates: {start: "20250721", end: "20250724"}, desc: "<b>Goal:</b> Drive final ticket sales to sell-out. <br><b>Action:</b> Launch hyper-targeted digital ad campaign. Final email blast to mailing list with 'Low Ticket' warning.", notes: "Ad creative to be finalized by Pratt." },
+            { id: 14, week: 5, title: "Launch Phase 5: The Final Push", assignee: "diana", status: 'not_started', dates: {start: "20250721", end: "20250724"}, desc: "<b>Goal:</b> Drive final ticket sales to sell-out. <br><b>Action:</b> Launch hyper-targeted digital ad campaign. Final email blast to mailing list with 'Low Ticket' warning.", notes: "Ad creative to be finalized by Pratt." },
             { id: 15, week: 5, title: "Final Permit Confirmation", assignee: "riley", status: 'not_started', dates: {start: "20250721", end: "20250722"}, desc: "<b>Goal:</b> Have permit physically in hand. <br><b>Action:</b> Final confirmation with the commission. Pick up the physical permit if necessary.", notes: "" },
             { id: 16, week: 5, title: "Day-Of Production & Staging (July 25)", assignee: "collaborative", status: 'not_started', dates: {start: "20250725", end: "20250725"}, desc: "<b>Goal:</b> Flawless technical execution. <br><b>Action:</b> Riley to manage equipment delivery and setup. Pratt to oversee sound check, lighting calibration, and full technical rehearsal. Sextant to prep bar.", notes: "Run-of-show required." }
         ];
